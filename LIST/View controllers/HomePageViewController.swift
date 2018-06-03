@@ -13,9 +13,8 @@ class HomePageViewController: UIViewController {
     
     var user = LISTUser()
     
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(true)
         Auth.auth().addStateDidChangeListener { (auth, user) in
             print("check begins")
             if user == nil {
@@ -24,10 +23,7 @@ class HomePageViewController: UIViewController {
                 })
             }
         }
-        
-        print(user.userID + "\n" + user.email)
     }
-    
     
     @IBAction func signOutTapped(_ sender: UIButton) {
         // todo: double check if the user wants to sign out

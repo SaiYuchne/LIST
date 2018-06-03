@@ -16,11 +16,16 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
     @IBOutlet weak var passwordField: UITextField!
     
     override func viewDidLoad() {
-        super.viewDidLoad()
+        super.viewDidLoad()    
+    }
 
-        emailField.delegate = self
-        passwordField.delegate = self
-        
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(true)
+        self.view.window?.rootViewController?.dismiss(animated: true, completion: nil)
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(true)
         // monitor a user’s authentication state
         Auth.auth().addStateDidChangeListener() { (auth, user) in
             if user != nil {
@@ -30,8 +35,10 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
                 self.passwordField.text = nil
             }
         }
+        emailField.delegate = self
+        passwordField.delegate = self
     }
-
+    
     // MARK: Dismiss the keyboard
     // when touching outside
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {

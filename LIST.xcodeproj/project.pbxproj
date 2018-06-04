@@ -21,6 +21,8 @@
 		40BE768A20BBFD910025D5BE /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 40BE768920BBFD910025D5BE /* GoogleService-Info.plist */; };
 		40CF0C0420C23C23003039A6 /* LISTUser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40CF0C0320C23C23003039A6 /* LISTUser.swift */; };
 		40CF0C0620C26D96003039A6 /* HomePageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40CF0C0520C26D96003039A6 /* HomePageViewController.swift */; };
+		40CF0C0820C3E884003039A6 /* ProfileExtractView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40CF0C0720C3E884003039A6 /* ProfileExtractView.swift */; };
+		40CF0C0A20C55DAF003039A6 /* HomePageListExtractView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40CF0C0920C55DAF003039A6 /* HomePageListExtractView.swift */; };
 		7C47CD4F3AFA93218358662F /* Pods_LISTUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1673E739B51279783AF84EDE /* Pods_LISTUITests.framework */; };
 		BA08A5FD8F9360535C67C648 /* Pods_LIST.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6C5AD5ED95E4D4649BD46EE8 /* Pods_LIST.framework */; };
 /* End PBXBuildFile section */
@@ -64,6 +66,8 @@
 		40CF0BFE20C18E33003039A6 /* LIST.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = LIST.entitlements; sourceTree = "<group>"; };
 		40CF0C0320C23C23003039A6 /* LISTUser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LISTUser.swift; sourceTree = "<group>"; };
 		40CF0C0520C26D96003039A6 /* HomePageViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomePageViewController.swift; sourceTree = "<group>"; };
+		40CF0C0720C3E884003039A6 /* ProfileExtractView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileExtractView.swift; sourceTree = "<group>"; };
+		40CF0C0920C55DAF003039A6 /* HomePageListExtractView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomePageListExtractView.swift; sourceTree = "<group>"; };
 		4FB801B2425169C4FB7B7A8E /* Pods-LIST.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-LIST.debug.xcconfig"; path = "Pods/Target Support Files/Pods-LIST/Pods-LIST.debug.xcconfig"; sourceTree = "<group>"; };
 		651C07F793C9F59A2F79EB40 /* Pods_LISTTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_LISTTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		6C5AD5ED95E4D4649BD46EE8 /* Pods_LIST.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_LIST.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -143,6 +147,7 @@
 				40CF0C0320C23C23003039A6 /* LISTUser.swift */,
 				40CF0BFE20C18E33003039A6 /* LIST.entitlements */,
 				40BE765420BA8F270025D5BE /* AppDelegate.swift */,
+				40CF0C0B20C55DBB003039A6 /* Views */,
 				40BE768420BAE0970025D5BE /* View controllers */,
 				40BE765820BA8F270025D5BE /* Main.storyboard */,
 				40BE765B20BA8F270025D5BE /* Assets.xcassets */,
@@ -181,6 +186,15 @@
 				40CF0C0520C26D96003039A6 /* HomePageViewController.swift */,
 			);
 			path = "View controllers";
+			sourceTree = "<group>";
+		};
+		40CF0C0B20C55DBB003039A6 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				40CF0C0720C3E884003039A6 /* ProfileExtractView.swift */,
+				40CF0C0920C55DAF003039A6 /* HomePageListExtractView.swift */,
+			);
+			path = Views;
 			sourceTree = "<group>";
 		};
 		A3690CD0852B4E1D6A13794A /* Frameworks */ = {
@@ -420,11 +434,13 @@
 			files = (
 				40BE768620BBEA9D0025D5BE /* LoginViewController.swift in Sources */,
 				40CF0C0620C26D96003039A6 /* HomePageViewController.swift in Sources */,
+				40CF0C0820C3E884003039A6 /* ProfileExtractView.swift in Sources */,
 				40BE765720BA8F270025D5BE /* ViewController.swift in Sources */,
 				40CF0C0420C23C23003039A6 /* LISTUser.swift in Sources */,
 				40BE765520BA8F270025D5BE /* AppDelegate.swift in Sources */,
 				40BE768320BADE690025D5BE /* FillProfileViewController.swift in Sources */,
 				40BE768820BBEB670025D5BE /* SignUpViewController.swift in Sources */,
+				40CF0C0A20C55DAF003039A6 /* HomePageListExtractView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

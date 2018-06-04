@@ -25,6 +25,10 @@ class HomePageViewController: UIViewController {
         }
     }
     
+    override func viewDidLoad() {
+       
+    }
+    
     @IBAction func signOutTapped(_ sender: UIButton) {
         // todo: double check if the user wants to sign out
         do {
@@ -33,6 +37,18 @@ class HomePageViewController: UIViewController {
         } catch let error {
             print(error)
         }
+    }
+    
+    
+    @IBOutlet weak var settingsLabel: UILabel! {
+        didSet{
+            let tap = UITapGestureRecognizer(target: self, action: #selector(goToChangeSettings))
+            settingsLabel.addGestureRecognizer(tap)
+        }
+    }
+    
+    @objc func goToChangeSettings() {
+        
     }
     
     /*

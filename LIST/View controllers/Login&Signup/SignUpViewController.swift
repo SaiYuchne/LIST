@@ -8,9 +8,12 @@
 
 import UIKit
 import FirebaseAuth
+import FirebaseDatabase
 
 class SignUpViewController: UIViewController ,UITextFieldDelegate{
 
+    lazy var user = LISTUser()
+    
     @IBOutlet weak var emailField: UITextField!
     @IBOutlet weak var codeField: UITextField!
     @IBOutlet weak var rePasswordField: UITextField!
@@ -37,6 +40,10 @@ class SignUpViewController: UIViewController ,UITextFieldDelegate{
                     alert.addAction(UIAlertAction(title: "OK", style: .default))
                     self.present(alert, animated: true, completion: nil)
                 } else {
+                    print("user email is \(email)")
+                    let ref = Database.database().reference(fromURL: "https://list-caiyuqian.firebaseio.com")
+                    ref.child("profile").childByAutoId().child("\(self.user.userID)").childByAutoId().child("email").childByAutoId().setValue(email)
+                    self.user.email = email
                     self.performSegue(withIdentifier: "goToFillProfile", sender: self)
                 }
             }

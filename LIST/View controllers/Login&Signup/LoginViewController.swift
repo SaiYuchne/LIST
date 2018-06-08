@@ -8,6 +8,7 @@
 
 import UIKit
 import FirebaseAuth
+import FirebaseDatabase
 
 class LoginViewController: UIViewController, UITextFieldDelegate {
 
@@ -16,7 +17,7 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
     @IBOutlet weak var passwordField: UITextField!
     
     override func viewDidLoad() {
-        super.viewDidLoad()    
+        super.viewDidLoad()
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -57,7 +58,7 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
         // form validation on email and password
         if let email = emailField.text, let password = passwordField.text {
             Auth.auth().signIn(withEmail: email, password: password) { (user, error) in
-                if let _ = user {
+                if let user = user {
                     // user is found, go to personal page
                     self.performSegue(withIdentifier: "goToHomePage", sender: self)
                 }else if let error = error{

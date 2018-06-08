@@ -8,28 +8,23 @@
 
 import UIKit
 
-class HomePageListExtractView: UIView {
+class HomePageListExtractView: RoundRecView {
     
     var user = LISTUser()
     
     private static var isMostImportantList = true
+
     
-    override func draw(_ rect: CGRect) {
-        let roundedRect = UIBezierPath(roundedRect: bounds, cornerRadius: cornerRadius)
-        roundedRect.addClip()
-        UIColor.white.setFill()
-        roundedRect.fill()
-    }
     // MARK: mottoLabel
     private lazy var mottoLabel = createMottoLabel()
     
     private var mottoString: NSAttributedString {
         if(HomePageListExtractView.isMostImportantList){
             HomePageListExtractView.isMostImportantList = !HomePageListExtractView.isMostImportantList
-            return centeredAttributedString("most important", fontSize: cornerFontSize)
+            return centeredAttributedString("most important", fontSize: fontSize)
         }else{
             HomePageListExtractView.isMostImportantList = !HomePageListExtractView.isMostImportantList
-            return centeredAttributedString("most urgent", fontSize: cornerFontSize)
+            return centeredAttributedString("most urgent", fontSize: fontSize)
         }
     }
     
@@ -63,21 +58,10 @@ class HomePageListExtractView: UIView {
         paragraphStyle.alignment = .center
         return NSAttributedString(string: string, attributes: [.paragraphStyle:paragraphStyle,.font:font])
     }
-
 }
+
 extension HomePageListExtractView {
-    private struct SizeRatio {
-        static let cornerFontSizeToBoundsHeight: CGFloat = 0.35
-        static let cornerOffsetToCornerRadius:CGFloat = 0.33
-        static let cornerRadiusToBoundsHeight: CGFloat = 0.06
-    }
-    private var cornerRadius: CGFloat {
-        return bounds.size.height * SizeRatio.cornerRadiusToBoundsHeight
-    }
-    private var cornerFontSize: CGFloat {
-        return bounds.size.height * SizeRatio.cornerFontSizeToBoundsHeight
-    }
-    private var cornerOffset: CGFloat {
-        return cornerRadius * SizeRatio.cornerOffsetToCornerRadius
+    var fontSize: CGFloat {
+        return bounds.size.height * 0.3
     }
 }

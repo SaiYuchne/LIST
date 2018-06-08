@@ -74,6 +74,7 @@ class FillProfileViewController: UIViewController, UIPickerViewDelegate, UIPicke
         
         dateField.text = "\(dateString)"
         self.view.endEditing(true)
+        print("user birthDate is \(dateString)")
         user.birthDate = dateString
     }
     
@@ -94,6 +95,7 @@ class FillProfileViewController: UIViewController, UIPickerViewDelegate, UIPicke
         genderField.text = genders[row]
         genderPicker.resignFirstResponder()
         if let text = genderField.text{
+            print("user gender is \(text)")
             user.gender = text
         }
     }
@@ -101,9 +103,11 @@ class FillProfileViewController: UIViewController, UIPickerViewDelegate, UIPicke
     // MARK: I'm ready tapped
     @IBAction func imReadyTapped(_ sender: UIButton) {
         if let text = nameField.text{
+            print("username is \(text)")
             user.userName = text
         }
         if let text = mottoField.text{
+            print("user motto is \(text)")
             user.motto = text
         }
         

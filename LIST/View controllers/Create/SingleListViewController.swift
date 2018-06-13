@@ -14,7 +14,7 @@ class SingleListViewController: UIViewController, UITableViewDelegate, UITableVi
     
     @IBOutlet weak var listNameLabel: UILabel!
     var listName: String?
-    
+
     var goals: [String] = []
     
     override func viewDidLoad() {
@@ -92,14 +92,17 @@ class SingleListViewController: UIViewController, UITableViewDelegate, UITableVi
             }
         }
     }
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
+    
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destinationViewController.
-        // Pass the selected object to the new view controller.
+        if segue.identifier == "goToGoalSettings" {
+            if let destination = segue.destination as? ListItemViewController {
+                if sender is UIButton {
+                    if let superView = (sender as! UIButton).superview?.superview as? ListItemTableViewCell {
+                        destination.itemName = superView.goalLabel.text
+                    }
+                }
+            }
+        }
     }
-    */
 
 }

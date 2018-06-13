@@ -10,15 +10,23 @@ import UIKit
 
 class ViewListViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
 
+    @IBOutlet weak var tableView: UITableView!
+    
     var tableViewData = [cellData]()
     
     var byPriority = false
     var byDeadline = false
     var byTag = false
     
+    var chosenSection: Int?
+    var chosenRow: Int?
+    
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        tableView.delegate = self
+        tableView.dataSource = self
+        
         if(byPriority){
             tableViewData = [
                 cellData(opened: false, title: "⭐️⭐️⭐️⭐️⭐️", sectionData: ["Cell1", "Cell2", "Cell3"]),
@@ -45,13 +53,12 @@ class ViewListViewController: UIViewController, UITableViewDelegate, UITableView
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        if tableViewData[section].opened == true{
+        if tableViewData[section].opened {
             return tableViewData[section].sectionData.count + 1
         } else {
             return 1
         }
     }
-    
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         if indexPath.row == 0 {
@@ -59,16 +66,16 @@ class ViewListViewController: UIViewController, UITableViewDelegate, UITableView
             cell.textLabel?.text = tableViewData[indexPath.section].title
             return cell
         } else {
-            let dataIndex = indexPath.row - 1
+            let indexData = indexPath.row - 1
             guard let cell = tableView.dequeueReusableCell(withIdentifier: "listNameCell") else {return UITableViewCell()}
-            cell.textLabel?.text = tableViewData[indexPath.section].sectionData[dataIndex]
+            cell.textLabel?.text = tableViewData[indexPath.section].sectionData[indexData]
             return cell
         }
     }
 
-    func tableView(_ tableView: UITableView, didDeselectRowAt indexPath: IndexPath) {
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         if indexPath.row == 0 {
-            if tableViewData[indexPath.section].opened == true {
+            if tableViewData[indexPath.section].opened {
                 tableViewData[indexPath.section].opened = false
                 let sections = IndexSet.init(integer: indexPath.section)
                 tableView.reloadSections(sections, with: .none)
@@ -76,6 +83,18 @@ class ViewListViewController: UIViewController, UITableViewDelegate, UITableView
                 tableViewData[indexPath.section].opened = true
                 let sections = IndexSet.init(integer: indexPath.section)
                 tableView.reloadSections(sections, with: .none)
+            }
+        } else {
+            chosenSection = indexPath.section
+            chosenRow = indexPath.row - 1
+            self.performSegue(withIdentifier: "goToAList", sender: self)
+        }
+    }
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if segue.identifier == "goToAList" {
+            if let destination = segue.destination as? SingleListViewController {
+                destination.listName = tableViewData[chosenSection!].sectionData[chosenRow!]
             }
         }
     }

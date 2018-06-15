@@ -12,6 +12,7 @@ import FirebaseDatabase
 
 class HomePageViewController: UIViewController {
     
+    let ref = Database.database().reference()
     var user = LISTUser()
     
     override func viewDidAppear(_ animated: Bool) {
@@ -50,8 +51,7 @@ class HomePageViewController: UIViewController {
     @objc func profileExtractTapped(_ recognizer: UITapGestureRecognizer){
         switch recognizer.state {
         case .ended:
-            // design a new view showing "LIST has been with you for ** days"
-            print("to be continued")
+            UIView.transition(with: profileExtract, duration: 0.6, options: .transitionFlipFromLeft, animations: { self.profileExtract.isFaceUp = !self.profileExtract.isFaceUp})
         default:
             break
         }

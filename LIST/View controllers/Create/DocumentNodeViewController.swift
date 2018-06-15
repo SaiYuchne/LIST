@@ -14,19 +14,35 @@ class DocumentNodeViewController: UIViewController, UITextFieldDelegate{
     
     @IBOutlet weak var descriptionTextView: UITextView!
     
+    var addNode = true
+    
     let picker = UIDatePicker()
     
     override func viewDidLoad() {
         super.viewDidLoad()
 
         dateTextField.delegate = self
-        // Do any additional setup after loading the view.
+        createDatePicker()
+        if !addNode {
+            // fetch the data from the database
+        }
     }
 
     @IBAction func saveTapped(_ sender: UIButton) {
-    }
-    
-    @IBAction func backTapped(_ sender: Any) {
+        if !addNode {
+            // update the documentation in the database
+            let alert = UIAlertController(title: "Added", message: "Add the node successfully!", preferredStyle: .alert)
+            let ok = UIAlertAction(title: "OK", style: .default, handler: nil)
+            alert.addAction(ok)
+            present(alert, animated: true, completion: nil)
+        } else {
+            // create new entry in the database
+            let alert = UIAlertController(title: "Edited", message: "Edit the node successfully!", preferredStyle: .alert)
+            let ok = UIAlertAction(title: "OK", style: .default, handler: nil)
+            alert.addAction(ok)
+            present(alert, animated: true, completion: nil)
+        }
+        
     }
     
     // MARK: Set the date picker with a tool bar
@@ -57,6 +73,19 @@ class DocumentNodeViewController: UIViewController, UITextFieldDelegate{
         dateTextField.text = "\(dateString)"
         self.view.endEditing(true)
         print("user birthDate is \(dateString)")
+    }
+    
+    @IBAction func deleteTapped(_ sender: UIButton) {
+        let alert = UIAlertController(title: "Warning", message: "Delete this node?", preferredStyle: .alert)
+        let no = UIAlertAction(title: "No", style: .cancel, handler: nil)
+        let yes = UIAlertAction(title: "Yes", style: .default) { (_) in
+            // delete data from the database
+            // go back to the previous page
+            _ = self.navigationController?.popViewController(animated: true)
+        }
+        alert.addAction(no)
+        alert.addAction(yes)
+        present(alert, animated: true, completion: nil)
     }
     
     // MARK: Dismiss the keyboard

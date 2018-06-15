@@ -7,16 +7,24 @@
 //
 
 import UIKit
+import FirebaseDatabase
 
 class ProfileExtractView: UIView {
 
     var user = LISTUser()
+    var isFaceUp = true {
+        didSet{
+            setNeedsLayout()
+            setNeedsDisplay()
+        }
+    }
     
     // MARK: mottoLabel
     private lazy var mottoLabel = createMottoLabel()
     
     private var mottoString: NSAttributedString {
-        return centeredAttributedString("\"Just do it!\"", fontSize: cornerFontSize)
+        return centeredAttributedString("\"Just do it!\"", fontSize: cornerFontSize, isParagraphStyleNatural:true)
+//        return centeredAttributedString("\"\(user.motto)\"", fontSize: cornerFontSize)
     }
     
     private func createMottoLabel() -> UILabel {
@@ -35,7 +43,8 @@ class ProfileExtractView: UIView {
     private lazy var usernameLabel = createMottoLabel()
     
     private var usernameString: NSAttributedString {
-        return centeredAttributedString("Testname", fontSize: cornerFontSize*0.8)
+        return centeredAttributedString("Testname", fontSize: cornerFontSize*0.8, isParagraphStyleNatural:true)
+//        return centeredAttributedString("\(user.username)", fontSize: cornerFontSize*0.8)
     }
     
     private func createUsernameLabel() -> UILabel {
@@ -52,7 +61,7 @@ class ProfileExtractView: UIView {
     
     // MARK: iconPIC
     private lazy var iconPic = createIconPic()
-    
+    // todo: how to upload iconPic
     func createIconPic() -> UIImageView {
         let iconImageView = UIImageView()
         iconImageView.frame = CGRect(x: picXPosition, y: self.bounds.origin.y+self.frame.size.height * 0.1, width: self.frame.size.width * 0.25, height: self.frame.size.height * 0.8)
@@ -63,6 +72,26 @@ class ProfileExtractView: UIView {
     func configureIconPic(_ imageView: UIImageView) {
         imageView.image = UIImage(named: "icon")
         imageView.contentMode = .scaleAspectFill
+    }
+    
+    // MARK: dayLabel
+    private lazy var dayLabel = createDayLabel()
+    
+    private var dayString: NSAttributedString {
+        return centeredAttributedString("LIST has been there with you for\n 40 days!", fontSize: cornerFontSize*0.8, isParagraphStyleNatural:false)
+        //        return centeredAttributedString("\(user.username)", fontSize: cornerFontSize*0.8)
+    }
+    
+    private func createDayLabel() -> UILabel {
+        let label = UILabel()
+        label.numberOfLines = 0
+        addSubview(label)
+        return label
+    }
+    
+    private func configureDayLabel(_ label: UILabel) {
+        label.attributedText = dayString
+        label.frame = self.bounds
     }
     
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
@@ -76,13 +105,30 @@ class ProfileExtractView: UIView {
         configureMottoLabel(mottoLabel)
         configureUsernameLabel(usernameLabel)
         configureIconPic(iconPic)
+        configureDayLabel(dayLabel)
+        
+        if isFaceUp {
+            mottoLabel.isHidden = false
+            usernameLabel.isHidden = false
+            iconPic.isHidden = false
+            dayLabel.isHidden = true
+        } else {
+            mottoLabel.isHidden = true
+            usernameLabel.isHidden = true
+            iconPic.isHidden = true
+            dayLabel.isHidden = false
+        }
     }
     
-    private func centeredAttributedString(_ string: String, fontSize: CGFloat) -> NSAttributedString {
+    private func centeredAttributedString(_ string: String, fontSize: CGFloat, isParagraphStyleNatural: Bool) -> NSAttributedString {
         var font = UIFont.preferredFont(forTextStyle: .body).withSize(fontSize)
         font = UIFontMetrics(forTextStyle: .body).scaledFont(for: font)
         let paragraphStyle = NSMutableParagraphStyle()
-        paragraphStyle.alignment = .natural
+        if isParagraphStyleNatural{
+            paragraphStyle.alignment = .natural
+        } else {
+            paragraphStyle.alignment = .center
+        }
         return NSAttributedString(string: string, attributes: [.paragraphStyle:paragraphStyle,.font:font])
     }
     
@@ -91,6 +137,12 @@ class ProfileExtractView: UIView {
         roundedRect.addClip()
         UIColor.white.setFill()
         roundedRect.fill()
+        
+        if isFaceUp {
+            
+        } else {
+            
+        }
     }
 }
 

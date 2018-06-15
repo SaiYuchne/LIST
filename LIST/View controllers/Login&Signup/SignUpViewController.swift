@@ -42,7 +42,7 @@ class SignUpViewController: UIViewController ,UITextFieldDelegate{
                 } else {
                     print("user email is \(email)")
                     let ref = Database.database().reference(fromURL: "https://list-caiyuqian.firebaseio.com")
-                    ref.child("profile").childByAutoId().child("\(self.user.userID)").childByAutoId().child("email").childByAutoId().setValue(email)
+                    ref.child("profile").child("\(self.user.userID)").child("email").setValue(email)
                     self.user.email = email
                     self.performSegue(withIdentifier: "goToFillProfile", sender: self)
                 }

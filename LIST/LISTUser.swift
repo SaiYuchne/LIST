@@ -13,7 +13,7 @@ import FirebaseDatabase
 class LISTUser {
     let userID: String
     let ref = Database.database().reference()
-    lazy var profileRef = ref.child("pofile").childByAutoId()
+    lazy var profileRef = ref.child("pofile")
     
     // MARK: Retrieve and update user's info 
     var email: String {

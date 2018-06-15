@@ -18,6 +18,8 @@ class ListItemViewController: UIViewController {
     
     var points = [ISPoint]()
     
+    private var addNode = false
+    
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -52,29 +54,28 @@ class ListItemViewController: UIViewController {
         point.pointColor = point.lineColor
         point.touchUpInside =
             { (point:ISPoint) in
-                print(point.title)
+                self.addNode = true
                 self.addANode()
         }
         
         timeline.points.append(point)
         
-        
-//        for i in 0...9 {
-//            let point = ISPoint(title: "point \(i)")
-//            point.description = "my awesome description"
-//            point.lineColor = i % 2 == 0 ? .red : .green
-//            point.pointColor = point.lineColor
-//            point.touchUpInside =
-//                { (point:ISPoint) in
-//                    print(point.title)
-//            }
-//
-//            timeline.points.append(point)
-//        }
     }
     
     func addANode() {
         self.performSegue(withIdentifier: "goToNodeSetting", sender: self)
+        // update the new node from the database
+        let point = ISPoint(title: "2018-06-30")
+        point.description = "my awesome description"
+        point.lineColor = .black
+        point.pointColor = point.lineColor
+        point.touchUpInside =
+            { (point:ISPoint) in
+                self.addNode = false
+                self.performSegue(withIdentifier: "goToNodeSetting", sender: self)
+        }
+        
+        timeline.points.insert(point, at: 1)
         
     }
     
@@ -104,6 +105,14 @@ class ListItemViewController: UIViewController {
         alert.addAction(cancel)
         alert.addAction(edit)
         present(alert, animated: true, completion: nil)
+    }
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if segue.identifier == "goToNodeSetting" {
+            if let destination = segue.destination as? DocumentNodeViewController {
+                destination.addNode = false
+            }
+        }
     }
     
     // MARK: Dismiss the keyboard

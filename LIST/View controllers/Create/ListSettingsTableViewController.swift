@@ -14,17 +14,13 @@ class ListSettingsTableViewController: UITableViewController,  UITextFieldDelega
     private var alert = UIAlertController(title: "Edit", message: "Edit your list name:", preferredStyle: .alert)
     var newDdl: String?
     
-    private var settingTitle = ["List name", "Creation date", "Deadline", "Priority level", "Who can view this list", "Delete this list"]
+    private var settingTitle = ["List name", "Creation date", "Deadline", "Priority level", "Who can view this list", "Tags", "Delete this list"]
+    
     override func viewDidLoad() {
         super.viewDidLoad()
 
     }
-
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
-    }
-
+    
     // MARK: - Table view data source
     override func numberOfSections(in tableView: UITableView) -> Int {
         return 1
@@ -54,9 +50,12 @@ class ListSettingsTableViewController: UITableViewController,  UITextFieldDelega
             case 3:
                 cell.accessoryType = .disclosureIndicator
                 cell.detailTextLabel?.text = "important"
-            default:
+            case 4:
                 cell.accessoryType = .disclosureIndicator
                 cell.detailTextLabel?.text = "personal"
+            default:
+                cell.accessoryType = .disclosureIndicator
+                cell.detailTextLabel?.text = ""
             }
             return cell
         }else {
@@ -180,6 +179,9 @@ class ListSettingsTableViewController: UITableViewController,  UITextFieldDelega
             self.present(alert, animated: true, completion: nil)
             tableView.reloadData()
         case 5:
+            // perform segue
+            self.performSegue(withIdentifier: "goToTagSettings", sender: self)
+        case 6:
             let alert = UIAlertController(title: "Delete the list", message: "Are you sure to delete this list?", preferredStyle: .alert)
             let no = UIAlertAction(title: "Don't delete", style: .cancel, handler: nil)
             let yes = UIAlertAction(title: "Delete", style: .default) { (_) in

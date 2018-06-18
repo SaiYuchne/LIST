@@ -214,8 +214,7 @@
                                                     <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                                 </state>
                                                 <connections>
-                                                    <action selector="settingsTapped:" destination="AWy-QC-cra" eventType="touchUpInside" id="WAD-tm-4Nh"/>
-                                                    <segue destination="mZt-fV-fuF" kind="show" id="frd-w9-dOu"/>
+                                                    <segue destination="mZt-fV-fuF" kind="show" identifier="goToSettings" id="H8y-vg-JKO"/>
                                                 </connections>
                                             </button>
                                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="NT4-Bh-I0s">
@@ -916,13 +915,14 @@
                                                         </label>
                                                         <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Bhz-HT-yK3">
                                                             <rect key="frame" x="314" y="7" width="30" height="30"/>
-                                                            <color key="backgroundColor" red="0.5" green="0.0" blue="0.5" alpha="1" colorSpace="calibratedRGB"/>
+                                                            <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                                             <constraints>
                                                                 <constraint firstAttribute="width" constant="30" id="1nA-qd-F7L"/>
                                                                 <constraint firstAttribute="height" constant="30" id="feU-su-rb1"/>
                                                             </constraints>
                                                             <state key="normal" image="write"/>
                                                             <connections>
+                                                                <action selector="goalSettingsTapped:" destination="W9g-Yc-DPZ" eventType="touchUpInside" id="LoZ-ut-A1f"/>
                                                                 <segue destination="xN1-UT-pJ0" kind="show" identifier="goToGoalSettings" id="lZR-kQ-SYG"/>
                                                             </connections>
                                                         </button>
@@ -944,8 +944,47 @@
                                                     <outlet property="goalSettingsButton" destination="Bhz-HT-yK3" id="ceB-u6-HYc"/>
                                                 </connections>
                                             </tableViewCell>
-                                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="toolCell" id="nVa-vt-sFA" customClass="ToolTableViewCell" customModule="LIST" customModuleProvider="target">
+                                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="subgoalCell" id="tIX-ZY-LtP" customClass="SubgoalTableViewCell" customModule="LIST" customModuleProvider="target">
                                                 <rect key="frame" x="0.0" y="72" width="354" height="44"/>
+                                                <autoresizingMask key="autoresizingMask"/>
+                                                <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="tIX-ZY-LtP" id="kFF-m0-qMg">
+                                                    <rect key="frame" x="0.0" y="0.0" width="354" height="43.666666666666664"/>
+                                                    <autoresizingMask key="autoresizingMask"/>
+                                                    <subviews>
+                                                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="MsC-of-g2T">
+                                                            <rect key="frame" x="20" y="7" width="30" height="30"/>
+                                                            <constraints>
+                                                                <constraint firstAttribute="width" secondItem="MsC-of-g2T" secondAttribute="height" multiplier="1:1" id="VEl-J7-lD2"/>
+                                                                <constraint firstAttribute="height" constant="30" id="Vrz-7Z-MgY"/>
+                                                            </constraints>
+                                                            <state key="normal" title="⚪️"/>
+                                                            <connections>
+                                                                <action selector="completeGoalButtonTapped:" destination="tIX-ZY-LtP" eventType="touchUpInside" id="Bbi-6q-2Zw"/>
+                                                            </connections>
+                                                        </button>
+                                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Subgoal here" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="cSr-S7-4ag">
+                                                            <rect key="frame" x="60" y="11" width="269" height="22"/>
+                                                            <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                            <nil key="textColor"/>
+                                                            <nil key="highlightedColor"/>
+                                                        </label>
+                                                    </subviews>
+                                                    <constraints>
+                                                        <constraint firstItem="MsC-of-g2T" firstAttribute="top" secondItem="kFF-m0-qMg" secondAttribute="top" constant="7" id="JqQ-8g-u0p"/>
+                                                        <constraint firstItem="cSr-S7-4ag" firstAttribute="top" secondItem="kFF-m0-qMg" secondAttribute="topMargin" id="Mfc-BY-5Q1"/>
+                                                        <constraint firstItem="MsC-of-g2T" firstAttribute="leading" secondItem="kFF-m0-qMg" secondAttribute="leading" constant="20" id="YNQ-wV-0N9"/>
+                                                        <constraint firstAttribute="bottomMargin" secondItem="cSr-S7-4ag" secondAttribute="bottom" id="aGo-70-L0p"/>
+                                                        <constraint firstAttribute="trailingMargin" secondItem="cSr-S7-4ag" secondAttribute="trailing" constant="10" id="bXH-ub-yUm"/>
+                                                        <constraint firstItem="cSr-S7-4ag" firstAttribute="leading" secondItem="MsC-of-g2T" secondAttribute="trailing" constant="10" id="mN7-FX-Iwd"/>
+                                                    </constraints>
+                                                </tableViewCellContentView>
+                                                <connections>
+                                                    <outlet property="completeGoalButton" destination="MsC-of-g2T" id="xhX-Cj-osk"/>
+                                                    <outlet property="subgoalLabel" destination="cSr-S7-4ag" id="mhw-WU-Vdu"/>
+                                                </connections>
+                                            </tableViewCell>
+                                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="toolCell" id="nVa-vt-sFA" customClass="ToolTableViewCell" customModule="LIST" customModuleProvider="target">
+                                                <rect key="frame" x="0.0" y="116" width="354" height="44"/>
                                                 <autoresizingMask key="autoresizingMask"/>
                                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="nVa-vt-sFA" id="68i-wx-BOh">
                                                     <rect key="frame" x="0.0" y="0.0" width="354" height="43.666666666666664"/>

@@ -7,35 +7,25 @@
 //
 
 import UIKit
+import FirebaseDatabase
 
 class TagCollectionTableViewController: UITableViewController {
 
+    let ref = Database.database().reference()
+    var listID: String?
+    
     private var cellTitle = ["Animal", "Cat", "Clothes", "Diet", "Family", "Fashion", "Food", "Love", "Romance", "Sports", "Study", "Travel", "YOLO"]
     
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        // Uncomment the following line to preserve selection between presentations
-        // self.clearsSelectionOnViewWillAppear = false
-
-        // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
-        // self.navigationItem.rightBarButtonItem = self.editButtonItem
-    }
-
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
     }
 
     // MARK: - Table view data source
-
     override func numberOfSections(in tableView: UITableView) -> Int {
-        // #warning Incomplete implementation, return the number of sections
         return 1
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        // #warning Incomplete implementation, return the number of rows
         return cellTitle.count
     }
 
@@ -52,36 +42,42 @@ class TagCollectionTableViewController: UITableViewController {
             if cell.detailTextLabel?.text == "" {
                 cell.detailTextLabel?.text = "✔️"
                 // add the tag in the database
+                ref.child("List").child(listID!).child("tag").observeSingleEvent(of: .value, with: { (snapshot) in
+                    if var tags = snapshot.value as? [String] {
+                        tags.append(self.cellTitle[indexPath.row])
+                        self.ref.child("List").child(self.listID!).child("tag").setValue(tags)
+                    }
+                })
             } else {
                 cell.detailTextLabel?.text = ""
                 // delete the tag in the database
+               let tagToBeDeleted = cellTitle[indexPath.row]
+                ref.child("List").child(listID!).child("tag").observeSingleEvent(of: .value, with: { (snapshot) in
+                    if var tags = snapshot.value as? [String] {
+                        var tagIndex = -1
+                        for index in tags.indices {
+                            tagIndex += 1
+                            if tags[index] == tagToBeDeleted {
+                                break
+                            }
+                        }
+                        tags.remove(at: tagIndex)
+                    }
+                })
             }
         }
     }
 
-    /*
-    // Override to support rearranging the table view.
-    override func tableView(_ tableView: UITableView, moveRowAt fromIndexPath: IndexPath, to: IndexPath) {
-
+    // MARK: database operations
+    func getTableViewDataFromDatabase() {
+        let systemTagRef = ref.child("Tag").queryOrdered(byChild: "tagName")
+        systemTagRef.observeSingleEvent(of: .value) { (snapshot) in
+            if let snapshots = snapshot.children.allObjects as? [DataSnapshot]{
+                for snap in snapshots{
+                    let tempData = snap.value as? Dictionary<String, Any>
+                    self.cellTitle.append(tempData!["tagName"] as! String)
+                }
+            }
+        }
     }
-    */
-
-    /*
-    // Override to support conditional rearranging of the table view.
-    override func tableView(_ tableView: UITableView, canMoveRowAt indexPath: IndexPath) -> Bool {
-        // Return false if you do not want the item to be re-orderable.
-        return true
-    }
-    */
-
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destinationViewController.
-        // Pass the selected object to the new view controller.
-    }
-    */
-
 }

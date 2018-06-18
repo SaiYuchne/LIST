@@ -16,6 +16,7 @@ class ISPoint {
     var lineColor:UIColor
     var touchUpInside:Optional<(_ point:ISPoint) -> Void>
     var fill:Bool
+    var nodeID: String?
     
     init(title:String, description:String, pointColor:UIColor, lineColor:UIColor, touchUpInside:Optional<(_ point:ISPoint) -> Void>, fill:Bool) {
         self.title = title

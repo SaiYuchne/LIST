@@ -44,6 +44,8 @@ class SignUpViewController: UIViewController ,UITextFieldDelegate{
                     let ref = Database.database().reference(fromURL: "https://list-caiyuqian.firebaseio.com")
                     ref.child("profile").child("\(self.user.userID)").child("email").setValue(email)
                     self.user.email = email
+                    let today = Date()
+                    self.user.createDate = today.toString(dateFormat: "dd-MM-yyyy")
                     self.performSegue(withIdentifier: "goToFillProfile", sender: self)
                 }
             }
@@ -61,4 +63,13 @@ class SignUpViewController: UIViewController ,UITextFieldDelegate{
         textField.resignFirstResponder()
         return true
     }
+}
+extension Date {
+    func toString( dateFormat format  : String ) -> String
+    {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = format
+        return dateFormatter.string(from: self)
+    }
+    
 }

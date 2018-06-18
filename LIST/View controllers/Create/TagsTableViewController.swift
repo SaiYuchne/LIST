@@ -7,9 +7,13 @@
 //
 
 import UIKit
+import FirebaseDatabase
 
 class TagsTableViewController: UITableViewController {
 
+    let ref = Database.database().reference()
+    var listID: String?
+    
     private var cellTitle = ["Love", "Travel", "YOLO", "Add more tags"]
     
     override func viewDidLoad() {
@@ -17,13 +21,7 @@ class TagsTableViewController: UITableViewController {
 
     }
 
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
-    }
-
     // MARK: - Table view data source
-
     override func numberOfSections(in tableView: UITableView) -> Int {
         return 1
     }
@@ -33,6 +31,8 @@ class TagsTableViewController: UITableViewController {
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        getTableViewDataFromDatabase()
+        
         if indexPath.row+1 < cellTitle.count {
             let cell = tableView.dequeueReusableCell(withIdentifier: "userTagCell", for: indexPath)
             cell.textLabel?.text = cellTitle[indexPath.row]
@@ -63,6 +63,12 @@ class TagsTableViewController: UITableViewController {
                 let no = UIAlertAction(title: "No", style: .cancel, handler: nil)
                 let yes = UIAlertAction(title: "Yes", style: .default) { (_) in
                     // remove the tag from the database
+                    self.ref.child("List").child(self.listID!).child("tags").observeSingleEvent(of: .value, with: { (snapshot) in
+                        if var tags = snapshot.value as? [String]{
+                            tags.remove(at: indexPath.row)
+                            self.ref.child("List").child(self.listID!).child("tags").setValue(tags)
+                        }
+                    })
                     self.cellTitle.remove(at: indexPath.row)
                     self.tableView.deleteRows(at: [indexPath], with: .fade)
                 }
@@ -73,29 +79,23 @@ class TagsTableViewController: UITableViewController {
         }
     }
 
-    /*
-    // Override to support rearranging the table view.
-    override func tableView(_ tableView: UITableView, moveRowAt fromIndexPath: IndexPath, to: IndexPath) {
-
-    }
-    */
-
-    /*
-    // Override to support conditional rearranging of the table view.
-    override func tableView(_ tableView: UITableView, canMoveRowAt indexPath: IndexPath) -> Bool {
-        // Return false if you do not want the item to be re-orderable.
-        return true
-    }
-    */
-
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destinationViewController.
-        // Pass the selected object to the new view controller.
+        if segue.identifier == "goToTagCollection"{
+            if let destination = segue.destination as? TagCollectionTableViewController{
+                destination.listID = listID
+            }
+        }
     }
-    */
-
+    
+    // MARK: database operations
+    func getTableViewDataFromDatabase() {
+        let listTagRef = ref.child("List").child(listID!).child("tag")
+        listTagRef.observeSingleEvent(of: .value) { (snapshot) in
+            if let tags = snapshot.value as? [String] {
+                for tag in tags {
+                    self.cellTitle.insert(tag, at: self.cellTitle.count-1)
+                }
+            }
+        }
+    }
 }

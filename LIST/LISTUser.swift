@@ -53,6 +53,18 @@ class LISTUser {
             profileRef.child("users/\(userID)/birthDate").setValue(newValue)
         }
     }
+    var createDate: String {
+        get{
+            var createDate: String?
+            profileRef.child(userID).child("createDate").observe(.value, with: { (snapshot) in
+                createDate = snapshot.value as? String
+            })
+            return createDate ?? ""
+        }
+        set{
+            profileRef.child("users/\(userID)/createDate").setValue(newValue)
+        }
+    }
     var userName: String {
         get{
             var userName: String?

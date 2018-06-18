@@ -78,8 +78,10 @@ class ProfileExtractView: UIView {
     private lazy var dayLabel = createDayLabel()
     
     private var dayString: NSAttributedString {
+        let todayString = Date().toString(dateFormat: "dd-MM-yyyy")
+        
         return centeredAttributedString("LIST has been there with you for\n 40 days!", fontSize: cornerFontSize*0.8, isParagraphStyleNatural:false)
-        //        return centeredAttributedString("\(user.username)", fontSize: cornerFontSize*0.8)
+//        return centeredAttributedString("LIST has been there with you for\n \(calculateDateDifference(from: user.createDate, to: todayString)) days!", fontSize: cornerFontSize*0.8, isParagraphStyleNatural:false)
     }
     
     private func createDayLabel() -> UILabel {
@@ -143,6 +145,21 @@ class ProfileExtractView: UIView {
         } else {
             
         }
+    }
+    
+    // MARK: calculate the time difference
+    func calculateDateDifference(from date1: String, to date2: String) -> Int {
+        let calendar: Calendar = Calendar.current
+        
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "dd-MM-yyyy"
+        
+        let firstDate = dateFormatter.date(from: date1)
+        let secondDate = dateFormatter.date(from: date2)
+
+        let difference = calendar.component(.day, from: secondDate!) - calendar.component(.day, from: firstDate!)
+        
+        return difference
     }
 }
 

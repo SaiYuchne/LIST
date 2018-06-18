@@ -7,9 +7,14 @@
 //
 
 import UIKit
+import FirebaseDatabase
 
 class DocumentNodeViewController: UIViewController, UITextFieldDelegate{
 
+    let ref = Database.database().reference()
+    var itemID: String?
+    var nodeID: String?
+    
     @IBOutlet weak var dateTextField: UITextField!
     
     @IBOutlet weak var descriptionTextView: UITextView!
@@ -29,14 +34,16 @@ class DocumentNodeViewController: UIViewController, UITextFieldDelegate{
     }
 
     @IBAction func saveTapped(_ sender: UIButton) {
-        if !addNode {
-            // update the documentation in the database
+        if addNode {
+            // create new entry in the database
+            addNewNodeInDatabase()
             let alert = UIAlertController(title: "Added", message: "Add the node successfully!", preferredStyle: .alert)
             let ok = UIAlertAction(title: "OK", style: .default, handler: nil)
             alert.addAction(ok)
             present(alert, animated: true, completion: nil)
         } else {
-            // create new entry in the database
+            // update the documentation in the database
+            editNewNodeInDatabase()
             let alert = UIAlertController(title: "Edited", message: "Edit the node successfully!", preferredStyle: .alert)
             let ok = UIAlertAction(title: "OK", style: .default, handler: nil)
             alert.addAction(ok)
@@ -98,5 +105,21 @@ class DocumentNodeViewController: UIViewController, UITextFieldDelegate{
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         textField.resignFirstResponder()
         return true
+    }
+    
+    // MARK: database operations
+    func addNewNodeInDatabase() {
+        let progressRef = ref.child("Progress").child(itemID!)
+        let nodeID = progressRef.childByAutoId().key
+        
+        let nodeInfo = ["date": dateTextField.text!, "content": descriptionTextView.text] as [String: Any]
+        progressRef.child(nodeID).setValue(nodeInfo)
+    }
+    
+    func editNewNodeInDatabase() {
+        let nodeRef = ref.child("Progress").child(itemID!).child(nodeID!)
+        
+        let nodeInfo = ["date": dateTextField.text!, "content": descriptionTextView.text] as [String: Any]
+        nodeRef.setValue(nodeInfo)
     }
 }

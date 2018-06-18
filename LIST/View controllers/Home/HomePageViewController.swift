@@ -64,10 +64,6 @@ class HomePageViewController: UIViewController {
         return true
     }
     
-    @IBAction func settingsTapped(_ sender: UIButton) {
-        
-    }
-    
     @IBAction func signOutTapped(_ sender: UIButton) {
         // todo: double check if the user wants to sign out
         do {
@@ -77,11 +73,4 @@ class HomePageViewController: UIViewController {
             print(error)
         }
     }
-    
-//    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-//        if let destination = segue.destination as? ProfileTableViewController{
-//
-//        }
-//    }
-
 }

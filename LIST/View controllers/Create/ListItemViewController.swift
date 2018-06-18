@@ -7,11 +7,16 @@
 //
 
 import UIKit
+import FirebaseDatabase
 
 class ListItemViewController: UIViewController {
 
+    let ref = Database.database().reference()
+    
     @IBOutlet weak var itemNameLabel: UILabel!
     var itemName: String?
+    var itemID: String?
+    private var selectedNodeID: String?
     
     @IBOutlet weak var timeLineView: UIView!
     lazy var timeline = ISTimeline(frame: timeLineView.bounds)
@@ -59,23 +64,25 @@ class ListItemViewController: UIViewController {
         }
         
         timeline.points.append(point)
+        getNodeDataFromDatabase()
         
     }
     
     func addANode() {
         self.performSegue(withIdentifier: "goToNodeSetting", sender: self)
         // update the new node from the database
-        let point = ISPoint(title: "2018-06-30")
-        point.description = "my awesome description"
-        point.lineColor = .black
-        point.pointColor = point.lineColor
-        point.touchUpInside =
-            { (point:ISPoint) in
-                self.addNode = false
-                self.performSegue(withIdentifier: "goToNodeSetting", sender: self)
-        }
-        
-        timeline.points.insert(point, at: 1)
+        // May need further code here
+//        let point = ISPoint(title: "2018-06-30")
+//        point.description = "my awesome description"
+//        point.lineColor = .black
+//        point.pointColor = point.lineColor
+//        point.touchUpInside =
+//            { (point:ISPoint) in
+//                self.addNode = false
+//                self.performSegue(withIdentifier: "goToNodeSetting", sender: self)
+//        }
+//
+//        timeline.points.insert(point, at: 1)
         
     }
     
@@ -98,6 +105,7 @@ class ListItemViewController: UIViewController {
             newName = alert.textFields?[0].text
             if newName != nil {
                 // change the list name in database
+                self.ref.child("ListItem").child(self.itemID!).child("content").setValue(newName!)
                 print(newName!)
                 self.itemNameLabel.text = newName!
             }
@@ -110,7 +118,11 @@ class ListItemViewController: UIViewController {
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "goToNodeSetting" {
             if let destination = segue.destination as? DocumentNodeViewController {
-                destination.addNode = false
+                destination.addNode = self.addNode
+                destination.itemID = self.itemID
+                if !self.addNode {
+                    destination.nodeID = selectedNodeID
+                }
             }
         }
     }
@@ -127,4 +139,28 @@ class ListItemViewController: UIViewController {
         return true
     }
 
+    // MARK: database operation
+    func getNodeDataFromDatabase() {
+        let progressRef = ref.child("Progress").child(itemID!)
+        progressRef.observeSingleEvent(of: .value) { (snapshot) in
+            if let snapshots = snapshot.children.allObjects as? [DataSnapshot]{
+                for snap in snapshots {
+                    let tempData = snap.value as! Dictionary<String, String>
+                    let point = ISPoint(title: tempData["date"]!)
+                    point.nodeID = snap.key
+                    point.description = tempData["content"]
+                    point.lineColor = .black
+                    point.pointColor = point.lineColor
+                    point.touchUpInside =
+                        { (point:ISPoint) in
+                            self.addNode = false
+                            self.selectedNodeID = point.nodeID
+                            self.performSegue(withIdentifier: "goToNodeSetting", sender: self)
+                    }
+                    
+                    self.timeline.points.insert(point, at: 1)
+                }
+            }
+        }
+    }
 }

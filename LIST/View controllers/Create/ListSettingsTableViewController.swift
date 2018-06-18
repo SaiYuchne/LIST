@@ -233,7 +233,6 @@ class ListSettingsTableViewController: UITableViewController,  UITextFieldDelega
         }
     }
     
-    
     // MARK: Set the date picker with a tool bar
     func createDatePicker(_ textField: UITextField){
         print("createDatePicker is called")

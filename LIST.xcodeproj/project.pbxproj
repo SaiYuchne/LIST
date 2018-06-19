@@ -42,6 +42,11 @@
 		40CF0C2520CB8095003039A6 /* ToolTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40CF0C2420CB8095003039A6 /* ToolTableViewCell.swift */; };
 		40CF0C2720CCC317003039A6 /* ListSettingsTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40CF0C2620CCC317003039A6 /* ListSettingsTableViewController.swift */; };
 		40DC375620D3938000EADAD1 /* SubgoalTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40DC375520D3938000EADAD1 /* SubgoalTableViewCell.swift */; };
+		40DC375920D89B6400EADAD1 /* FriendsTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40DC375820D89B6400EADAD1 /* FriendsTableViewController.swift */; };
+		40DC375B20D8A18400EADAD1 /* FriendTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40DC375A20D8A18400EADAD1 /* FriendTableViewCell.swift */; };
+		40DC375D20D8A48400EADAD1 /* FriendNotificationTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40DC375C20D8A48400EADAD1 /* FriendNotificationTableViewCell.swift */; };
+		40DC375F20D8AE1200EADAD1 /* FriendRequestTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40DC375E20D8AE1200EADAD1 /* FriendRequestTableViewController.swift */; };
+		40DC376120D8B5B200EADAD1 /* FriendRequestTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40DC376020D8B5B200EADAD1 /* FriendRequestTableViewCell.swift */; };
 		7C47CD4F3AFA93218358662F /* Pods_LISTUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1673E739B51279783AF84EDE /* Pods_LISTUITests.framework */; };
 		BA08A5FD8F9360535C67C648 /* Pods_LIST.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6C5AD5ED95E4D4649BD46EE8 /* Pods_LIST.framework */; };
 /* End PBXBuildFile section */
@@ -106,6 +111,11 @@
 		40CF0C2420CB8095003039A6 /* ToolTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToolTableViewCell.swift; sourceTree = "<group>"; };
 		40CF0C2620CCC317003039A6 /* ListSettingsTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListSettingsTableViewController.swift; sourceTree = "<group>"; };
 		40DC375520D3938000EADAD1 /* SubgoalTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubgoalTableViewCell.swift; sourceTree = "<group>"; };
+		40DC375820D89B6400EADAD1 /* FriendsTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FriendsTableViewController.swift; sourceTree = "<group>"; };
+		40DC375A20D8A18400EADAD1 /* FriendTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FriendTableViewCell.swift; sourceTree = "<group>"; };
+		40DC375C20D8A48400EADAD1 /* FriendNotificationTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FriendNotificationTableViewCell.swift; sourceTree = "<group>"; };
+		40DC375E20D8AE1200EADAD1 /* FriendRequestTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FriendRequestTableViewController.swift; sourceTree = "<group>"; };
+		40DC376020D8B5B200EADAD1 /* FriendRequestTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FriendRequestTableViewCell.swift; sourceTree = "<group>"; };
 		4FB801B2425169C4FB7B7A8E /* Pods-LIST.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-LIST.debug.xcconfig"; path = "Pods/Target Support Files/Pods-LIST/Pods-LIST.debug.xcconfig"; sourceTree = "<group>"; };
 		651C07F793C9F59A2F79EB40 /* Pods_LISTTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_LISTTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		6C5AD5ED95E4D4649BD46EE8 /* Pods_LIST.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_LIST.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -230,6 +240,7 @@
 				40CF0C1520CA71A0003039A6 /* Login&Signup */,
 				40CF0C1920CA78D2003039A6 /* Home */,
 				40CF0C1820CA78BC003039A6 /* Create */,
+				40DC375720D89B3100EADAD1 /* Friends */,
 			);
 			path = "View controllers";
 			sourceTree = "<group>";
@@ -298,8 +309,20 @@
 				40CF0C2220CB765B003039A6 /* ListItemTableViewCell.swift */,
 				40CF0C2420CB8095003039A6 /* ToolTableViewCell.swift */,
 				40DC375520D3938000EADAD1 /* SubgoalTableViewCell.swift */,
+				40DC375A20D8A18400EADAD1 /* FriendTableViewCell.swift */,
+				40DC375C20D8A48400EADAD1 /* FriendNotificationTableViewCell.swift */,
+				40DC376020D8B5B200EADAD1 /* FriendRequestTableViewCell.swift */,
 			);
 			path = "Table View Cells";
+			sourceTree = "<group>";
+		};
+		40DC375720D89B3100EADAD1 /* Friends */ = {
+			isa = PBXGroup;
+			children = (
+				40DC375820D89B6400EADAD1 /* FriendsTableViewController.swift */,
+				40DC375E20D8AE1200EADAD1 /* FriendRequestTableViewController.swift */,
+			);
+			path = Friends;
 			sourceTree = "<group>";
 		};
 		A3690CD0852B4E1D6A13794A /* Frameworks */ = {
@@ -540,6 +563,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				401470BC20CE5ACE008B5846 /* ViewListMenuView.swift in Sources */,
+				40DC375D20D8A48400EADAD1 /* FriendNotificationTableViewCell.swift in Sources */,
 				40BE768620BBEA9D0025D5BE /* LoginViewController.swift in Sources */,
 				40CF0C1720CA71D2003039A6 /* SystemSettingsTableViewController.swift in Sources */,
 				40CF0C2720CCC317003039A6 /* ListSettingsTableViewController.swift in Sources */,
@@ -547,12 +571,14 @@
 				401470BE20CE6114008B5846 /* ViewListViewController.swift in Sources */,
 				40CF0C0820C3E884003039A6 /* ProfileExtractView.swift in Sources */,
 				401470C220D0C3D1008B5846 /* ISTimeline.swift in Sources */,
+				40DC375F20D8AE1200EADAD1 /* FriendRequestTableViewController.swift in Sources */,
 				401470C020CFA5FB008B5846 /* ListItemViewController.swift in Sources */,
 				40CF0C2320CB765B003039A6 /* ListItemTableViewCell.swift in Sources */,
 				40CF0C0420C23C23003039A6 /* LISTUser.swift in Sources */,
 				40BE765520BA8F270025D5BE /* AppDelegate.swift in Sources */,
 				40CF0C2520CB8095003039A6 /* ToolTableViewCell.swift in Sources */,
 				40CF0C1F20CAB542003039A6 /* SingleListViewController.swift in Sources */,
+				40DC375920D89B6400EADAD1 /* FriendsTableViewController.swift in Sources */,
 				40BE768320BADE690025D5BE /* FillProfileViewController.swift in Sources */,
 				401470CA20D11151008B5846 /* DocumentNodeViewController.swift in Sources */,
 				40A8693720D25599007A079C /* TagsTableViewController.swift in Sources */,
@@ -563,8 +589,10 @@
 				401470BA20CE58C0008B5846 /* ViewListMenuViewController.swift in Sources */,
 				40A8693920D25A12007A079C /* TagCollectionTableViewController.swift in Sources */,
 				40CF0C2120CAB706003039A6 /* RoundRecView.swift in Sources */,
+				40DC376120D8B5B200EADAD1 /* FriendRequestTableViewCell.swift in Sources */,
 				40CF0C0F20C807BF003039A6 /* ProfileTableViewController.swift in Sources */,
 				40DC375620D3938000EADAD1 /* SubgoalTableViewCell.swift in Sources */,
+				40DC375B20D8A18400EADAD1 /* FriendTableViewCell.swift in Sources */,
 				401470C820D0C50B008B5846 /* ISPoint.swift in Sources */,
 				40CF0C0A20C55DAF003039A6 /* HomePageListExtractView.swift in Sources */,
 			);

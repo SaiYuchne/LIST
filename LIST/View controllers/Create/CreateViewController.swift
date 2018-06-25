@@ -46,7 +46,7 @@ class CreateViewController: UIViewController {
         listID = key
         
         // update List
-        let defaultListInfo = ["listTitle": listTitle, "userID": user.userID, "privacy": "personal", "priority": nil, "deadline": nil, "creationDate": Date().toString(dateFormat: "dd-MM-yyyy"), "tag": [String](), "collaborator": [String](), "isFinished": false] as [String : Any?]
+        let defaultListInfo = ["listTitle": listTitle, "userID": user.userID, "privacy": "personal", "priority": nil, "creationDate": Date().toString(dateFormat: "dd-MM-yyyy"), "deadline": nil, "tag": [String](), "collaborator": [String](), "isFinished": false] as [String : Any?]
         ref.child("List").child(key).setValue(defaultListInfo)
         // update ListItem
         ref.child("ListItem").child(key).child("itemNo").setValue(0)

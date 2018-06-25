@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import FirebaseDatabase
 
 class ListItemTableViewCell: UITableViewCell {
 
@@ -15,6 +16,10 @@ class ListItemTableViewCell: UITableViewCell {
     @IBOutlet weak var goalLabel: UILabel!
     
     @IBOutlet weak var goalSettingsButton: UIButton!
+    
+    let ref = Database.database().reference()
+    var itemID: String?
+    var listID: String?
     
     override func awakeFromNib() {
         super.awakeFromNib()
@@ -27,7 +32,13 @@ class ListItemTableViewCell: UITableViewCell {
     }
 
     @IBAction func completeButtonTapped(_ sender: Any) {
-         completeButton.setTitle("✔️", for: .normal)
+        if completeButton.titleLabel?.text == "🔲" {
+            ref.child("ListItem").child(listID!).child(itemID!).child("isFinished").setValue(true)
+            completeButton.setTitle("✔️", for: .normal)
+        } else {
+            ref.child("ListItem").child(listID!).child(itemID!).child("isFinished").setValue(false)
+            completeButton.setTitle("🔲", for: .normal)
+        }
     }
   
     

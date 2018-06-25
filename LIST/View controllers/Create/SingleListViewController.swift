@@ -12,6 +12,15 @@ import FirebaseDatabase
 class SingleListViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
     
     let ref = Database.database().reference()
+    private lazy var user = LISTUser()
+    private var isEditable: Bool {
+        let creatorID = ref.child("List").child(listID!).value(forKey: "userID") as! String
+        if creatorID == user.userID {
+            return true
+        } else {
+            return false
+        }
+    }
     
     struct cellData{
         var opened = Bool()
@@ -34,6 +43,15 @@ class SingleListViewController: UIViewController, UITableViewDelegate, UITableVi
     var listID: String?
     var selectedWishIndex: Array<Any>.Index?
     
+    private var totalNumOfItems = 0
+    private var numOfCompletedItems = 0 {
+        didSet {
+            if numOfCompletedItems == totalNumOfItems {
+                completeWholeList()
+            }
+        }
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         tableView.delegate = self
@@ -41,7 +59,7 @@ class SingleListViewController: UIViewController, UITableViewDelegate, UITableVi
         configureListNameLabel(listNameLabel)
         
         // get the tableViewData from the database
-        // getTableViewDataFromDatabase()
+        getTableViewDataFromDatabase()
         goalData = [
             cellData(opened: false, itemID: "123", title: "Europe", isGoalFinished: false, subgoalID: ["1", "2", "3"], sectionData: ["UK", "France", "Germany"], isSubgoalFinished: [false, false, false]),
             cellData(opened: false, itemID: "123", title: "Asia", isGoalFinished: false, subgoalID: ["1", "2"], sectionData: ["Thailand", "Japan"],  isSubgoalFinished: [false, false])]
@@ -74,7 +92,6 @@ class SingleListViewController: UIViewController, UITableViewDelegate, UITableVi
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-//        print("indexPath.row = \(indexPath.row)")
         print("tableView.numberOfSections = \(tableView.numberOfSections)")
         if indexPath.section+1 != tableView.numberOfSections{
             if indexPath.row == 0 {
@@ -83,7 +100,11 @@ class SingleListViewController: UIViewController, UITableViewDelegate, UITableVi
                 cell.goalLabel.text = goalData[indexPath.section].title
                 if(goalData[indexPath.section].isGoalFinished){
                     cell.completeButton.setTitle("✔️", for: .normal)
+                    cell.listID = listID
+                    cell.itemID = goalData[indexPath.section].itemID
+                    numOfCompletedItems += 1
                 }
+                totalNumOfItems += 1
                 return cell
             } else {
                 let indexData = indexPath.row - 1
@@ -91,7 +112,11 @@ class SingleListViewController: UIViewController, UITableViewDelegate, UITableVi
                 cell.subgoalLabel.text = goalData[indexPath.section].sectionData[indexData]
                 if(goalData[indexPath.section].isSubgoalFinished[indexData]){
                     cell.completeGoalButton.setTitle("✔️", for: .normal)
+                    cell.itemID = goalData[indexPath.section].itemID
+                    cell.subgoalID = goalData[indexPath.section].subgoalID[indexPath.row]
+                    numOfCompletedItems += 1
                 }
+                totalNumOfItems += 1
                 return cell
             }
         }
@@ -111,6 +136,7 @@ class SingleListViewController: UIViewController, UITableViewDelegate, UITableVi
                 self.goalData.append(cellData(opened: false, itemID: key,  title: wish, isGoalFinished: false, subgoalID: [], sectionData: [], isSubgoalFinished: []))
                 // add the wish in the database
                 self.addWishInDatabase(key: key, wish: wish)
+                self.totalNumOfItems += 1
                 self.tableView.reloadData()
             }
         }
@@ -145,6 +171,7 @@ class SingleListViewController: UIViewController, UITableViewDelegate, UITableVi
                         }
                     }
                     self.addSubgoalInDatabase(wishIndex: wishIndex!, subgoal: subgoal)
+                    self.totalNumOfItems += 1
                 }
             }
             alert.addAction(cancel)
@@ -181,8 +208,10 @@ class SingleListViewController: UIViewController, UITableViewDelegate, UITableVi
                     let alert = UIAlertController(title: "Warning", message: "Delete this wish?", preferredStyle: .alert)
                     let no = UIAlertAction(title: "No", style: .cancel, handler: nil)
                     let yes = UIAlertAction(title: "Yes", style: .default) { (_) in
+                        self.totalNumOfItems -= 1
                         // delete data in the database
                         self.deleteWishFromDatabase(itemID: self.goalData[indexPath.section].itemID)
+                        self.totalNumOfItems -= self.goalData[indexPath.section].sectionData.count
                         self.goalData.remove(at: indexPath.section)
                         let indexSet = IndexSet(arrayLiteral: indexPath.section)
                         self.tableView.deleteSections(indexSet, with: .fade)
@@ -194,6 +223,7 @@ class SingleListViewController: UIViewController, UITableViewDelegate, UITableVi
                     let alert = UIAlertController(title: "Warning", message: "Delete this subgoal?", preferredStyle: .alert)
                     let no = UIAlertAction(title: "No", style: .cancel, handler: nil)
                     let yes = UIAlertAction(title: "Yes", style: .default) { (_) in
+                        self.totalNumOfItems -= 1
                         // delete data in the database
                         self.goalData[indexPath.section].sectionData.remove(at: indexPath.row)
                         // the following code may need modification
@@ -234,15 +264,42 @@ class SingleListViewController: UIViewController, UITableViewDelegate, UITableVi
                 }
             }
         } else if segue.identifier == "goToListSettings" {
-            if let destination = segue.destination as? ListSettingsTableViewController {
-                if sender is UIButton {
-                    if let _ = (sender as! UIButton).superview?.superview as? ToolTableViewCell {
-                        destination.listID = listID
+            if isEditable{
+                if let destination = segue.destination as? ListSettingsTableViewController {
+                    if sender is UIButton {
+                        if let _ = (sender as! UIButton).superview?.superview as? ToolTableViewCell {
+                            destination.listID = listID
+                        }
                     }
                 }
+            } else {
+                let alert = UIAlertController(title: "No access", message: "Sorry, only the creator can change the list settings", preferredStyle: .alert)
+                alert.addAction(UIAlertAction(title: "Ok", style: .default, handler: nil))
             }
         }
     }
+    
+    // MARK: complete wish/subgoal button tapped
+    @IBAction func completeGoalButtonTapped(_ sender: UIButton) {
+        if sender.titleLabel?.text == "🔲" {
+            sender.setTitle("✔️", for: .normal)
+            numOfCompletedItems += 1
+        } else {
+            sender.setTitle("🔲", for: .normal)
+            numOfCompletedItems -= 1
+        }
+    }
+    
+    @IBAction func completeSubgoalButtonTapped(_ sender: UIButton) {
+        if sender.titleLabel?.text == "⚪️" {
+            sender.setTitle("✔️", for: .normal)
+            numOfCompletedItems += 1
+        } else {
+            sender.setTitle("⚪️", for: .normal)
+            numOfCompletedItems -= 1
+        }
+    }
+    
     
     // MARK: database operations
     func getTableViewDataFromDatabase(){
@@ -251,13 +308,14 @@ class SingleListViewController: UIViewController, UITableViewDelegate, UITableVi
         let _ = listItemRef.observeSingleEvent(of: .value, with: { (snapshot) in
             if let snapshots = snapshot.children.allObjects as? [DataSnapshot]{
                 for snap in snapshots{
-                    let tempData = snap.value as! Dictionary<String, Any>
+                    var tempData = snap.value as! Dictionary<String, Any>
                     let key = snap.key
+                    
                     self.goalData.append(cellData(opened: false, itemID: key, title: tempData["content"] as! String, isGoalFinished: tempData["isFinished"] as! Bool, subgoalID: [],  sectionData: [],  isSubgoalFinished: []))
                     let _ = self.ref.child("Subgoal").child(key).observeSingleEvent(of: .value, with: { (snapshot) in
                         if let snapshots = snapshot.children.allObjects as? [DataSnapshot]{
                             for snap in snapshots{
-                                let tempData = snap.value as! Dictionary<String, Any>
+                                var tempData = snap.value as! Dictionary<String, Any>
                                 self.goalData[self.goalData.count-1].subgoalID.append(snap.key)
                                 self.goalData[self.goalData.count-1].sectionData.append(tempData["content"] as! String)
                                 self.goalData[self.goalData.count-1].isSubgoalFinished.append(tempData["isFinished"] as! Bool)
@@ -307,7 +365,38 @@ class SingleListViewController: UIViewController, UITableViewDelegate, UITableVi
         let subgoalRef = ref.child("Subgoal").child(itemID)
         subgoalRef.child(subgoalID).removeValue()
     }
+    
+    func completeWholeList() {
+        let alert = UIAlertController(title: "Congratulations!", message: "You have completed all goals in this list!", preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "Thanks", style: .default, handler: nil))
+        
+        ref.child("List").child(listID!).child("isFinished").setValue(true)
+        let archiveRef = ref.child("Archive").child(listID!)
+        ref.child("List").child(listID!).observeSingleEvent(of: .value) { (snapshot) in
+            let tempData = snapshot.value as? Dictionary<String, Any>
+            let listTitle = tempData!["listTitle"] as? String
+            let userID = tempData!["userID"] as? String
+            let privacy = tempData!["privacy"] as? String
+            let priority = tempData!["priority"] as? String
+            let creationDate = tempData!["creationDate"] as? String
+            let deadline = tempData!["deadline"] as? String
+            let tag = tempData!["userID"] as? [String]
+            let collaborator = tempData!["collaborator"] as? [String]
+            let completionDate = Date().toString(dateFormat: "dd-MM-yyyy")
+            let archiveInfo = ["listTitle": listTitle, "userID": userID, "privacy": privacy, "priority": priority, "creationDate": creationDate, "deadline": deadline, "tag": tag, "collaborator": collaborator, "cimpletionDate": completionDate] as [String : Any?]
+            archiveRef.setValue(archiveInfo)
+        }
+        ref.child("List").child(listID!).removeValue()
+        
+        // update the count of completed lists
+        if let count = ref.child("Archive").child("count").value(forKey: user.userID) as? Int {
+            ref.child("Archive").child("count").child(user.userID).setValue(count+1)
+        } else {
+            ref.child("Archive").child("count").child(user.userID).setValue(1)
+        }
+    }
 }
+
 extension NSDictionary {
     var swiftDictionary: Dictionary<String, Any> {
         var swiftDictionary = Dictionary<String, Any>()

@@ -64,6 +64,21 @@ class HomePageViewController: UIViewController {
         return true
     }
     
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if segue.identifier == "goToArchive" {
+            if let destination = segue.destination as? PageViewController {
+                let tryDatabase = ref.child("Archive").child(user.userID).queryOrdered(byChild: "completionDate")
+                tryDatabase.observeSingleEvent(of: .value, with: { (snapshot) in
+                    if let snapshots = snapshot.children.allObjects as? [DataSnapshot]{
+                        for snap in snapshots {
+                            destination.listIDs.append(snap.key)
+                        }
+                    }
+                })
+            }
+        }
+    }
+    
     @IBAction func signOutTapped(_ sender: UIButton) {
         // todo: double check if the user wants to sign out
         do {

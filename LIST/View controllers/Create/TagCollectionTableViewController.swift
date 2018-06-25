@@ -18,6 +18,7 @@ class TagCollectionTableViewController: UITableViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        getTableViewDataFromDatabase()
     }
 
     // MARK: - Table view data source

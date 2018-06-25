@@ -47,6 +47,13 @@
 		40DC375D20D8A48400EADAD1 /* FriendNotificationTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40DC375C20D8A48400EADAD1 /* FriendNotificationTableViewCell.swift */; };
 		40DC375F20D8AE1200EADAD1 /* FriendRequestTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40DC375E20D8AE1200EADAD1 /* FriendRequestTableViewController.swift */; };
 		40DC376120D8B5B200EADAD1 /* FriendRequestTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40DC376020D8B5B200EADAD1 /* FriendRequestTableViewCell.swift */; };
+		40DC376420DA46DC00EADAD1 /* ArchiveHomePageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40DC376320DA46DC00EADAD1 /* ArchiveHomePageViewController.swift */; };
+		40DC376620DB642A00EADAD1 /* ArchiveHomePageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40DC376520DB642A00EADAD1 /* ArchiveHomePageView.swift */; };
+		40DC376820DB93AF00EADAD1 /* ArchiveListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40DC376720DB93AF00EADAD1 /* ArchiveListViewController.swift */; };
+		40DC376A20DBA4C500EADAD1 /* PageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40DC376920DBA4C500EADAD1 /* PageViewController.swift */; };
+		40DC376C20DBDB6500EADAD1 /* CollaboratorTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40DC376B20DBDB6500EADAD1 /* CollaboratorTableViewController.swift */; };
+		40DC376F20DE0BD700EADAD1 /* MessageTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40DC376E20DE0BD700EADAD1 /* MessageTableViewController.swift */; };
+		40DC377120DE0CA100EADAD1 /* InvitationTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40DC377020DE0CA100EADAD1 /* InvitationTableViewCell.swift */; };
 		7C47CD4F3AFA93218358662F /* Pods_LISTUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1673E739B51279783AF84EDE /* Pods_LISTUITests.framework */; };
 		BA08A5FD8F9360535C67C648 /* Pods_LIST.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6C5AD5ED95E4D4649BD46EE8 /* Pods_LIST.framework */; };
 /* End PBXBuildFile section */
@@ -116,6 +123,13 @@
 		40DC375C20D8A48400EADAD1 /* FriendNotificationTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FriendNotificationTableViewCell.swift; sourceTree = "<group>"; };
 		40DC375E20D8AE1200EADAD1 /* FriendRequestTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FriendRequestTableViewController.swift; sourceTree = "<group>"; };
 		40DC376020D8B5B200EADAD1 /* FriendRequestTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FriendRequestTableViewCell.swift; sourceTree = "<group>"; };
+		40DC376320DA46DC00EADAD1 /* ArchiveHomePageViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArchiveHomePageViewController.swift; sourceTree = "<group>"; };
+		40DC376520DB642A00EADAD1 /* ArchiveHomePageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArchiveHomePageView.swift; sourceTree = "<group>"; };
+		40DC376720DB93AF00EADAD1 /* ArchiveListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArchiveListViewController.swift; sourceTree = "<group>"; };
+		40DC376920DBA4C500EADAD1 /* PageViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PageViewController.swift; sourceTree = "<group>"; };
+		40DC376B20DBDB6500EADAD1 /* CollaboratorTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollaboratorTableViewController.swift; sourceTree = "<group>"; };
+		40DC376E20DE0BD700EADAD1 /* MessageTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageTableViewController.swift; sourceTree = "<group>"; };
+		40DC377020DE0CA100EADAD1 /* InvitationTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InvitationTableViewCell.swift; sourceTree = "<group>"; };
 		4FB801B2425169C4FB7B7A8E /* Pods-LIST.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-LIST.debug.xcconfig"; path = "Pods/Target Support Files/Pods-LIST/Pods-LIST.debug.xcconfig"; sourceTree = "<group>"; };
 		651C07F793C9F59A2F79EB40 /* Pods_LISTTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_LISTTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		6C5AD5ED95E4D4649BD46EE8 /* Pods_LIST.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_LIST.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -240,6 +254,7 @@
 				40CF0C1520CA71A0003039A6 /* Login&Signup */,
 				40CF0C1920CA78D2003039A6 /* Home */,
 				40CF0C1820CA78BC003039A6 /* Create */,
+				40DC376D20DE0BB700EADAD1 /* Message */,
 				40DC375720D89B3100EADAD1 /* Friends */,
 			);
 			path = "View controllers";
@@ -254,6 +269,7 @@
 				401470BB20CE5ACE008B5846 /* ViewListMenuView.swift */,
 				40CF0C2020CAB706003039A6 /* RoundRecView.swift */,
 				401470C120D0C3D1008B5846 /* ISTimeline.swift */,
+				40DC376520DB642A00EADAD1 /* ArchiveHomePageView.swift */,
 				40CF0C2820CCC858003039A6 /* Table View Cells */,
 			);
 			path = Views;
@@ -289,6 +305,7 @@
 				401470C920D11151008B5846 /* DocumentNodeViewController.swift */,
 				40A8693620D25599007A079C /* TagsTableViewController.swift */,
 				40A8693820D25A12007A079C /* TagCollectionTableViewController.swift */,
+				40DC376B20DBDB6500EADAD1 /* CollaboratorTableViewController.swift */,
 			);
 			path = Create;
 			sourceTree = "<group>";
@@ -298,6 +315,7 @@
 			children = (
 				40CF0C0520C26D96003039A6 /* HomePageViewController.swift */,
 				401470B820CE588C008B5846 /* All my lists */,
+				40DC376220DA3B3200EADAD1 /* Archive */,
 				40CF0C1420CA7188003039A6 /* Settings */,
 			);
 			path = Home;
@@ -312,6 +330,7 @@
 				40DC375A20D8A18400EADAD1 /* FriendTableViewCell.swift */,
 				40DC375C20D8A48400EADAD1 /* FriendNotificationTableViewCell.swift */,
 				40DC376020D8B5B200EADAD1 /* FriendRequestTableViewCell.swift */,
+				40DC377020DE0CA100EADAD1 /* InvitationTableViewCell.swift */,
 			);
 			path = "Table View Cells";
 			sourceTree = "<group>";
@@ -323,6 +342,24 @@
 				40DC375E20D8AE1200EADAD1 /* FriendRequestTableViewController.swift */,
 			);
 			path = Friends;
+			sourceTree = "<group>";
+		};
+		40DC376220DA3B3200EADAD1 /* Archive */ = {
+			isa = PBXGroup;
+			children = (
+				40DC376320DA46DC00EADAD1 /* ArchiveHomePageViewController.swift */,
+				40DC376720DB93AF00EADAD1 /* ArchiveListViewController.swift */,
+				40DC376920DBA4C500EADAD1 /* PageViewController.swift */,
+			);
+			path = Archive;
+			sourceTree = "<group>";
+		};
+		40DC376D20DE0BB700EADAD1 /* Message */ = {
+			isa = PBXGroup;
+			children = (
+				40DC376E20DE0BD700EADAD1 /* MessageTableViewController.swift */,
+			);
+			path = Message;
 			sourceTree = "<group>";
 		};
 		A3690CD0852B4E1D6A13794A /* Frameworks */ = {
@@ -565,10 +602,13 @@
 				401470BC20CE5ACE008B5846 /* ViewListMenuView.swift in Sources */,
 				40DC375D20D8A48400EADAD1 /* FriendNotificationTableViewCell.swift in Sources */,
 				40BE768620BBEA9D0025D5BE /* LoginViewController.swift in Sources */,
+				40DC376820DB93AF00EADAD1 /* ArchiveListViewController.swift in Sources */,
 				40CF0C1720CA71D2003039A6 /* SystemSettingsTableViewController.swift in Sources */,
 				40CF0C2720CCC317003039A6 /* ListSettingsTableViewController.swift in Sources */,
 				40CF0C0620C26D96003039A6 /* HomePageViewController.swift in Sources */,
 				401470BE20CE6114008B5846 /* ViewListViewController.swift in Sources */,
+				40DC377120DE0CA100EADAD1 /* InvitationTableViewCell.swift in Sources */,
+				40DC376620DB642A00EADAD1 /* ArchiveHomePageView.swift in Sources */,
 				40CF0C0820C3E884003039A6 /* ProfileExtractView.swift in Sources */,
 				401470C220D0C3D1008B5846 /* ISTimeline.swift in Sources */,
 				40DC375F20D8AE1200EADAD1 /* FriendRequestTableViewController.swift in Sources */,
@@ -579,6 +619,7 @@
 				40CF0C2520CB8095003039A6 /* ToolTableViewCell.swift in Sources */,
 				40CF0C1F20CAB542003039A6 /* SingleListViewController.swift in Sources */,
 				40DC375920D89B6400EADAD1 /* FriendsTableViewController.swift in Sources */,
+				40DC376420DA46DC00EADAD1 /* ArchiveHomePageViewController.swift in Sources */,
 				40BE768320BADE690025D5BE /* FillProfileViewController.swift in Sources */,
 				401470CA20D11151008B5846 /* DocumentNodeViewController.swift in Sources */,
 				40A8693720D25599007A079C /* TagsTableViewController.swift in Sources */,
@@ -588,7 +629,10 @@
 				40BE768820BBEB670025D5BE /* SignUpViewController.swift in Sources */,
 				401470BA20CE58C0008B5846 /* ViewListMenuViewController.swift in Sources */,
 				40A8693920D25A12007A079C /* TagCollectionTableViewController.swift in Sources */,
+				40DC376C20DBDB6500EADAD1 /* CollaboratorTableViewController.swift in Sources */,
 				40CF0C2120CAB706003039A6 /* RoundRecView.swift in Sources */,
+				40DC376F20DE0BD700EADAD1 /* MessageTableViewController.swift in Sources */,
+				40DC376A20DBA4C500EADAD1 /* PageViewController.swift in Sources */,
 				40DC376120D8B5B200EADAD1 /* FriendRequestTableViewCell.swift in Sources */,
 				40CF0C0F20C807BF003039A6 /* ProfileTableViewController.swift in Sources */,
 				40DC375620D3938000EADAD1 /* SubgoalTableViewCell.swift in Sources */,

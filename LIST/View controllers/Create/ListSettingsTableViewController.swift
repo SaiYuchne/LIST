@@ -19,7 +19,7 @@ class ListSettingsTableViewController: UITableViewController,  UITextFieldDelega
     var newDdl: String?
     var dateStringForDatabase: String?
     
-    private var settings = ["List name": "list name", "Creation date": "2018-07-01", "Deadline": "2018-12-31", "Priority level": "⭐️⭐️⭐️⭐️", "Who can view this list": "personal", "Tags": nil, "Delete this list": nil]
+    private var settings = ["List name": "list name", "Creation date": "2018-07-01", "Deadline": "2018-12-31", "Priority level": "⭐️⭐️⭐️⭐️", "Who can view this list": "personal", "Tags": nil, "Collaborators": nil, "Delete this list": nil]
     private let priorityLevel = ["⭐️": 1, "⭐️⭐️": 2, "⭐️⭐️⭐️": 3, "⭐️⭐️⭐️⭐️": 4, "⭐️⭐️⭐️⭐️⭐️": 5]
     
     override func viewDidLoad() {
@@ -65,9 +65,12 @@ class ListSettingsTableViewController: UITableViewController,  UITextFieldDelega
                 cell.accessoryType = .disclosureIndicator
                 cell.textLabel?.text = "Who can view this list"
                 cell.detailTextLabel?.text = settings["Who can view this list"]!
-            default:
+            case 5:
                 cell.accessoryType = .disclosureIndicator
                 cell.textLabel?.text = "Tags"
+            default:
+                cell.accessoryType = .disclosureIndicator
+                cell.textLabel?.text = "Collaborators"
             }
             return cell
         }else {
@@ -205,6 +208,9 @@ class ListSettingsTableViewController: UITableViewController,  UITextFieldDelega
             // perform segue
             self.performSegue(withIdentifier: "goToTagSettings", sender: self)
         case 6:
+            // perform segue
+            self.performSegue(withIdentifier: "goToCollaborators", sender: self)
+        case 7:
             let alert = UIAlertController(title: "Delete the list", message: "Are you sure to delete this list?", preferredStyle: .alert)
             let no = UIAlertAction(title: "Don't delete", style: .cancel, handler: nil)
             let yes = UIAlertAction(title: "Delete", style: .default) { (_) in
@@ -274,6 +280,12 @@ class ListSettingsTableViewController: UITableViewController,  UITextFieldDelega
         if segue.identifier == "goToTagSettings"{
             if let destination = segue.destination as? TagsTableViewController {
                 destination.listID = listID
+            }
+        } else if segue.identifier == "goToCollaborators"{
+            if let destination = segue.destination as? CollaboratorTableViewController {
+                if let collaborators = ref.child("List").child(listID!).value(forKey: "collaborator") as? [String] {
+                    destination.collaborators = collaborators
+                }
             }
         }
     }

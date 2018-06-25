@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import FirebaseDatabase
 
 class SubgoalTableViewCell: UITableViewCell {
 
@@ -14,19 +15,24 @@ class SubgoalTableViewCell: UITableViewCell {
     
     @IBOutlet weak var subgoalLabel: UILabel!
     
+    let ref = Database.database().reference()
+    var subgoalID: String?
+    var itemID: String?
+    
     override func awakeFromNib() {
         super.awakeFromNib()
         // Initialization code
     }
 
-    override func setSelected(_ selected: Bool, animated: Bool) {
-        super.setSelected(selected, animated: animated)
-
-        // Configure the view for the selected state
-    }
 
     @IBAction func completeGoalButtonTapped(_ sender: Any) {
-        completeGoalButton.setTitle("✔️", for: .normal)
+        if completeGoalButton.titleLabel?.text == "⚪️" {
+            completeGoalButton.setTitle("✔️", for: .normal)
+            ref.child("Subgoal").child(itemID!).child(subgoalID!).child("isFinished").setValue(true)
+        } else {
+            completeGoalButton.setTitle("⚪️", for: .normal)
+            ref.child("Subgoal").child(itemID!).child(subgoalID!).child("isFinished").setValue(false)
+        }
     }
     
 }

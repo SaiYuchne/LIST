@@ -29,7 +29,7 @@ class DocumentNodeViewController: UIViewController, UITextFieldDelegate{
         dateTextField.delegate = self
         createDatePicker()
         if !addNode {
-            // fetch the data from the database
+            getDataFromDatabase()
         }
     }
 
@@ -108,6 +108,13 @@ class DocumentNodeViewController: UIViewController, UITextFieldDelegate{
     }
     
     // MARK: database operations
+    func getDataFromDatabase() {
+        let date = ref.child("Progress").child(itemID!).child(nodeID!).value(forKey: "date") as? String
+        let content = ref.child("Progress").child(itemID!).child(nodeID!).value(forKey: "content") as? String
+        dateTextField.text = date
+        descriptionTextView.text = content
+    }
+    
     func addNewNodeInDatabase() {
         let progressRef = ref.child("Progress").child(itemID!)
         let nodeID = progressRef.childByAutoId().key
@@ -122,4 +129,5 @@ class DocumentNodeViewController: UIViewController, UITextFieldDelegate{
         let nodeInfo = ["date": dateTextField.text!, "content": descriptionTextView.text] as [String: Any]
         nodeRef.setValue(nodeInfo)
     }
+
 }

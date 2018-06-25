@@ -32,7 +32,7 @@ class ViewListViewController: UIViewController, UITableViewDelegate, UITableView
         tableView.delegate = self
         tableView.dataSource = self
         
-        getTableViewDataFromDatabase()
+//        getTableViewDataFromDatabase()
         if(byPriority){
             tableViewData = [
                 cellData(opened: false, title: "⭐️⭐️⭐️⭐️⭐️", sectionData: ["Cell1", "Cell2", "Cell3"], listID: ["1", "1", "1",]),
@@ -112,7 +112,7 @@ class ViewListViewController: UIViewController, UITableViewDelegate, UITableView
             var index = 6
             for _ in 0...5 {
                 index -= 1
-                priorityListRef.child("5").observeSingleEvent(of: .value, with: { (snapshot) in
+                priorityListRef.child("\(index)").observeSingleEvent(of: .value, with: { (snapshot) in
                     if let ids = snapshot.value as? [String] {
                         self.tableViewData.append(cellData(opened: false, title: self.priorityLevel["\(index)"]!, sectionData: [String](), listID: ids))
                     }

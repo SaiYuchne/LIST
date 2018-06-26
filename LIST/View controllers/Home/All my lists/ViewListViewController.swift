@@ -32,26 +32,7 @@ class ViewListViewController: UIViewController, UITableViewDelegate, UITableView
         tableView.delegate = self
         tableView.dataSource = self
         
-//        getTableViewDataFromDatabase()
-        if(byPriority){
-            tableViewData = [
-                cellData(opened: false, title: "⭐️⭐️⭐️⭐️⭐️", sectionData: ["Cell1", "Cell2", "Cell3"], listID: ["1", "1", "1",]),
-                cellData(opened: false, title: "⭐️⭐️⭐️⭐️", sectionData: ["Cell1", "Cell2", "Cell3"], listID: ["1", "1", "1",]),
-                cellData(opened: false, title: "⭐️⭐️⭐️", sectionData: ["Cell1", "Cell2", "Cell3"], listID: ["1", "1", "1",]),
-                cellData(opened: false, title: "⭐️⭐️", sectionData: ["Cell1", "Cell2", "Cell3"], listID: ["1", "1", "1",]),
-                cellData(opened: false, title: "⭐️", sectionData: ["Cell1", "Cell2", "Cell3"], listID: ["1", "1", "1",])]
-            byPriority = !byPriority
-        } else if (byDeadline){
-            tableViewData = [
-                cellData(opened: false, title: "2018-07-01", sectionData: ["Cell1", "Cell2", "Cell3"], listID: ["1", "1", "1",]),
-                cellData(opened: false, title: "2018-06-29", sectionData: ["Cell1", "Cell2", "Cell3"], listID: ["1", "1", "1",])]
-            byDeadline = !byDeadline
-        } else {
-            tableViewData = [
-                cellData(opened: false, title: "animal", sectionData: ["Cell1", "Cell2", "Cell3"], listID: ["1", "1", "1",]),
-                cellData(opened: false, title: "books", sectionData: ["Cell1", "Cell2", "Cell3"], listID: ["1", "1", "1",])]
-            byTag = !byTag
-        }
+        getTableViewDataFromDatabase()
     }
 
     func numberOfSections(in tableView: UITableView) -> Int {
@@ -102,6 +83,7 @@ class ViewListViewController: UIViewController, UITableViewDelegate, UITableView
             if let destination = segue.destination as? SingleListViewController {
                 destination.listName = tableViewData[chosenSection!].sectionData[chosenRow!]
                 destination.listID = tableViewData[chosenSection!].listID[chosenRow!]
+                destination.isNew = false
             }
         }
     }

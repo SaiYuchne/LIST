@@ -15,7 +15,7 @@ class ListSettingsTableViewController: UITableViewController,  UITextFieldDelega
     
     var listID: String?
     let picker = UIDatePicker()
-    private var alert = UIAlertController(title: "Edit", message: "Edit your list name:", preferredStyle: .alert)
+    private var alert = UIAlertController(title: "Edit", message: "Edit the deadline:", preferredStyle: .alert)
     var newDdl: String?
     var dateStringForDatabase: String?
     
@@ -188,7 +188,7 @@ class ListSettingsTableViewController: UITableViewController,  UITextFieldDelega
                     cell.detailTextLabel?.text = "friends"
                 }
             }))
-            alert.addAction(UIAlertAction(title: "the public but I want to be anonomous", style: .default, handler: { (action) in
+            alert.addAction(UIAlertAction(title: "the public but I want to be anonymous", style: .default, handler: { (action) in
                 //update the priority level in the database
                 self.ref.child("List").child(self.listID!).child("privacy").setValue("the public but I want to be anonomous")
                 if let cell = tableView.cellForRow(at: indexPath) {

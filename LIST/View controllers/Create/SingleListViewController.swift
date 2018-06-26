@@ -21,6 +21,7 @@ class SingleListViewController: UIViewController, UITableViewDelegate, UITableVi
             return false
         }
     }
+    var isNew: Bool?
     
     struct cellData{
         var opened = Bool()
@@ -58,11 +59,11 @@ class SingleListViewController: UIViewController, UITableViewDelegate, UITableVi
         tableView.dataSource = self
         configureListNameLabel(listNameLabel)
         
-        // get the tableViewData from the database
-        getTableViewDataFromDatabase()
-        goalData = [
-            cellData(opened: false, itemID: "123", title: "Europe", isGoalFinished: false, subgoalID: ["1", "2", "3"], sectionData: ["UK", "France", "Germany"], isSubgoalFinished: [false, false, false]),
-            cellData(opened: false, itemID: "123", title: "Asia", isGoalFinished: false, subgoalID: ["1", "2"], sectionData: ["Thailand", "Japan"],  isSubgoalFinished: [false, false])]
+        // get the tableViewData from the database if the list is not newly created
+        if !isNew! {
+            getTableViewDataFromDatabase()
+        }
+
     }
 
     func configureListNameLabel(_ label: UILabel){

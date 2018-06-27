@@ -165,12 +165,11 @@ class CreateViewController: UIViewController, UITextFieldDelegate,  UIPickerView
         
         // generates a random key
         let key = ref.child("List").childByAutoId().key
-        listID = key
+        self.listID = key
         
         // update List
         let defaultListInfo = ["listTitle": listName!, "userID": user.userID, "privacy": privacyLevel!, "priority": priorityLevel!, "creationDate": Date().toString(dateFormat: "dd-MM-yyyy"), "deadline": deadline!, "tag": [String](), "collaborator": [String](), "isFinished": false] as [String : Any?]
         ref.child("List").child(key).setValue(defaultListInfo)
-        
     }
 
 }

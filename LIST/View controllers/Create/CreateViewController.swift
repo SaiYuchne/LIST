@@ -33,6 +33,11 @@ class CreateViewController: UIViewController, UITextFieldDelegate,  UIPickerView
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        createDatePicker()
+        
+        configureDoneButtonForPrivacy()
+        configureDoneButtonForPriority()
+        
         priorityPicker.delegate = self
         priorityPicker.dataSource = self
         privacyPicker.delegate = self
@@ -44,7 +49,6 @@ class CreateViewController: UIViewController, UITextFieldDelegate,  UIPickerView
         
         priorityPicker.accessibilityIdentifier = "priority"
         privacyPicker.accessibilityIdentifier = "privacy"
-        
     }
 
     // MARK: set up the picker views
@@ -96,37 +100,70 @@ class CreateViewController: UIViewController, UITextFieldDelegate,  UIPickerView
     }
     
     // MARK: Set the date picker with a tool bar
-    func createDatePicker(_ textField: UITextField){
+    func createDatePicker(){
         print("createDatePicker is called")
         // toolbar
         let toolbar = UIToolbar()
         toolbar.sizeToFit()
         
         // done button for toolbar
-        let done = UIBarButtonItem(barButtonSystemItem: .done, target: self, action: #selector(donePressed))
+        let done = UIBarButtonItem(barButtonSystemItem: .done, target: self, action: #selector(deadlineDonePressed))
         toolbar.setItems([done], animated: false)
         
-        textField.inputAccessoryView = toolbar
-        textField.inputView = picker
+        deadlineTextField.inputAccessoryView = toolbar
+        deadlineTextField.inputView = picker
         
         // format picker for date
         picker.datePickerMode = .date
-        textField.text = deadline
+        deadlineTextField.text = deadline
     }
     
-    @objc func donePressed() {
-        print("donePressed is called")
+    @objc func deadlineDonePressed() {
+        print("deadlineDonePressed is called")
         // format date
         let formatter = DateFormatter()
         formatter.dateStyle = .medium
         formatter.timeStyle = .none
         
         let formatterForDatabase = DateFormatter()
-        formatterForDatabase.dateFormat = "dd-MM-yyyy"
+        // MARK: TO DO: format style is not dd-mm-yyyy
+        formatterForDatabase.dateFormat = "dd-mm-yyyy"
         let dateString = formatter.string(from: picker.date)
         
         deadline = "\(dateString)"
         print(deadline!)
+        deadlineTextField.text = deadline
+        self.view.endEditing(true)
+    }
+    
+    func configureDoneButtonForPrivacy() {
+        // toolbar
+        let toolbar = UIToolbar()
+        toolbar.sizeToFit()
+        
+        // done button for toolbar
+        let done = UIBarButtonItem(barButtonSystemItem: .done, target: self, action: #selector(otherDonePressed))
+        toolbar.setItems([done], animated: false)
+        
+        privacyLevelTextField.inputAccessoryView = toolbar
+        privacyLevelTextField.inputView = privacyPicker
+    }
+    
+    func configureDoneButtonForPriority() {
+        // toolbar
+        let toolbar = UIToolbar()
+        toolbar.sizeToFit()
+        
+        // done button for toolbar
+        let done = UIBarButtonItem(barButtonSystemItem: .done, target: self, action: #selector(otherDonePressed))
+        toolbar.setItems([done], animated: false)
+        
+        priorityLevelTextField.inputAccessoryView = toolbar
+        priorityLevelTextField.inputView = priorityPicker
+    }
+    
+    @objc func otherDonePressed() {
+        // MARK: TO DO: the first row cannot be automatically selected
         self.view.endEditing(true)
     }
     
@@ -145,31 +182,35 @@ class CreateViewController: UIViewController, UITextFieldDelegate,  UIPickerView
         let user = LISTUser()
         
         // check if all the necessary information is collected
-        if listName == nil {
+        if listName?.count == 0 {
+            print("no list name")
             let alert = UIAlertController(title: "Sorry", message: "A list name is needed", preferredStyle: .alert)
             alert.addAction(UIAlertAction(title: "Ok", style: .default, handler: nil))
             present(alert, animated: true, completion: nil)
-        } else if priorityLevel == nil {
+        } else if priorityLevel?.count == 0 {
+            print("no priorityLevel")
             let alert = UIAlertController(title: "Sorry", message: "Priority level is needed", preferredStyle: .alert)
             alert.addAction(UIAlertAction(title: "Ok", style: .default, handler: nil))
             present(alert, animated: true, completion: nil)
-        } else if privacyLevel == nil {
+        } else if privacyLevel?.count == 0 {
+            print("no privacyLevel")
             let alert = UIAlertController(title: "Sorry", message: "Privacy level is needed", preferredStyle: .alert)
             alert.addAction(UIAlertAction(title: "Ok", style: .default, handler: nil))
             present(alert, animated: true, completion: nil)
         } else if deadline == nil {
+            print("no deadline")
             let alert = UIAlertController(title: "Sorry", message: "A deadline is needed", preferredStyle: .alert)
             alert.addAction(UIAlertAction(title: "Ok", style: .default, handler: nil))
             present(alert, animated: true, completion: nil)
+        } else {
+            // generates a random key
+            let key = ref.child("List").childByAutoId().key
+            self.listID = key
+            
+            // update List
+            let defaultListInfo = ["listTitle": listName!, "userID": user.userID, "privacy": privacyLevel!, "priority": priorityLevel!, "creationDate": Date().toString(dateFormat: "dd-MM-yyyy"), "deadline": deadline!, "tag": [String](), "collaborator": [String](), "isFinished": false] as [String : Any?]
+            ref.child("List").child(key).setValue(defaultListInfo)
         }
-        
-        // generates a random key
-        let key = ref.child("List").childByAutoId().key
-        self.listID = key
-        
-        // update List
-        let defaultListInfo = ["listTitle": listName!, "userID": user.userID, "privacy": privacyLevel!, "priority": priorityLevel!, "creationDate": Date().toString(dateFormat: "dd-MM-yyyy"), "deadline": deadline!, "tag": [String](), "collaborator": [String](), "isFinished": false] as [String : Any?]
-        ref.child("List").child(key).setValue(defaultListInfo)
     }
 
 }

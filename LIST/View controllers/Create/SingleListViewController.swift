@@ -260,6 +260,7 @@ class SingleListViewController: UIViewController, UITableViewDelegate, UITableVi
                 if sender is UIButton {
                     if let superView = (sender as! UIButton).superview?.superview as? ListItemTableViewCell {
                         destination.itemName = superView.goalLabel.text
+                        // there is a problem here (force unwrapping)
                         destination.itemID = self.goalData[selectedWishIndex!].itemID
                     }
                 }

@@ -49,6 +49,14 @@ class CreateViewController: UIViewController, UITextFieldDelegate,  UIPickerView
         
         priorityPicker.accessibilityIdentifier = "priority"
         privacyPicker.accessibilityIdentifier = "privacy"
+        
+        // set the default value
+        priorityPicker.selectRow(0, inComponent: 0, animated: false)
+        priorityLevelTextField.text = priority[0]
+        priorityLevel = priorityLevelTextField.text
+        privacyPicker.selectRow(0, inComponent: 0, animated: false)
+        privacyLevelTextField.text = privacy[0]
+        privacyLevel = privacyLevelTextField.text
     }
 
     // MARK: set up the picker views

@@ -12,6 +12,7 @@ import FirebaseDatabase
 class CreateViewController: UIViewController, UITextFieldDelegate,  UIPickerViewDelegate, UIPickerViewDataSource {
     
     let ref = Database.database().reference()
+    let user = LISTUser()
     
     @IBOutlet weak var listTitleTextField: UITextField!
     @IBOutlet weak var priorityLevelTextField: UITextField!

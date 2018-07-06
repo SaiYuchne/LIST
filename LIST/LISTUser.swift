@@ -91,6 +91,6 @@ class LISTUser {
     }
     
     init(){
-        userID = (Auth.auth().currentUser?.uid)!
+        userID = (Auth.auth().currentUser?.uid)! as! String
     }
 }

@@ -13,13 +13,12 @@ class SingleListViewController: UIViewController, UITableViewDelegate, UITableVi
     
     let ref = Database.database().reference()
     private lazy var user = LISTUser()
-    private var isEditable: Bool {
-        let creatorID = ref.child("List").child(listID!).value(forKey: "userID") as! String
-        if creatorID == user.userID {
-            return true
-        } else {
-            return false
+    var isEditable: Bool {
+        var id: String?
+        ref.child("List").child(listID!).child("userID").observeSingleEvent(of: .value) { (snapshot) in
+            id = snapshot.value as? String
         }
+        return id == user.userID
     }
     var isNew: Bool?
     
@@ -54,6 +53,7 @@ class SingleListViewController: UIViewController, UITableViewDelegate, UITableVi
     }
     
     override func viewDidLoad() {
+        print("listID is \(listID!)")
         super.viewDidLoad()
         tableView.delegate = self
         tableView.dataSource = self
@@ -266,17 +266,18 @@ class SingleListViewController: UIViewController, UITableViewDelegate, UITableVi
                 }
             }
         } else if segue.identifier == "goToListSettings" {
+            print("segue name is goToListSettings")
             if isEditable{
+                print("isEditable is true")
                 if let destination = segue.destination as? ListSettingsTableViewController {
-                    if sender is UIButton {
-                        if let _ = (sender as! UIButton).superview?.superview as? ToolTableViewCell {
-                            destination.listID = listID
-                        }
-                    }
+                    print("has prepared segue for goToListSettings")
+                    destination.listID = listID
                 }
             } else {
+                print("isEditable is false")
                 let alert = UIAlertController(title: "No access", message: "Sorry, only the creator can change the list settings", preferredStyle: .alert)
                 alert.addAction(UIAlertAction(title: "Ok", style: .default, handler: nil))
+                present(alert, animated: true, completion: nil)
             }
         }
     }

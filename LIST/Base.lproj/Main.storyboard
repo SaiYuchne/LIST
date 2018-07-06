@@ -1361,7 +1361,7 @@
                                                 </tableViewCellContentView>
                                                 <connections>
                                                     <outlet property="addButton" destination="pPE-wB-qRp" id="Zwh-ZN-Eil"/>
-                                                    <outlet property="settingsButtonTapped" destination="r8i-ey-OIh" id="zw0-BA-2gk"/>
+                                                    <outlet property="settingsButton" destination="r8i-ey-OIh" id="baG-Hw-JKe"/>
                                                 </connections>
                                             </tableViewCell>
                                         </prototypes>

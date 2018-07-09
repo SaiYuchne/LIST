@@ -88,6 +88,7 @@ class ViewListViewController: UIViewController, UITableViewDelegate, UITableView
         }
     }
     
+    // MARK: database operations
     func getTableViewDataFromDatabase() {
         if(byPriority){
             let priorityListRef = ref.child("PriorityList").child(user.userID)

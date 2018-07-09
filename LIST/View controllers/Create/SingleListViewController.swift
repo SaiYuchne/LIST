@@ -20,6 +20,7 @@ class SingleListViewController: UIViewController, UITableViewDelegate, UITableVi
         }
         return id == user.userID
     }
+    
     var isNew: Bool?
     
     struct cellData{

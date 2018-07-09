@@ -23,8 +23,8 @@ class ProfileExtractView: UIView {
     private lazy var mottoLabel = createMottoLabel()
     
     private var mottoString: NSAttributedString {
-        return centeredAttributedString("\"Just do it!\"", fontSize: cornerFontSize, isParagraphStyleNatural:true)
-//        return centeredAttributedString("\"\(user.motto)\"", fontSize: cornerFontSize)
+//        return centeredAttributedString("\"Just do it!\"", fontSize: cornerFontSize, isParagraphStyleNatural:true)
+        return createAttributedString("\"\(user.motto)\"", fontSize: cornerFontSize, isParagraphStyleNatural:true)
     }
     
     private func createMottoLabel() -> UILabel {
@@ -43,7 +43,7 @@ class ProfileExtractView: UIView {
     private lazy var usernameLabel = createMottoLabel()
     
     private var usernameString: NSAttributedString {
-        return centeredAttributedString("Testname", fontSize: cornerFontSize*0.8, isParagraphStyleNatural:true)
+        return createAttributedString("Testname", fontSize: cornerFontSize*0.8, isParagraphStyleNatural:true)
 //        return centeredAttributedString("\(user.username)", fontSize: cornerFontSize*0.8)
     }
     
@@ -80,8 +80,8 @@ class ProfileExtractView: UIView {
     private var dayString: NSAttributedString {
         let todayString = Date().toString(dateFormat: "dd-MM-yyyy")
         
-        return centeredAttributedString("LIST has been there with you for\n 40 days!", fontSize: cornerFontSize*0.8, isParagraphStyleNatural:false)
-//        return centeredAttributedString("LIST has been there with you for\n \(calculateDateDifference(from: user.createDate, to: todayString)) days!", fontSize: cornerFontSize*0.8, isParagraphStyleNatural:false)
+//        return centeredAttributedString("LIST has been there with you for\n 40 days!", fontSize: cornerFontSize*0.8, isParagraphStyleNatural:false)
+        return createAttributedString("LIST has been there with you for\n \(calculateDateDifference(from: user.createDate, to: todayString)) days!", fontSize: cornerFontSize*0.8, isParagraphStyleNatural:false)
     }
     
     private func createDayLabel() -> UILabel {
@@ -122,7 +122,7 @@ class ProfileExtractView: UIView {
         }
     }
     
-    private func centeredAttributedString(_ string: String, fontSize: CGFloat, isParagraphStyleNatural: Bool) -> NSAttributedString {
+    private func createAttributedString(_ string: String, fontSize: CGFloat, isParagraphStyleNatural: Bool) -> NSAttributedString {
         var font = UIFont.preferredFont(forTextStyle: .body).withSize(fontSize)
         font = UIFontMetrics(forTextStyle: .body).scaledFont(for: font)
         let paragraphStyle = NSMutableParagraphStyle()
@@ -139,12 +139,6 @@ class ProfileExtractView: UIView {
         roundedRect.addClip()
         UIColor.white.setFill()
         roundedRect.fill()
-        
-        if isFaceUp {
-            
-        } else {
-            
-        }
     }
     
     // MARK: calculate the time difference

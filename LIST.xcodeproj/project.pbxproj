@@ -54,6 +54,15 @@
 		40DC376C20DBDB6500EADAD1 /* CollaboratorTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40DC376B20DBDB6500EADAD1 /* CollaboratorTableViewController.swift */; };
 		40DC376F20DE0BD700EADAD1 /* MessageTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40DC376E20DE0BD700EADAD1 /* MessageTableViewController.swift */; };
 		40DC377120DE0CA100EADAD1 /* InvitationTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40DC377020DE0CA100EADAD1 /* InvitationTableViewCell.swift */; };
+		40E919C020F050EB0022D0E6 /* RandomWishView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40E919BF20F050EB0022D0E6 /* RandomWishView.swift */; };
+		40E919C320F060FD0022D0E6 /* WorldPageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40E919C220F060FD0022D0E6 /* WorldPageViewController.swift */; };
+		40E919C520F062080022D0E6 /* InspirationPoolExtractView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40E919C420F062080022D0E6 /* InspirationPoolExtractView.swift */; };
+		40E919C720F06AC10022D0E6 /* InspirationPoolViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40E919C620F06AC10022D0E6 /* InspirationPoolViewController.swift */; };
+		40E919CA20F301080022D0E6 /* SingleFavouriteListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40E919C920F301080022D0E6 /* SingleFavouriteListViewController.swift */; };
+		40E919CC20F305880022D0E6 /* FavListGoalTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40E919CB20F305880022D0E6 /* FavListGoalTableViewCell.swift */; };
+		40E919CE20F305AD0022D0E6 /* FavListSubgoalTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40E919CD20F305AD0022D0E6 /* FavListSubgoalTableViewCell.swift */; };
+		40E919D220F30BA40022D0E6 /* ViewFavouriteListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40E919D120F30BA40022D0E6 /* ViewFavouriteListViewController.swift */; };
+		40E919D420F30DCD0022D0E6 /* FavListNameTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40E919D320F30DCD0022D0E6 /* FavListNameTableViewCell.swift */; };
 		7C47CD4F3AFA93218358662F /* Pods_LISTUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1673E739B51279783AF84EDE /* Pods_LISTUITests.framework */; };
 		BA08A5FD8F9360535C67C648 /* Pods_LIST.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6C5AD5ED95E4D4649BD46EE8 /* Pods_LIST.framework */; };
 /* End PBXBuildFile section */
@@ -130,6 +139,15 @@
 		40DC376B20DBDB6500EADAD1 /* CollaboratorTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollaboratorTableViewController.swift; sourceTree = "<group>"; };
 		40DC376E20DE0BD700EADAD1 /* MessageTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageTableViewController.swift; sourceTree = "<group>"; };
 		40DC377020DE0CA100EADAD1 /* InvitationTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InvitationTableViewCell.swift; sourceTree = "<group>"; };
+		40E919BF20F050EB0022D0E6 /* RandomWishView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RandomWishView.swift; sourceTree = "<group>"; };
+		40E919C220F060FD0022D0E6 /* WorldPageViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorldPageViewController.swift; sourceTree = "<group>"; };
+		40E919C420F062080022D0E6 /* InspirationPoolExtractView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InspirationPoolExtractView.swift; sourceTree = "<group>"; };
+		40E919C620F06AC10022D0E6 /* InspirationPoolViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InspirationPoolViewController.swift; sourceTree = "<group>"; };
+		40E919C920F301080022D0E6 /* SingleFavouriteListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SingleFavouriteListViewController.swift; sourceTree = "<group>"; };
+		40E919CB20F305880022D0E6 /* FavListGoalTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavListGoalTableViewCell.swift; sourceTree = "<group>"; };
+		40E919CD20F305AD0022D0E6 /* FavListSubgoalTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavListSubgoalTableViewCell.swift; sourceTree = "<group>"; };
+		40E919D120F30BA40022D0E6 /* ViewFavouriteListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewFavouriteListViewController.swift; sourceTree = "<group>"; };
+		40E919D320F30DCD0022D0E6 /* FavListNameTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavListNameTableViewCell.swift; sourceTree = "<group>"; };
 		4FB801B2425169C4FB7B7A8E /* Pods-LIST.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-LIST.debug.xcconfig"; path = "Pods/Target Support Files/Pods-LIST/Pods-LIST.debug.xcconfig"; sourceTree = "<group>"; };
 		651C07F793C9F59A2F79EB40 /* Pods_LISTTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_LISTTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		6C5AD5ED95E4D4649BD46EE8 /* Pods_LIST.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_LIST.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -256,6 +274,7 @@
 				40CF0C1820CA78BC003039A6 /* Create */,
 				40DC376D20DE0BB700EADAD1 /* Message */,
 				40DC375720D89B3100EADAD1 /* Friends */,
+				40E919C120F060BF0022D0E6 /* World */,
 			);
 			path = "View controllers";
 			sourceTree = "<group>";
@@ -270,6 +289,8 @@
 				40CF0C2020CAB706003039A6 /* RoundRecView.swift */,
 				401470C120D0C3D1008B5846 /* ISTimeline.swift */,
 				40DC376520DB642A00EADAD1 /* ArchiveHomePageView.swift */,
+				40E919BF20F050EB0022D0E6 /* RandomWishView.swift */,
+				40E919C420F062080022D0E6 /* InspirationPoolExtractView.swift */,
 				40CF0C2820CCC858003039A6 /* Table View Cells */,
 			);
 			path = Views;
@@ -316,6 +337,7 @@
 				40CF0C0520C26D96003039A6 /* HomePageViewController.swift */,
 				401470B820CE588C008B5846 /* All my lists */,
 				40DC376220DA3B3200EADAD1 /* Archive */,
+				40E919C820F300CF0022D0E6 /* My favourite lists */,
 				40CF0C1420CA7188003039A6 /* Settings */,
 			);
 			path = Home;
@@ -331,6 +353,9 @@
 				40DC375C20D8A48400EADAD1 /* FriendNotificationTableViewCell.swift */,
 				40DC376020D8B5B200EADAD1 /* FriendRequestTableViewCell.swift */,
 				40DC377020DE0CA100EADAD1 /* InvitationTableViewCell.swift */,
+				40E919CB20F305880022D0E6 /* FavListGoalTableViewCell.swift */,
+				40E919CD20F305AD0022D0E6 /* FavListSubgoalTableViewCell.swift */,
+				40E919D320F30DCD0022D0E6 /* FavListNameTableViewCell.swift */,
 			);
 			path = "Table View Cells";
 			sourceTree = "<group>";
@@ -360,6 +385,24 @@
 				40DC376E20DE0BD700EADAD1 /* MessageTableViewController.swift */,
 			);
 			path = Message;
+			sourceTree = "<group>";
+		};
+		40E919C120F060BF0022D0E6 /* World */ = {
+			isa = PBXGroup;
+			children = (
+				40E919C220F060FD0022D0E6 /* WorldPageViewController.swift */,
+				40E919C620F06AC10022D0E6 /* InspirationPoolViewController.swift */,
+			);
+			path = World;
+			sourceTree = "<group>";
+		};
+		40E919C820F300CF0022D0E6 /* My favourite lists */ = {
+			isa = PBXGroup;
+			children = (
+				40E919C920F301080022D0E6 /* SingleFavouriteListViewController.swift */,
+				40E919D120F30BA40022D0E6 /* ViewFavouriteListViewController.swift */,
+			);
+			path = "My favourite lists";
 			sourceTree = "<group>";
 		};
 		A3690CD0852B4E1D6A13794A /* Frameworks */ = {
@@ -616,28 +659,37 @@
 				40CF0C2320CB765B003039A6 /* ListItemTableViewCell.swift in Sources */,
 				40CF0C0420C23C23003039A6 /* LISTUser.swift in Sources */,
 				40BE765520BA8F270025D5BE /* AppDelegate.swift in Sources */,
+				40E919CE20F305AD0022D0E6 /* FavListSubgoalTableViewCell.swift in Sources */,
 				40CF0C2520CB8095003039A6 /* ToolTableViewCell.swift in Sources */,
 				40CF0C1F20CAB542003039A6 /* SingleListViewController.swift in Sources */,
 				40DC375920D89B6400EADAD1 /* FriendsTableViewController.swift in Sources */,
 				40DC376420DA46DC00EADAD1 /* ArchiveHomePageViewController.swift in Sources */,
 				40BE768320BADE690025D5BE /* FillProfileViewController.swift in Sources */,
 				401470CA20D11151008B5846 /* DocumentNodeViewController.swift in Sources */,
+				40E919C720F06AC10022D0E6 /* InspirationPoolViewController.swift in Sources */,
 				40A8693720D25599007A079C /* TagsTableViewController.swift in Sources */,
 				40CF0C1320CA6BA6003039A6 /* SettingsTableViewController.swift in Sources */,
 				40CF0C1D20CA7A2B003039A6 /* CreateView.swift in Sources */,
 				40CF0C1B20CA790D003039A6 /* CreateViewController.swift in Sources */,
+				40E919C520F062080022D0E6 /* InspirationPoolExtractView.swift in Sources */,
 				40BE768820BBEB670025D5BE /* SignUpViewController.swift in Sources */,
+				40E919CA20F301080022D0E6 /* SingleFavouriteListViewController.swift in Sources */,
 				401470BA20CE58C0008B5846 /* ViewListMenuViewController.swift in Sources */,
+				40E919D420F30DCD0022D0E6 /* FavListNameTableViewCell.swift in Sources */,
 				40A8693920D25A12007A079C /* TagCollectionTableViewController.swift in Sources */,
 				40DC376C20DBDB6500EADAD1 /* CollaboratorTableViewController.swift in Sources */,
 				40CF0C2120CAB706003039A6 /* RoundRecView.swift in Sources */,
 				40DC376F20DE0BD700EADAD1 /* MessageTableViewController.swift in Sources */,
+				40E919CC20F305880022D0E6 /* FavListGoalTableViewCell.swift in Sources */,
 				40DC376A20DBA4C500EADAD1 /* PageViewController.swift in Sources */,
 				40DC376120D8B5B200EADAD1 /* FriendRequestTableViewCell.swift in Sources */,
 				40CF0C0F20C807BF003039A6 /* ProfileTableViewController.swift in Sources */,
+				40E919C020F050EB0022D0E6 /* RandomWishView.swift in Sources */,
 				40DC375620D3938000EADAD1 /* SubgoalTableViewCell.swift in Sources */,
+				40E919D220F30BA40022D0E6 /* ViewFavouriteListViewController.swift in Sources */,
 				40DC375B20D8A18400EADAD1 /* FriendTableViewCell.swift in Sources */,
 				401470C820D0C50B008B5846 /* ISPoint.swift in Sources */,
+				40E919C320F060FD0022D0E6 /* WorldPageViewController.swift in Sources */,
 				40CF0C0A20C55DAF003039A6 /* HomePageListExtractView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

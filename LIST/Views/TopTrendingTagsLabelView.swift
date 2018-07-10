@@ -1,15 +1,15 @@
 //
-//  InspirationPoolExtractView.swift
+//  TopTrendingTagsLabelView.swift
 //  LIST
 //
-//  Created by 蔡雨倩 on 07/07/2018.
+//  Created by 蔡雨倩 on 10/07/2018.
 //  Copyright © 2018 蔡雨倩. All rights reserved.
 //
 
 import UIKit
 
-class InspirationPoolExtractView: UIView {
-    
+class TopTrendingTagsLabelView: UIView {
+
     private lazy var label = createLabel()
     
     private func createLabel() -> UILabel {
@@ -18,9 +18,9 @@ class InspirationPoolExtractView: UIView {
         addSubview(label)
         return label
     }
-
+    
     private func configureLabel(_ label: UILabel) {
-        label.attributedText = centeredAttributedString("Get a dive!💦", fontSize: labelFontSize)
+        label.attributedText = centeredAttributedString("🔝Top Trending Tags", fontSize: labelFontSize)
         label.frame = self.frame
     }
     
@@ -30,7 +30,7 @@ class InspirationPoolExtractView: UIView {
         UIColor.init(red: 31/255, green: 54/255, blue: 130/255, alpha: 1).setFill()
         roundedRect.fill()
     }
-
+    
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
         setNeedsLayout()
         setNeedsDisplay()
@@ -49,9 +49,10 @@ class InspirationPoolExtractView: UIView {
         return NSAttributedString(string: string, attributes: [.paragraphStyle:paragraphStyle,.font:font])
     }
 }
-extension InspirationPoolExtractView {
+
+extension TopTrendingTagsLabelView {
     struct SizeRatio {
-        static let fontSizeToBoundsHeight: CGFloat = 0.8
+        static let fontSizeToBoundsHeight: CGFloat = 0.7
         static let cornerOffsetToCornerRadius:CGFloat = 0.33
         static let cornerRadiusToBoundsHeight: CGFloat = 0.06
     }

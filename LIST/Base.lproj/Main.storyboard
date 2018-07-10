@@ -2225,11 +2225,58 @@
                                     <constraint firstAttribute="width" secondItem="aGO-OK-hGe" secondAttribute="height" multiplier="5:1" id="hD3-px-xwS"/>
                                 </constraints>
                             </view>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="vDj-gJ-Aii" customClass="TopTrendingTagsLabelView" customModule="LIST" customModuleProvider="target">
+                                <rect key="frame" x="20" y="134.66666666666666" width="374" height="62.333333333333343"/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" secondItem="vDj-gJ-Aii" secondAttribute="height" multiplier="6:1" id="R6P-YN-Mpk"/>
+                                </constraints>
+                            </view>
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="Uc2-hr-Xca">
+                                <rect key="frame" x="20" y="217" width="374" height="199.33333333333337"/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" secondItem="Uc2-hr-Xca" secondAttribute="height" multiplier="15:8" id="NKB-uX-iBV"/>
+                                </constraints>
+                                <prototypes>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="trendingTagCell" id="tpL-eC-vaE" customClass="TrendingTagTableViewCell" customModule="LIST" customModuleProvider="target">
+                                        <rect key="frame" x="0.0" y="28" width="374" height="44"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="tpL-eC-vaE" id="Q6D-78-Gc8">
+                                            <rect key="frame" x="0.0" y="0.0" width="374" height="43.666666666666664"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="9ov-cn-Ssv">
+                                                    <rect key="frame" x="25" y="11" width="324" height="22"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                    <nil key="textColor"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                            </subviews>
+                                            <constraints>
+                                                <constraint firstAttribute="trailingMargin" secondItem="9ov-cn-Ssv" secondAttribute="trailing" constant="10" id="0ut-Ro-uhs"/>
+                                                <constraint firstItem="9ov-cn-Ssv" firstAttribute="bottom" secondItem="Q6D-78-Gc8" secondAttribute="bottomMargin" id="7LU-Lv-21q"/>
+                                                <constraint firstItem="9ov-cn-Ssv" firstAttribute="top" secondItem="Q6D-78-Gc8" secondAttribute="topMargin" id="W6O-K2-i40"/>
+                                                <constraint firstItem="9ov-cn-Ssv" firstAttribute="leading" secondItem="Q6D-78-Gc8" secondAttribute="leadingMargin" constant="10" id="xAN-kb-Y0v"/>
+                                            </constraints>
+                                        </tableViewCellContentView>
+                                        <connections>
+                                            <outlet property="tagLabel" destination="9ov-cn-Ssv" id="cxX-tn-sUq"/>
+                                        </connections>
+                                    </tableViewCell>
+                                </prototypes>
+                            </tableView>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
                             <constraint firstItem="LGw-PN-yZc" firstAttribute="trailing" secondItem="aGO-OK-hGe" secondAttribute="trailing" constant="20" id="7Jm-8w-hhU"/>
+                            <constraint firstItem="LGw-PN-yZc" firstAttribute="trailing" secondItem="vDj-gJ-Aii" secondAttribute="trailing" constant="20" id="Fyc-v6-gza"/>
+                            <constraint firstItem="vDj-gJ-Aii" firstAttribute="leading" secondItem="LGw-PN-yZc" secondAttribute="leading" constant="20" id="VfX-QB-miN"/>
+                            <constraint firstItem="LGw-PN-yZc" firstAttribute="trailing" secondItem="Uc2-hr-Xca" secondAttribute="trailing" constant="20" id="XsG-A6-aLA"/>
+                            <constraint firstItem="Uc2-hr-Xca" firstAttribute="leading" secondItem="LGw-PN-yZc" secondAttribute="leading" constant="20" id="Y3I-p1-Xh9"/>
                             <constraint firstItem="aGO-OK-hGe" firstAttribute="top" secondItem="LGw-PN-yZc" secondAttribute="top" constant="20" id="crR-Os-DT3"/>
+                            <constraint firstItem="Uc2-hr-Xca" firstAttribute="top" secondItem="vDj-gJ-Aii" secondAttribute="bottom" constant="20" id="iOv-Ub-zQX"/>
+                            <constraint firstItem="vDj-gJ-Aii" firstAttribute="top" secondItem="aGO-OK-hGe" secondAttribute="bottom" constant="20" id="jJq-Kp-TPu"/>
                             <constraint firstItem="aGO-OK-hGe" firstAttribute="leading" secondItem="LGw-PN-yZc" secondAttribute="leading" constant="20" id="xEM-wH-7JD"/>
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="LGw-PN-yZc"/>
@@ -2237,6 +2284,7 @@
                     <tabBarItem key="tabBarItem" title="World" id="Ncy-HY-h5d"/>
                     <connections>
                         <outlet property="inspirationPoolExtractView" destination="aGO-OK-hGe" id="RfK-l9-GGX"/>
+                        <outlet property="trendingTagsTableView" destination="Uc2-hr-Xca" id="Cg8-xp-qLB"/>
                         <segue destination="dbO-rx-flQ" kind="show" identifier="goToInspirationPool" id="YYj-6l-CVf"/>
                     </connections>
                 </viewController>

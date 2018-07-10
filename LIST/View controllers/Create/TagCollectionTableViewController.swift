@@ -43,12 +43,7 @@ class TagCollectionTableViewController: UITableViewController {
             if cell.detailTextLabel?.text == "" {
                 cell.detailTextLabel?.text = "✔️"
                 // add the tag in the database
-                ref.child("List").child(listID!).child("tag").observeSingleEvent(of: .value, with: { (snapshot) in
-                    if var tags = snapshot.value as? [String] {
-                        tags.append(self.cellTitle[indexPath.row])
-                        self.ref.child("List").child(self.listID!).child("tag").setValue(tags)
-                    }
-                })
+                addTagInDatabase(row: indexPath.row)
             } else {
                 cell.detailTextLabel?.text = ""
                 // delete the tag in the database
@@ -80,5 +75,22 @@ class TagCollectionTableViewController: UITableViewController {
                 }
             }
         }
+    }
+    
+    private func addTagInDatabase(row: Int) {
+        // change the list settings
+        ref.child("List").child(listID!).child("tag").observeSingleEvent(of: .value, with: { (snapshot) in
+            if var tags = snapshot.value as? [String] {
+                tags.append(self.cellTitle[row])
+                self.ref.child("List").child(self.listID!).child("tag").setValue(tags)
+            }
+        })
+        
+        // update the app's tag system
+        ref.child("Tag").child("tags").child(cellTitle[row]).child("listCount").observeSingleEvent(of: .value) { (snapshot) in
+                let listCount = snapshot.value as! Int
+                self.ref.child("Tag").child("tags").child(self.cellTitle[row]).child("listCount").setValue(listCount + 1)
+        }
+
     }
 }

@@ -15,6 +15,9 @@
 		401470C220D0C3D1008B5846 /* ISTimeline.swift in Sources */ = {isa = PBXBuildFile; fileRef = 401470C120D0C3D1008B5846 /* ISTimeline.swift */; };
 		401470C820D0C50B008B5846 /* ISPoint.swift in Sources */ = {isa = PBXBuildFile; fileRef = 401470C720D0C50B008B5846 /* ISPoint.swift */; };
 		401470CA20D11151008B5846 /* DocumentNodeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 401470C920D11151008B5846 /* DocumentNodeViewController.swift */; };
+		4098461A20F6FEA300DCAF22 /* SystemTagCollectionTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4098461920F6FEA300DCAF22 /* SystemTagCollectionTableViewController.swift */; };
+		4098461C20F7088E00DCAF22 /* MotivationQuoteViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4098461B20F7088E00DCAF22 /* MotivationQuoteViewController.swift */; };
+		4098461E20F709C200DCAF22 /* MotivationQuoteView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4098461D20F709C200DCAF22 /* MotivationQuoteView.swift */; };
 		40A8693720D25599007A079C /* TagsTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40A8693620D25599007A079C /* TagsTableViewController.swift */; };
 		40A8693920D25A12007A079C /* TagCollectionTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40A8693820D25A12007A079C /* TagCollectionTableViewController.swift */; };
 		40BE765520BA8F270025D5BE /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40BE765420BA8F270025D5BE /* AppDelegate.swift */; };
@@ -63,8 +66,7 @@
 		40E919CE20F305AD0022D0E6 /* FavListSubgoalTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40E919CD20F305AD0022D0E6 /* FavListSubgoalTableViewCell.swift */; };
 		40E919D220F30BA40022D0E6 /* ViewFavouriteListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40E919D120F30BA40022D0E6 /* ViewFavouriteListViewController.swift */; };
 		40E919D420F30DCD0022D0E6 /* FavListNameTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40E919D320F30DCD0022D0E6 /* FavListNameTableViewCell.swift */; };
-		40E919D620F458150022D0E6 /* TopTrendingTagsLabelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40E919D520F458150022D0E6 /* TopTrendingTagsLabelView.swift */; };
-		40E919D820F45B8B0022D0E6 /* TrendingTagTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40E919D720F45B8B0022D0E6 /* TrendingTagTableViewCell.swift */; };
+		40E919DA20F46A580022D0E6 /* TopTrendingTagsLabelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40E919D920F46A570022D0E6 /* TopTrendingTagsLabelView.swift */; };
 		7C47CD4F3AFA93218358662F /* Pods_LISTUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1673E739B51279783AF84EDE /* Pods_LISTUITests.framework */; };
 		BA08A5FD8F9360535C67C648 /* Pods_LIST.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6C5AD5ED95E4D4649BD46EE8 /* Pods_LIST.framework */; };
 /* End PBXBuildFile section */
@@ -95,6 +97,9 @@
 		401470C120D0C3D1008B5846 /* ISTimeline.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ISTimeline.swift; sourceTree = "<group>"; };
 		401470C720D0C50B008B5846 /* ISPoint.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ISPoint.swift; sourceTree = "<group>"; };
 		401470C920D11151008B5846 /* DocumentNodeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DocumentNodeViewController.swift; sourceTree = "<group>"; };
+		4098461920F6FEA300DCAF22 /* SystemTagCollectionTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SystemTagCollectionTableViewController.swift; sourceTree = "<group>"; };
+		4098461B20F7088E00DCAF22 /* MotivationQuoteViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MotivationQuoteViewController.swift; sourceTree = "<group>"; };
+		4098461D20F709C200DCAF22 /* MotivationQuoteView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MotivationQuoteView.swift; sourceTree = "<group>"; };
 		40A8693620D25599007A079C /* TagsTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TagsTableViewController.swift; sourceTree = "<group>"; };
 		40A8693820D25A12007A079C /* TagCollectionTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TagCollectionTableViewController.swift; sourceTree = "<group>"; };
 		40BE765120BA8F270025D5BE /* LIST.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = LIST.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -150,8 +155,7 @@
 		40E919CD20F305AD0022D0E6 /* FavListSubgoalTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavListSubgoalTableViewCell.swift; sourceTree = "<group>"; };
 		40E919D120F30BA40022D0E6 /* ViewFavouriteListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewFavouriteListViewController.swift; sourceTree = "<group>"; };
 		40E919D320F30DCD0022D0E6 /* FavListNameTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavListNameTableViewCell.swift; sourceTree = "<group>"; };
-		40E919D520F458150022D0E6 /* TopTrendingTagsLabelView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TopTrendingTagsLabelView.swift; sourceTree = "<group>"; };
-		40E919D720F45B8B0022D0E6 /* TrendingTagTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrendingTagTableViewCell.swift; sourceTree = "<group>"; };
+		40E919D920F46A570022D0E6 /* TopTrendingTagsLabelView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TopTrendingTagsLabelView.swift; sourceTree = "<group>"; };
 		4FB801B2425169C4FB7B7A8E /* Pods-LIST.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-LIST.debug.xcconfig"; path = "Pods/Target Support Files/Pods-LIST/Pods-LIST.debug.xcconfig"; sourceTree = "<group>"; };
 		651C07F793C9F59A2F79EB40 /* Pods_LISTTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_LISTTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		6C5AD5ED95E4D4649BD46EE8 /* Pods_LIST.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_LIST.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -295,7 +299,8 @@
 				40DC376520DB642A00EADAD1 /* ArchiveHomePageView.swift */,
 				40E919BF20F050EB0022D0E6 /* RandomWishView.swift */,
 				40E919C420F062080022D0E6 /* InspirationPoolExtractView.swift */,
-				40E919D520F458150022D0E6 /* TopTrendingTagsLabelView.swift */,
+				40E919D920F46A570022D0E6 /* TopTrendingTagsLabelView.swift */,
+				4098461D20F709C200DCAF22 /* MotivationQuoteView.swift */,
 				40CF0C2820CCC858003039A6 /* Table View Cells */,
 			);
 			path = Views;
@@ -361,7 +366,6 @@
 				40E919CB20F305880022D0E6 /* FavListGoalTableViewCell.swift */,
 				40E919CD20F305AD0022D0E6 /* FavListSubgoalTableViewCell.swift */,
 				40E919D320F30DCD0022D0E6 /* FavListNameTableViewCell.swift */,
-				40E919D720F45B8B0022D0E6 /* TrendingTagTableViewCell.swift */,
 			);
 			path = "Table View Cells";
 			sourceTree = "<group>";
@@ -398,6 +402,8 @@
 			children = (
 				40E919C220F060FD0022D0E6 /* WorldPageViewController.swift */,
 				40E919C620F06AC10022D0E6 /* InspirationPoolViewController.swift */,
+				4098461920F6FEA300DCAF22 /* SystemTagCollectionTableViewController.swift */,
+				4098461B20F7088E00DCAF22 /* MotivationQuoteViewController.swift */,
 			);
 			path = World;
 			sourceTree = "<group>";
@@ -648,9 +654,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				40E919D820F45B8B0022D0E6 /* TrendingTagTableViewCell.swift in Sources */,
 				401470BC20CE5ACE008B5846 /* ViewListMenuView.swift in Sources */,
-				40E919D620F458150022D0E6 /* TopTrendingTagsLabelView.swift in Sources */,
+				40E919DA20F46A580022D0E6 /* TopTrendingTagsLabelView.swift in Sources */,
 				40DC375D20D8A48400EADAD1 /* FriendNotificationTableViewCell.swift in Sources */,
 				40BE768620BBEA9D0025D5BE /* LoginViewController.swift in Sources */,
 				40DC376820DB93AF00EADAD1 /* ArchiveListViewController.swift in Sources */,
@@ -658,8 +663,10 @@
 				40CF0C2720CCC317003039A6 /* ListSettingsTableViewController.swift in Sources */,
 				40CF0C0620C26D96003039A6 /* HomePageViewController.swift in Sources */,
 				401470BE20CE6114008B5846 /* ViewListViewController.swift in Sources */,
+				4098461C20F7088E00DCAF22 /* MotivationQuoteViewController.swift in Sources */,
 				40DC377120DE0CA100EADAD1 /* InvitationTableViewCell.swift in Sources */,
 				40DC376620DB642A00EADAD1 /* ArchiveHomePageView.swift in Sources */,
+				4098461A20F6FEA300DCAF22 /* SystemTagCollectionTableViewController.swift in Sources */,
 				40CF0C0820C3E884003039A6 /* ProfileExtractView.swift in Sources */,
 				401470C220D0C3D1008B5846 /* ISTimeline.swift in Sources */,
 				40DC375F20D8AE1200EADAD1 /* FriendRequestTableViewController.swift in Sources */,
@@ -691,6 +698,7 @@
 				40E919CC20F305880022D0E6 /* FavListGoalTableViewCell.swift in Sources */,
 				40DC376A20DBA4C500EADAD1 /* PageViewController.swift in Sources */,
 				40DC376120D8B5B200EADAD1 /* FriendRequestTableViewCell.swift in Sources */,
+				4098461E20F709C200DCAF22 /* MotivationQuoteView.swift in Sources */,
 				40CF0C0F20C807BF003039A6 /* ProfileTableViewController.swift in Sources */,
 				40E919C020F050EB0022D0E6 /* RandomWishView.swift in Sources */,
 				40DC375620D3938000EADAD1 /* SubgoalTableViewCell.swift in Sources */,

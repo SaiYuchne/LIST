@@ -16,6 +16,7 @@ class InspirationPoolViewController: UIViewController {
     var listID: String?
     var wish: String?
     var tag: String?
+    var isTagSpecific = false
     
     
     @IBOutlet weak var randomWish: RandomWishView! {
@@ -48,38 +49,69 @@ class InspirationPoolViewController: UIViewController {
     
     // MARK: the randomization of choosing random wishes: produce as needed
     private func pickARandomWish() {
-        var totalNumOfTags = 0
-        ref.child("Tag").child("numOfTags").observeSingleEvent(of: .value) { (snapshot) in
-            totalNumOfTags = snapshot.value as! Int
-        }
-        
-        let randomIndex = Int(arc4random_uniform(UInt32(totalNumOfTags))) + 1
-        ref.child("Tag").child("tags").observeSingleEvent(of: .value) { (snapshot) in
-            if let snapshots = snapshot.children.allObjects as? [DataSnapshot] {
-                var count = 0
-                for snap in snapshots {
-                    if count == randomIndex {
-                        var tempData = snap.value as! Dictionary<String, Any>
-                        self.tag = tempData["tagName"] as? String
-                        // randomly pick a list
-                        let listIDs = tempData["listIDs"] as! [String]
-                        let listIDCount = listIDs.count
-                        let randomIndex2 = Int(arc4random_uniform(UInt32(listIDCount))) + 1
-                        self.listID = listIDs[randomIndex2]
-                        // randomly pick a wish
-                    self.ref.child("ListItem").child(self.listID!).observeSingleEvent(of: .value, with: { (snapshot) in
-                            let wishCount = snapshot.childrenCount
-                        let randomWishIndex = Int(arc4random_uniform(UInt32(wishCount))) + 1
-                            if let snapshots = snapshot.children.allObjects as? [DataSnapshot] {
-                                let wishID = snapshots[randomWishIndex].key
-                                self.ref.child("ListItem").child(self.listID!).child(wishID).child("content").observeSingleEvent(of: .value, with: { (snapshot) in
-                                    self.wish = snapshot.value as! String
-                                })
-                            }
-                        })
+        if(isTagSpecific){
+            var listCount = 0
+            ref.child("Tag").child("tags").child(tag!).observeSingleEvent(of: .value) { (snapshot) in
+                listCount = snapshot.value as! Int
+            }
+            
+            let randomIndex = Int(arc4random_uniform(UInt32(listCount))) + 1
+            ref.child("Tag").child("tags").child(tag!).child("listIDs").observeSingleEvent(of: .value) { (snapshot) in
+                if let listIDs = snapshot.children.allObjects as? [String] {
+                    var count = 0
+                    for listID in listIDs {
+                        if count == randomIndex {
+                            self.listID = listID
+                            // randomly pick a wish
+                            self.ref.child("ListItem").child(listID).observeSingleEvent(of: .value, with: { (snapshot) in
+                                let wishCount = snapshot.childrenCount
+                                let randomWishIndex = Int(arc4random_uniform(UInt32(wishCount))) + 1
+                                if let snapshots = snapshot.children.allObjects as? [DataSnapshot] {
+                                    let wishID = snapshots[randomWishIndex].key
+                                    self.ref.child("ListItem").child(self.listID!).child(wishID).child("content").observeSingleEvent(of: .value, with: { (snapshot) in
+                                        self.wish = snapshot.value as? String
+                                    })
+                                }
+                            })
+                        }
                     }
+                    count = count + 1
                 }
-                count = count + 1
+            }
+        } else {
+            var totalNumOfTags = 0
+            ref.child("Tag").child("numOfTags").observeSingleEvent(of: .value) { (snapshot) in
+                totalNumOfTags = snapshot.value as! Int
+            }
+            
+            let randomIndex = Int(arc4random_uniform(UInt32(totalNumOfTags))) + 1
+            ref.child("Tag").child("tags").observeSingleEvent(of: .value) { (snapshot) in
+                if let snapshots = snapshot.children.allObjects as? [DataSnapshot] {
+                    var count = 0
+                    for snap in snapshots {
+                        if count == randomIndex {
+                            var tempData = snap.value as! Dictionary<String, Any>
+                            self.tag = tempData["tagName"] as? String
+                            // randomly pick a list
+                            let listIDs = tempData["listIDs"] as! [String]
+                            let listIDCount = listIDs.count
+                            let randomIndex2 = Int(arc4random_uniform(UInt32(listIDCount))) + 1
+                            self.listID = listIDs[randomIndex2]
+                            // randomly pick a wish
+                            self.ref.child("ListItem").child(self.listID!).observeSingleEvent(of: .value, with: { (snapshot) in
+                                let wishCount = snapshot.childrenCount
+                                let randomWishIndex = Int(arc4random_uniform(UInt32(wishCount))) + 1
+                                if let snapshots = snapshot.children.allObjects as? [DataSnapshot] {
+                                    let wishID = snapshots[randomWishIndex].key
+                                    self.ref.child("ListItem").child(self.listID!).child(wishID).child("content").observeSingleEvent(of: .value, with: { (snapshot) in
+                                        self.wish = snapshot.value as? String
+                                    })
+                                }
+                            })
+                        }
+                    }
+                    count = count + 1
+                }
             }
         }
     }

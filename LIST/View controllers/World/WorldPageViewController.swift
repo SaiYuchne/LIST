@@ -9,7 +9,7 @@
 import UIKit
 import FirebaseDatabase
 
-class WorldPageViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
+class WorldPageViewController: UIViewController {
 
     let ref = Database.database().reference()
     private lazy var user = LISTUser()
@@ -21,16 +21,19 @@ class WorldPageViewController: UIViewController, UITableViewDelegate, UITableVie
         }
     }
     
-    @IBOutlet weak var trendingTagsTableView: UITableView!
-    
     var trendingTags = [String]()
+    
+    @IBOutlet weak var firstTagLabel: UILabel!
+    @IBOutlet weak var secondTagLabel: UILabel!
+    @IBOutlet weak var thirdTagLabel: UILabel!
+    @IBOutlet weak var fourthTagLabel: UILabel!
+    @IBOutlet weak var fifthTagLabel: UILabel!
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        trendingTagsTableView.delegate = self
-        trendingTagsTableView.dataSource = self
+
         getDataFromDatabase()
+        configureLabels()
     }
     
     @objc private func inspirationPoolExtractTapped(_ recognizer: UITapGestureRecognizer) {
@@ -43,18 +46,60 @@ class WorldPageViewController: UIViewController, UITableViewDelegate, UITableVie
         }
     }
     
-    func numberOfSections(in tableView: UITableView) -> Int {
-        return 1
+    @IBOutlet weak var searchTagView: RoundRecView!{
+        didSet{
+            let tap = UITapGestureRecognizer(target: self, action: #selector(searchTagViewTapped(_: )))
+            searchTagView.addGestureRecognizer(tap)
+        }
     }
     
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return trendingTags.count
+    @objc func searchTagViewTapped(_ recognizer: UITapGestureRecognizer) {
+        switch recognizer.state {
+        case .ended:
+            performSegue(withIdentifier: "goToSystemTags", sender: self)
+            break
+        default:
+            break
+        }
     }
-
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-            guard let cell = tableView.dequeueReusableCell(withIdentifier: "trendingTagCell") as? TrendingTagTableViewCell else {return UITableViewCell()}
-            cell.tagLabel.text = trendingTags[indexPath.row]
-            return cell
+    
+    @IBOutlet weak var motivateView: RoundRecView!{
+        didSet{
+            let tap = UITapGestureRecognizer(target: self, action: #selector(motivateViewTapped(_: )))
+            motivateView.addGestureRecognizer(tap)
+        }
+    }
+    
+    @objc func motivateViewTapped(_ recognizer: UITapGestureRecognizer) {
+        switch recognizer.state {
+        case .ended:
+            // perform segue
+            break
+        default:
+            break
+        }
+    }
+    
+    private func configureLabels() {
+        firstTagLabel.text = "1️⃣ "+trendingTags[0]
+        secondTagLabel.text = "2️⃣ "+trendingTags[1]
+        thirdTagLabel.text = "3️⃣ "+trendingTags[2]
+        fourthTagLabel.text = "4️⃣ "+trendingTags[3]
+        fifthTagLabel.text = "5️⃣ "+trendingTags[4]
+        
+        firstTagLabel.font = UIFont.preferredFont(forTextStyle: .body).withSize(firstTagLabel.bounds.height * 0.9)
+        secondTagLabel.font = UIFont.preferredFont(forTextStyle: .body).withSize(secondTagLabel.bounds.height * 0.9)
+        thirdTagLabel.font = UIFont.preferredFont(forTextStyle: .body).withSize(thirdTagLabel.bounds.height * 0.9)
+        fourthTagLabel.font = UIFont.preferredFont(forTextStyle: .body).withSize(fourthTagLabel.bounds.height * 0.9)
+        fifthTagLabel.font = UIFont.preferredFont(forTextStyle: .body).withSize(fifthTagLabel.bounds.height * 0.9)
+    }
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if segue.identifier == "goToInspirationPool" {
+            if let destination = segue.destination as? InspirationPoolViewController {
+                destination.isTagSpecific = false
+            }
+        }
     }
     
     // MARK: database operations

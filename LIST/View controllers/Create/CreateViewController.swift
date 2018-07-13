@@ -217,8 +217,14 @@ class CreateViewController: UIViewController, UITextFieldDelegate,  UIPickerView
             self.listID = key
             
             // update List
+            // List section
             let defaultListInfo = ["listTitle": listName!, "userID": user.userID, "privacy": privacyLevel!, "priority": priorityLevel!, "creationDate": Date().toString(dateFormat: "dd-MM-yyyy"), "deadline": deadline!, "tag": [String](), "collaborator": [String](), "isFinished": false] as [String : Any?]
             ref.child("List").child(key).setValue(defaultListInfo)
+            
+            // PriorityList, DeadlineList sections
+            ref.child("PriorityList").child(user.userID).child(priorityLevel!).child(listID!).setValue(listID!)
+            let deadlineUpdate = ["listTitle": listName!, "deadline": deadline!]
+            ref.child("DeadlineList").child(user.userID).child(listID!).setValue(deadlineUpdate)
         }
     }
 

@@ -10,7 +10,7 @@ import UIKit
 import FirebaseAuth
 import FirebaseDatabase
 
-class SignUpViewController: UIViewController ,UITextFieldDelegate{
+class SignUpViewController: UIViewController ,UITextFieldDelegate {
 
     lazy var user = LISTUser()
     
@@ -18,6 +18,11 @@ class SignUpViewController: UIViewController ,UITextFieldDelegate{
     @IBOutlet weak var codeField: UITextField!
     @IBOutlet weak var rePasswordField: UITextField!
     @IBOutlet weak var passwordField: UITextField!
+    
+    var isEmailFieldEmpty = false
+    var isCodeFieldEmpty = false
+    var isPasswordFieldEmpty = false
+    var isRePassWordFieldEmpty = false
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -28,29 +33,58 @@ class SignUpViewController: UIViewController ,UITextFieldDelegate{
         rePasswordField.delegate = self
     }
     
+    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
+        if string.count == 0 {
+            return true
+        }
+        
+        let currentText = textField.text ?? ""
+        let prospectiveText = (currentText as NSString).replacingCharacters(in: range, with: string)
+        
+        switch textField {
+            case passwordField:
+                return prospectiveText.count <= 20
+            case rePasswordField:
+                return prospectiveText.count <= 20
+            default:
+                return true
+        }
+    }
+    
+    private func isInputValid() -> Bool {
+        
+        return true
+    }
+    
     // MARK: Create an user
     @IBAction func letsGoTapped(_ sender: UIButton) {
-        if let email = emailField.text, let password = passwordField.text{
-            Auth.auth().createUser(withEmail: email, password: password){ (user, error) in
-                if let error = error{
-                    // notify user that the resigistration failed
-                    let alert = UIAlertController(title: "Registration Failed",
-                                                  message:error.localizedDescription,
-                                                  preferredStyle: .alert)
-                    alert.addAction(UIAlertAction(title: "OK", style: .default))
-                    self.present(alert, animated: true, completion: nil)
-                } else {
-                    print("user email is \(email)")
-                    let ref = Database.database().reference(fromURL: "https://list-caiyuqian.firebaseio.com")
-                    ref.child("Profile").child("\(self.user.userID)").child("email").setValue(email)
-                    ref.child("UserID").child(email).setValue(self.user.userID)
-                    self.user.email = email
-                    let today = Date()
-                    self.user.createDate = today.toString(dateFormat: "dd-MM-yyyy")
-                    self.performSegue(withIdentifier: "goToFillProfile", sender: self)
+        // check every field is filled corretly
+        if (!isInputValid()) {
+            
+        } else {
+            if let email = emailField.text, let password = passwordField.text{
+                Auth.auth().createUser(withEmail: email, password: password){ (user, error) in
+                    if let error = error{
+                        // notify user that the resigistration failed
+                        let alert = UIAlertController(title: "Registration Failed",
+                                                      message:error.localizedDescription,
+                                                      preferredStyle: .alert)
+                        alert.addAction(UIAlertAction(title: "OK", style: .default))
+                        self.present(alert, animated: true, completion: nil)
+                    } else {
+                        print("user email is \(email)")
+                        let ref = Database.database().reference(fromURL: "https://list-caiyuqian.firebaseio.com")
+                        ref.child("Profile").child("\(self.user.userID)").child("email").setValue(email)
+                        ref.child("UserID").child(email).setValue(self.user.userID)
+                        self.user.email = email
+                        let today = Date()
+                        self.user.createDate = today.toString(dateFormat: "dd-MM-yyyy")
+                        self.performSegue(withIdentifier: "goToFillProfile", sender: self)
+                    }
                 }
             }
         }
+        
     }
     
     // MARK: Dismiss the keyboard

@@ -18,6 +18,7 @@
 		4098461A20F6FEA300DCAF22 /* SystemTagCollectionTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4098461920F6FEA300DCAF22 /* SystemTagCollectionTableViewController.swift */; };
 		4098461C20F7088E00DCAF22 /* MotivationQuoteViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4098461B20F7088E00DCAF22 /* MotivationQuoteViewController.swift */; };
 		4098461E20F709C200DCAF22 /* MotivationQuoteView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4098461D20F709C200DCAF22 /* MotivationQuoteView.swift */; };
+		4098462020F85A8400DCAF22 /* StringUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4098461F20F85A8400DCAF22 /* StringUtils.swift */; };
 		40A8693720D25599007A079C /* TagsTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40A8693620D25599007A079C /* TagsTableViewController.swift */; };
 		40A8693920D25A12007A079C /* TagCollectionTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40A8693820D25A12007A079C /* TagCollectionTableViewController.swift */; };
 		40BE765520BA8F270025D5BE /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40BE765420BA8F270025D5BE /* AppDelegate.swift */; };
@@ -100,6 +101,7 @@
 		4098461920F6FEA300DCAF22 /* SystemTagCollectionTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SystemTagCollectionTableViewController.swift; sourceTree = "<group>"; };
 		4098461B20F7088E00DCAF22 /* MotivationQuoteViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MotivationQuoteViewController.swift; sourceTree = "<group>"; };
 		4098461D20F709C200DCAF22 /* MotivationQuoteView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MotivationQuoteView.swift; sourceTree = "<group>"; };
+		4098461F20F85A8400DCAF22 /* StringUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StringUtils.swift; sourceTree = "<group>"; };
 		40A8693620D25599007A079C /* TagsTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TagsTableViewController.swift; sourceTree = "<group>"; };
 		40A8693820D25A12007A079C /* TagCollectionTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TagCollectionTableViewController.swift; sourceTree = "<group>"; };
 		40BE765120BA8F270025D5BE /* LIST.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = LIST.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -243,6 +245,7 @@
 			children = (
 				40CF0C0320C23C23003039A6 /* LISTUser.swift */,
 				401470C720D0C50B008B5846 /* ISPoint.swift */,
+				4098461F20F85A8400DCAF22 /* StringUtils.swift */,
 				40CF0BFE20C18E33003039A6 /* LIST.entitlements */,
 				40BE765420BA8F270025D5BE /* AppDelegate.swift */,
 				40CF0C0B20C55DBB003039A6 /* Views */,
@@ -654,6 +657,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4098462020F85A8400DCAF22 /* StringUtils.swift in Sources */,
 				401470BC20CE5ACE008B5846 /* ViewListMenuView.swift in Sources */,
 				40E919DA20F46A580022D0E6 /* TopTrendingTagsLabelView.swift in Sources */,
 				40DC375D20D8A48400EADAD1 /* FriendNotificationTableViewCell.swift in Sources */,

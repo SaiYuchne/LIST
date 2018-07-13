@@ -89,9 +89,8 @@ class TagsTableViewController: UITableViewController {
     
     // MARK: database operations
     func getTableViewDataFromDatabase() {
-        let listTagRef = ref.child("List").child(listID!).child("tag")
-        listTagRef.observeSingleEvent(of: .value) { (snapshot) in
-            if let tags = snapshot.value as? [String] {
+        ref.child("List").child(listID!).child("tag").queryOrdered(byChild: "tagName").observeSingleEvent(of: .value) { (snapshot) in
+            if let tags = snapshot.children.allObjects as? [String] {
                 for tag in tags {
                     self.cellTitle.insert(tag, at: self.cellTitle.count-1)
                 }

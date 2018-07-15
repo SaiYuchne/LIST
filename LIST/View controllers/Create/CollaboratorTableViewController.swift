@@ -83,8 +83,24 @@ class CollaboratorTableViewController: UITableViewController {
         let ok = UIAlertAction(title: "Ok", style: .default) { (_) in
             email = alert.textFields?[0].text
             if email != nil {
-                self.updateAccessInDatabase(email: email!)
-                self.addInvitationMessageInDatabase(email: email!)
+                var doesExist = false
+                self.ref.child("UserID").child(email!).observeSingleEvent(of: .value, with: { (snapshot) in
+                    if snapshot.value != nil {
+                        doesExist = true
+                    }
+                })
+                if(doesExist) {
+                    self.updateAccessInDatabase(email: email!)
+                    self.addInvitationMessageInDatabase(email: email!)
+                } else {
+                    let alert = UIAlertController(title: "Sorry", message: "The user you try to find does not exist.", preferredStyle: .alert)
+                    alert.addAction(UIAlertAction(title: "Ok", style: .default, handler: nil))
+                    self.present(alert, animated: true, completion: nil)
+                }
+            } else {
+                let alert = UIAlertController(title: "Error", message: "Email cannot be blank.", preferredStyle: .alert)
+                alert.addAction(UIAlertAction(title: "Ok", style: .default, handler: nil))
+                self.present(alert, animated: true, completion: nil)
             }
         }
         alert.addAction(cancel)

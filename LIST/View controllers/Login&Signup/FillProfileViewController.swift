@@ -19,6 +19,7 @@ class FillProfileViewController: UIViewController, UIPickerViewDelegate, UIPicke
     
     @IBOutlet weak var genderField: UITextField!
     
+    // motto is not compulsory
     @IBOutlet weak var mottoField: UITextField!
     
     let picker = UIDatePicker()
@@ -26,6 +27,7 @@ class FillProfileViewController: UIViewController, UIPickerViewDelegate, UIPicke
     let genderPicker = UIPickerView()
     let genders = ["Male", "Female"]
     
+    let nameForbiddenCharactersSet = "`~!@#$%^&*()-+=|\\}]{[:;\"'?/>.<,"
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -44,6 +46,29 @@ class FillProfileViewController: UIViewController, UIPickerViewDelegate, UIPicke
         Auth.auth().addStateDidChangeListener { (auth, user) in
             guard let _ = user else { return }
             self.user = LISTUser()
+        }
+        
+        // set the default value
+        genderPicker.selectRow(0, inComponent: 0, animated: false)
+        genderField.text = genders[0]
+        user.gender = genderField.text!
+    }
+    
+    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
+        if string.count == 0 {
+            return true
+        }
+        
+        let currentText = textField.text ?? ""
+        let prospectiveText = (currentText as NSString).replacingCharacters(in: range, with: string)
+        
+        switch textField {
+        case nameField:
+            return prospectiveText.count <= 20 && prospectiveText.doesNotContainCharactersIn(matchCharacters: nameForbiddenCharactersSet)
+        case mottoField:
+            return prospectiveText.count <= 50
+        default:
+            return true
         }
     }
 
@@ -100,18 +125,38 @@ class FillProfileViewController: UIViewController, UIPickerViewDelegate, UIPicke
         }
     }
     
+    private func isInputValid() -> Int {
+        if dateField.text == nil {
+            return 1
+        } else if nameField.text == nil {
+            return 2
+        }
+        return 3
+    }
+    
     // MARK: I'm ready tapped
     @IBAction func imReadyTapped(_ sender: UIButton) {
-        if let text = nameField.text{
-            print("username is \(text)")
-            user.userName = text
+        let checkResult = isInputValid()
+        if (checkResult != 3) {
+            var errorMessage = String()
+            switch checkResult {
+            case 1:
+                errorMessage = "Please provide your birthday date"
+            case 2:
+                errorMessage = "Please give yourself a user name"
+            default:
+                break
+            }
+            let alert = UIAlertController(title: "Error", message: errorMessage, preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: "Ok", style: .default, handler: nil))
+            
+        } else {
+            user.userName = nameField.text!
+            if let motto = mottoField.text {
+                user.motto = motto
+            }
+            self.performSegue(withIdentifier: "goToHomePageAfterSignUp", sender: self)
         }
-        if let text = mottoField.text{
-            print("user motto is \(text)")
-            user.motto = text
-        }
-        
-        self.performSegue(withIdentifier: "goToHomePageAfterSignUp", sender: self)
     }
     
     // MARK: Dismiss the keyboard

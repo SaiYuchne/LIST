@@ -19,11 +19,6 @@ class SignUpViewController: UIViewController ,UITextFieldDelegate {
     @IBOutlet weak var rePasswordField: UITextField!
     @IBOutlet weak var passwordField: UITextField!
     
-    var isEmailFieldEmpty = false
-    var isCodeFieldEmpty = false
-    var isPasswordFieldEmpty = false
-    var isRePassWordFieldEmpty = false
-    
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -51,15 +46,31 @@ class SignUpViewController: UIViewController ,UITextFieldDelegate {
         }
     }
     
-    private func isInputValid() -> Bool {
-        
-        return true
+    private func isInputValid() -> Int {
+        if passwordField.text != rePasswordField.text && passwordField.text != nil {
+            return 1
+        } else if passwordField.text == nil {
+            return 2
+        }
+        return 3
     }
     
     // MARK: Create an user
     @IBAction func letsGoTapped(_ sender: UIButton) {
         // check every field is filled corretly
-        if (!isInputValid()) {
+        let checkResult = isInputValid()
+        if (checkResult != 3) {
+            var errorMessage = String()
+            switch checkResult {
+            case 1:
+                errorMessage = "The password did not match the repassword"
+            case 2:
+                errorMessage = "The password cannot be empty"
+            default:
+                break
+            }
+            let alert = UIAlertController(title: "Error", message: errorMessage, preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: "Ok", style: .default, handler: nil))
             
         } else {
             if let email = emailField.text, let password = passwordField.text{

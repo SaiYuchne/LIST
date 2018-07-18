@@ -11,7 +11,7 @@ import FirebaseAuth
 
 class FillProfileViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataSource, UITextFieldDelegate {
     
-    var user: LISTUser!
+    var user = LISTUser()
     
     @IBOutlet weak var dateField: UITextField!
     
@@ -43,15 +43,18 @@ class FillProfileViewController: UIViewController, UIPickerViewDelegate, UIPicke
         
         genderField.inputView = genderPicker
         
-        Auth.auth().addStateDidChangeListener { (auth, user) in
-            guard let _ = user else { return }
-            self.user = LISTUser()
-        }
+//        Auth.auth().addStateDidChangeListener { (auth, user) in
+//            guard let _ = user else { return }
+//            self.user = LISTUser()
+//        }
         
         // set the default value
         genderPicker.selectRow(0, inComponent: 0, animated: false)
         genderField.text = genders[0]
-        user.gender = genderField.text!
+        print("genderField.text = \(genderField.text)")
+        if let gender = genderField.text {
+            user.gender = gender
+        }
     }
     
     func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {

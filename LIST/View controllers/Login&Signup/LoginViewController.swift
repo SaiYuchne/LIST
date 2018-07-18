@@ -31,6 +31,14 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
         Auth.auth().addStateDidChangeListener() { (auth, user) in
             if user != nil {
                 print("user is not nil")
+                
+                do {
+                    try Auth.auth().signOut()
+                    self.performSegue(withIdentifier: "goToLoginAfterSignOut", sender: self)
+                } catch let error {
+                    print(error)
+                }
+                
                 self.performSegue(withIdentifier: "goToHomePage", sender: self)
                 self.emailField.text = nil
                 self.passwordField.text = nil

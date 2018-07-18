@@ -39,6 +39,20 @@ class HomePageViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        ref.child("Profile").child(user.userID).child("pic").observeSingleEvent(of: .value, with: {(snapshot) in
+            if let profileImageURL = snapshot.value as? String {
+                let url = URL(fileURLWithPath: profileImageURL)
+                URLSession.shared.dataTask(with: url, completionHandler: {(data, response, error) in
+                    if error != nil {
+                        print(error!)
+                        return
+                    }
+                    DispatchQueue.main.async {
+                        self.profileExtract.iconImage = UIImage(data: data!)
+                    }
+                }).resume()
+            }
+        })
     }
     
     @IBOutlet weak var profileExtract: ProfileExtractView!{

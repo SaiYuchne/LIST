@@ -945,8 +945,32 @@
                             <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxY="YES"/>
                         </navigationBar>
                         <prototypes>
+                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" rowHeight="100" id="Tcr-24-U04" customClass="ProfileIconTableViewCell" customModule="LIST" customModuleProvider="target">
+                                <rect key="frame" x="0.0" y="72" width="414" height="100"/>
+                                <autoresizingMask key="autoresizingMask"/>
+                                <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="Tcr-24-U04" id="ZPl-XD-bx5">
+                                    <rect key="frame" x="0.0" y="0.0" width="414" height="99.666666666666671"/>
+                                    <autoresizingMask key="autoresizingMask"/>
+                                    <subviews>
+                                        <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="VPv-VN-iNE">
+                                            <rect key="frame" x="274.33333333333331" y="0.0" width="99.666666666666686" height="99.666666666666671"/>
+                                            <constraints>
+                                                <constraint firstAttribute="width" secondItem="VPv-VN-iNE" secondAttribute="height" multiplier="1:1" id="pdn-67-CkJ"/>
+                                            </constraints>
+                                        </imageView>
+                                    </subviews>
+                                    <constraints>
+                                        <constraint firstAttribute="bottom" secondItem="VPv-VN-iNE" secondAttribute="bottom" id="2lC-t2-0Mn"/>
+                                        <constraint firstItem="VPv-VN-iNE" firstAttribute="top" secondItem="ZPl-XD-bx5" secondAttribute="top" id="WJ9-yv-4ki"/>
+                                        <constraint firstAttribute="trailing" secondItem="VPv-VN-iNE" secondAttribute="trailing" constant="40" id="YSm-1l-DVp"/>
+                                    </constraints>
+                                </tableViewCellContentView>
+                                <connections>
+                                    <outlet property="iconImage" destination="VPv-VN-iNE" id="vDx-hU-HB4"/>
+                                </connections>
+                            </tableViewCell>
                             <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="none" indentationWidth="10" reuseIdentifier="profileInfoCell" textLabel="bTu-NX-IK3" detailTextLabel="CfT-ks-O4l" style="IBUITableViewCellStyleValue1" id="Z9U-N5-1Rc">
-                                <rect key="frame" x="0.0" y="72" width="414" height="44"/>
+                                <rect key="frame" x="0.0" y="172" width="414" height="44"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="Z9U-N5-1Rc" id="fbU-2l-c9s">
                                     <rect key="frame" x="0.0" y="0.0" width="414" height="43.666666666666664"/>
@@ -976,6 +1000,9 @@
                             <outlet property="delegate" destination="JJX-Oa-rmx" id="Oou-9w-wSG"/>
                         </connections>
                     </tableView>
+                    <connections>
+                        <segue destination="fUS-Ig-wSQ" kind="show" identifier="goToEditIcon" id="fXj-fb-5iB"/>
+                    </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="6s2-S8-d3Z" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
@@ -1016,6 +1043,65 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="uEq-bw-Kdl" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="3616" y="32"/>
+        </scene>
+        <!--Icon View Controller-->
+        <scene sceneID="k8t-cb-Ehs">
+            <objects>
+                <viewController id="fUS-Ig-wSQ" customClass="IconViewController" customModule="LIST" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="14k-hd-kSs">
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="736"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="Tx6-Yi-lJ0">
+                                <rect key="frame" x="0.0" y="168.66666666666663" width="414" height="414"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" secondItem="Tx6-Yi-lJ0" secondAttribute="height" multiplier="1:1" id="jAZ-zC-F6O"/>
+                                </constraints>
+                            </imageView>
+                            <stackView opaque="NO" contentMode="scaleToFill" distribution="fillEqually" spacing="20" translatesAutoresizingMaskIntoConstraints="NO" id="ZP2-jR-9fb">
+                                <rect key="frame" x="10" y="602.66666666666663" width="394" height="44.333333333333371"/>
+                                <subviews>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="YKI-ms-v3Z">
+                                        <rect key="frame" x="0.0" y="0.0" width="187" height="44.333333333333336"/>
+                                        <color key="backgroundColor" red="0.90196079019999997" green="0.90196079019999997" blue="0.90196079019999997" alpha="0.5" colorSpace="calibratedRGB"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="20"/>
+                                        <state key="normal" title="Change"/>
+                                        <connections>
+                                            <action selector="iconEditTapped:" destination="fUS-Ig-wSQ" eventType="touchUpInside" id="Fb7-6X-lQb"/>
+                                        </connections>
+                                    </button>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="21Q-uK-0eX">
+                                        <rect key="frame" x="207" y="0.0" width="187" height="44.333333333333336"/>
+                                        <color key="backgroundColor" red="0.90196079019999997" green="0.90196079019999997" blue="0.90196079019999997" alpha="0.5" colorSpace="calibratedRGB"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="20"/>
+                                        <state key="normal" title="Save"/>
+                                        <connections>
+                                            <action selector="saveTapped:" destination="fUS-Ig-wSQ" eventType="touchUpInside" id="DsK-4u-3gp"/>
+                                        </connections>
+                                    </button>
+                                </subviews>
+                            </stackView>
+                        </subviews>
+                        <color key="backgroundColor" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstItem="Tx6-Yi-lJ0" firstAttribute="leading" secondItem="FlQ-c7-Bf8" secondAttribute="leading" id="28e-g8-IiK"/>
+                            <constraint firstItem="FlQ-c7-Bf8" firstAttribute="trailing" secondItem="Tx6-Yi-lJ0" secondAttribute="trailing" id="6cm-3F-4oF"/>
+                            <constraint firstItem="ZP2-jR-9fb" firstAttribute="top" secondItem="Tx6-Yi-lJ0" secondAttribute="bottom" constant="20" id="Gf9-JR-qRE"/>
+                            <constraint firstItem="ZP2-jR-9fb" firstAttribute="leading" secondItem="FlQ-c7-Bf8" secondAttribute="leading" constant="10" id="SCq-6p-Ylw"/>
+                            <constraint firstItem="Tx6-Yi-lJ0" firstAttribute="centerX" secondItem="FlQ-c7-Bf8" secondAttribute="centerX" id="Ych-Uc-NXE"/>
+                            <constraint firstItem="FlQ-c7-Bf8" firstAttribute="trailing" secondItem="ZP2-jR-9fb" secondAttribute="trailing" constant="10" id="Zb9-xG-nH7"/>
+                            <constraint firstItem="Tx6-Yi-lJ0" firstAttribute="centerY" secondItem="FlQ-c7-Bf8" secondAttribute="centerY" id="fFo-aT-XKA"/>
+                            <constraint firstItem="FlQ-c7-Bf8" firstAttribute="bottom" secondItem="ZP2-jR-9fb" secondAttribute="bottom" constant="40" id="tKZ-wk-6R2"/>
+                        </constraints>
+                        <viewLayoutGuide key="safeArea" id="FlQ-c7-Bf8"/>
+                    </view>
+                    <connections>
+                        <outlet property="iconImage" destination="Tx6-Yi-lJ0" id="fuW-Ro-aPO"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="NZt-7f-dzZ" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="4379.7101449275369" y="31.793478260869566"/>
         </scene>
         <!--Home-->
         <scene sceneID="O9k-db-eO1">

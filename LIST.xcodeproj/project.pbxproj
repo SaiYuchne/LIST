@@ -15,6 +15,8 @@
 		401470C220D0C3D1008B5846 /* ISTimeline.swift in Sources */ = {isa = PBXBuildFile; fileRef = 401470C120D0C3D1008B5846 /* ISTimeline.swift */; };
 		401470C820D0C50B008B5846 /* ISPoint.swift in Sources */ = {isa = PBXBuildFile; fileRef = 401470C720D0C50B008B5846 /* ISPoint.swift */; };
 		401470CA20D11151008B5846 /* DocumentNodeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 401470C920D11151008B5846 /* DocumentNodeViewController.swift */; };
+		4051D75C20FEE37800A3CFC9 /* IconViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4051D75B20FEE37800A3CFC9 /* IconViewController.swift */; };
+		4051D75E20FEE98B00A3CFC9 /* ProfileIconTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4051D75D20FEE98A00A3CFC9 /* ProfileIconTableViewCell.swift */; };
 		4098461A20F6FEA300DCAF22 /* SystemTagCollectionTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4098461920F6FEA300DCAF22 /* SystemTagCollectionTableViewController.swift */; };
 		4098461C20F7088E00DCAF22 /* MotivationQuoteViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4098461B20F7088E00DCAF22 /* MotivationQuoteViewController.swift */; };
 		4098461E20F709C200DCAF22 /* MotivationQuoteView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4098461D20F709C200DCAF22 /* MotivationQuoteView.swift */; };
@@ -98,6 +100,8 @@
 		401470C120D0C3D1008B5846 /* ISTimeline.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ISTimeline.swift; sourceTree = "<group>"; };
 		401470C720D0C50B008B5846 /* ISPoint.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ISPoint.swift; sourceTree = "<group>"; };
 		401470C920D11151008B5846 /* DocumentNodeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DocumentNodeViewController.swift; sourceTree = "<group>"; };
+		4051D75B20FEE37800A3CFC9 /* IconViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IconViewController.swift; sourceTree = "<group>"; };
+		4051D75D20FEE98A00A3CFC9 /* ProfileIconTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProfileIconTableViewCell.swift; sourceTree = "<group>"; };
 		4098461920F6FEA300DCAF22 /* SystemTagCollectionTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SystemTagCollectionTableViewController.swift; sourceTree = "<group>"; };
 		4098461B20F7088E00DCAF22 /* MotivationQuoteViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MotivationQuoteViewController.swift; sourceTree = "<group>"; };
 		4098461D20F709C200DCAF22 /* MotivationQuoteView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MotivationQuoteView.swift; sourceTree = "<group>"; };
@@ -315,6 +319,7 @@
 				40CF0C1220CA6BA6003039A6 /* SettingsTableViewController.swift */,
 				40CF0C0E20C807BF003039A6 /* ProfileTableViewController.swift */,
 				40CF0C1620CA71D2003039A6 /* SystemSettingsTableViewController.swift */,
+				4051D75B20FEE37800A3CFC9 /* IconViewController.swift */,
 			);
 			path = Settings;
 			sourceTree = "<group>";
@@ -369,6 +374,7 @@
 				40E919CB20F305880022D0E6 /* FavListGoalTableViewCell.swift */,
 				40E919CD20F305AD0022D0E6 /* FavListSubgoalTableViewCell.swift */,
 				40E919D320F30DCD0022D0E6 /* FavListNameTableViewCell.swift */,
+				4051D75D20FEE98A00A3CFC9 /* ProfileIconTableViewCell.swift */,
 			);
 			path = "Table View Cells";
 			sourceTree = "<group>";
@@ -679,6 +685,7 @@
 				40CF0C0420C23C23003039A6 /* LISTUser.swift in Sources */,
 				40BE765520BA8F270025D5BE /* AppDelegate.swift in Sources */,
 				40E919CE20F305AD0022D0E6 /* FavListSubgoalTableViewCell.swift in Sources */,
+				4051D75E20FEE98B00A3CFC9 /* ProfileIconTableViewCell.swift in Sources */,
 				40CF0C2520CB8095003039A6 /* ToolTableViewCell.swift in Sources */,
 				40CF0C1F20CAB542003039A6 /* SingleListViewController.swift in Sources */,
 				40DC375920D89B6400EADAD1 /* FriendsTableViewController.swift in Sources */,
@@ -698,6 +705,7 @@
 				40A8693920D25A12007A079C /* TagCollectionTableViewController.swift in Sources */,
 				40DC376C20DBDB6500EADAD1 /* CollaboratorTableViewController.swift in Sources */,
 				40CF0C2120CAB706003039A6 /* RoundRecView.swift in Sources */,
+				4051D75C20FEE37800A3CFC9 /* IconViewController.swift in Sources */,
 				40DC376F20DE0BD700EADAD1 /* MessageTableViewController.swift in Sources */,
 				40E919CC20F305880022D0E6 /* FavListGoalTableViewCell.swift in Sources */,
 				40DC376A20DBA4C500EADAD1 /* PageViewController.swift in Sources */,

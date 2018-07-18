@@ -8,6 +8,7 @@
 
 import UIKit
 import FirebaseDatabase
+import Firebase
 
 class ProfileTableViewController: UITableViewController, UITextFieldDelegate {
 
@@ -39,7 +40,7 @@ class ProfileTableViewController: UITableViewController, UITextFieldDelegate {
         if let text = cell.textLabel?.text {
             switch (text) {
             case "Icon":
-                cell.detailTextLabel?.text = "icon"
+                break
             case "Username":
                 print("check")
                 print("username is \(user.userName)")
@@ -75,7 +76,8 @@ class ProfileTableViewController: UITableViewController, UITextFieldDelegate {
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         switch (indexPath.row) {
         case 0:
-            break
+            // perform segue to show the user's profile icon
+            performSegue(withIdentifier: "goToEditIcon", sender: self)
         // change the username
         case 1:
             let alert = UIAlertController(title: "Change", message: "Change your username:", preferredStyle: .alert)
@@ -205,5 +207,26 @@ class ProfileTableViewController: UITableViewController, UITextFieldDelegate {
         print(newDate!)
         alert.textFields?[0].text = newDate
         self.view.endEditing(true)
+    }
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if segue.identifier == "goToEditIcon" {
+            if let destination = segue.destination as? IconViewController {
+                ref.child("Profile").child(user.userID).child("pic").observeSingleEvent(of: .value, with: {(snapshot) in
+                    if let profileImageURL = snapshot.value as? String {
+                        let url = URL(fileURLWithPath: profileImageURL)
+                        URLSession.shared.dataTask(with: url, completionHandler: {(data, response, error) in
+                            if error != nil {
+                                print(error!)
+                                return
+                            }
+                            DispatchQueue.main.async {
+                                destination.iconImage.image = UIImage(data: data!)
+                            }
+                        }).resume()
+                    }
+                })
+            }
+        }
     }
 }

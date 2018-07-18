@@ -53,7 +53,7 @@ class MessageTableViewController: UITableViewController {
         let senderName = ref.child("Profile").child(cell.senderID!).value(forKey: "username") as! String
         let listName = ref.child("List").child(cell.listID!).value(forKey: "listTitle") as! String
         
-        let alert = UIAlertController(title: "Invitation", message: "\(senderName) has invited you to complete \"\(listName)\". Do you want to join?", preferredStyle: .actionSheet)
+        let alert = UIAlertController(title: "Invitation", message: "\(senderName) has invited you to complete \"\(listName)\". Now you can access the list.", preferredStyle: .actionSheet)
         alert.addAction(UIAlertAction(title: "Ok", style: .default, handler: nil))
         present(alert, animated: true, completion: nil)
     }

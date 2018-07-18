@@ -61,6 +61,7 @@ class ProfileExtractView: UIView {
     
     // MARK: iconPIC
     private lazy var iconPic = createIconPic()
+    var iconImage: UIImage?
     // todo: how to upload iconPic
     func createIconPic() -> UIImageView {
         let iconImageView = UIImageView()
@@ -70,7 +71,11 @@ class ProfileExtractView: UIView {
     }
     
     func configureIconPic(_ imageView: UIImageView) {
-        imageView.image = UIImage(named: "icon")
+        if let image = iconImage {
+            imageView.image = image
+        } else {
+            imageView.image = UIImage(named: "icon")
+        }
         imageView.contentMode = .scaleAspectFill
     }
     

@@ -71,6 +71,7 @@ class SignUpViewController: UIViewController ,UITextFieldDelegate {
             }
             let alert = UIAlertController(title: "Error", message: errorMessage, preferredStyle: .alert)
             alert.addAction(UIAlertAction(title: "Ok", style: .default, handler: nil))
+            present(alert, animated: true, completion: nil)
             
         } else {
             if let email = emailField.text, let password = passwordField.text{

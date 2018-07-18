@@ -43,11 +43,6 @@ class FillProfileViewController: UIViewController, UIPickerViewDelegate, UIPicke
         
         genderField.inputView = genderPicker
         
-//        Auth.auth().addStateDidChangeListener { (auth, user) in
-//            guard let _ = user else { return }
-//            self.user = LISTUser()
-//        }
-        
         // set the default value
         genderPicker.selectRow(0, inComponent: 0, animated: false)
         genderField.text = genders[0]
@@ -152,6 +147,7 @@ class FillProfileViewController: UIViewController, UIPickerViewDelegate, UIPicke
             }
             let alert = UIAlertController(title: "Error", message: errorMessage, preferredStyle: .alert)
             alert.addAction(UIAlertAction(title: "Ok", style: .default, handler: nil))
+            present(alert, animated: true, completion: nil)
             
         } else {
             user.userName = nameField.text!

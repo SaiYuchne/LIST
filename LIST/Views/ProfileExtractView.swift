@@ -43,8 +43,8 @@ class ProfileExtractView: UIView {
     private lazy var usernameLabel = createMottoLabel()
     
     private var usernameString: NSAttributedString {
-        return createAttributedString("Testname", fontSize: cornerFontSize*0.8, isParagraphStyleNatural:true)
-//        return centeredAttributedString("\(user.username)", fontSize: cornerFontSize*0.8)
+//        return createAttributedString("Testname", fontSize: cornerFontSize*0.8, isParagraphStyleNatural:true)
+        return createAttributedString("\(user.userName)", fontSize: cornerFontSize*0.8, isParagraphStyleNatural:true)
     }
     
     private func createUsernameLabel() -> UILabel {
@@ -83,10 +83,9 @@ class ProfileExtractView: UIView {
     private lazy var dayLabel = createDayLabel()
     
     private var dayString: NSAttributedString {
-        let todayString = Date().toString(dateFormat: "dd-MM-yyyy")
         
-//        return centeredAttributedString("LIST has been there with you for\n 40 days!", fontSize: cornerFontSize*0.8, isParagraphStyleNatural:false)
-        return createAttributedString("LIST has been there with you for\n \(calculateDateDifference(from: user.createDate, to: todayString)) days!", fontSize: cornerFontSize*0.8, isParagraphStyleNatural:false)
+//        return createAttributedString("LIST has been there with you for\n 40 days!", fontSize: cornerFontSize*0.8, isParagraphStyleNatural:false)
+        return createAttributedString("LIST has been there with you for\n \(calculateDateDifference(from: user.createDate)) days!", fontSize: cornerFontSize*0.8, isParagraphStyleNatural:false)
     }
     
     private func createDayLabel() -> UILabel {
@@ -147,17 +146,10 @@ class ProfileExtractView: UIView {
     }
     
     // MARK: calculate the time difference
-    func calculateDateDifference(from date1: String, to date2: String) -> Int {
-        let calendar: Calendar = Calendar.current
-        
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "dd-MM-yyyy"
-        
-        let firstDate = dateFormatter.date(from: date1)
-        let secondDate = dateFormatter.date(from: date2)
-
-        let difference = calendar.component(.day, from: secondDate!) - calendar.component(.day, from: firstDate!)
-        
+    func calculateDateDifference(from date1: Int) -> Int {
+        let todayIntervalBySecond = Date().timeIntervalSinceReferenceDate
+        let todayInterval = Int(todayIntervalBySecond/(3600 * 24))
+        let difference = todayInterval - date1
         return difference
     }
 }

@@ -85,12 +85,14 @@ class SignUpViewController: UIViewController ,UITextFieldDelegate {
                         self.present(alert, animated: true, completion: nil)
                     } else {
                         print("user email is \(email)")
-                        let ref = Database.database().reference(fromURL: "https://list-caiyuqian.firebaseio.com")
+                        let ref = Database.database().reference()
                         ref.child("Profile").child("\(self.user.userID)").child("email").setValue(email)
                         ref.child("UserID").child(email).setValue(self.user.userID)
                         self.user.email = email
-                        let today = Date()
-                        self.user.createDate = today.toString(dateFormat: "dd-MM-yyyy")
+                        let todayInterval = Date().timeIntervalSinceReferenceDate
+                        let creationDateInterval = Int(todayInterval/(3600 * 24))
+                        ref.child("Profile").child("\(self.user.userID)").child("createDate").setValue(creationDateInterval)
+                        self.user.createDate = creationDateInterval
                         self.performSegue(withIdentifier: "goToFillProfile", sender: self)
                     }
                 }

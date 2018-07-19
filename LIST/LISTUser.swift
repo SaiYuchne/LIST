@@ -11,7 +11,9 @@ import FirebaseAuth
 import FirebaseDatabase
 
 class LISTUser {
-    var userID: String = ""
+    var userID: String {
+        return Auth.auth().currentUser!.uid
+    }
     let ref = Database.database().reference()
     lazy var profileRef = ref.child("Profile")
     
@@ -26,7 +28,7 @@ class LISTUser {
             return email ?? ""
         }
         set{
-            profileRef.child("users/\(userID)/email").setValue(newValue)
+            profileRef.child(userID).child("email").setValue(newValue)
         }
     }
     var gender: String {
@@ -38,7 +40,7 @@ class LISTUser {
             return gender ?? ""
         }
         set{
-            profileRef.child("users/\(userID)/gender").setValue(newValue)
+            profileRef.child(userID).child("gender").setValue(newValue)
         }
     }
     var birthDate: String {
@@ -50,19 +52,19 @@ class LISTUser {
             return birthDate ?? ""
         }
         set{
-            profileRef.child("users/\(userID)/birthDate").setValue(newValue)
+            profileRef.child(userID).child("birthDate").setValue(newValue)
         }
     }
-    var createDate: String {
+    var createDate: Int {
         get{
-            var createDate: String?
+            var createDate: Int?
             profileRef.child(userID).child("createDate").observe(.value, with: { (snapshot) in
-                createDate = snapshot.value as? String
+                createDate = snapshot.value as? Int
             })
-            return createDate ?? ""
+            return createDate ?? 0
         }
         set{
-            profileRef.child("users/\(userID)/createDate").setValue(newValue)
+            profileRef.child(userID).child("createDate").setValue(newValue)
         }
     }
     var userName: String {
@@ -74,7 +76,7 @@ class LISTUser {
             return userName ?? ""
         }
         set{
-            profileRef.child("users/\(userID)/userName").setValue(newValue)
+            profileRef.child(userID).child("userName").setValue(newValue)
         }
     }
     var motto: String {
@@ -86,13 +88,19 @@ class LISTUser {
             return motto ?? ""
         }
         set{
-            profileRef.child("users/\(userID)/motto").setValue(newValue)
+            profileRef.child(userID).child("motto").setValue(newValue)
         }
     }
-    
-    init(){
-        if let id = Auth.auth().currentUser?.uid {
-            userID = id
+    var pic: String {
+        get{
+            var pic: String?
+            profileRef.child(userID).child("pic").observe(.value, with: { (snapshot) in
+                pic = snapshot.value as? String
+            })
+            return pic ?? ""
+        }
+        set{
+            profileRef.child(userID).child("pic").setValue(newValue)
         }
     }
 }

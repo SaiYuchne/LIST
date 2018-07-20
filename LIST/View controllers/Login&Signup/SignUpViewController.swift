@@ -86,11 +86,12 @@ class SignUpViewController: UIViewController ,UITextFieldDelegate {
                     } else {
                         print("user email is \(email)")
                         let ref = Database.database().reference()
-                        ref.child("Profile").child("\(self.user.userID)").child("email").setValue(email)
-                        ref.child("UserID").child(email).setValue(self.user.userID)
+                        ref.child("Profile").child("\(self.user.userID)").child("email").setValue("\(email)")
+                        ref.child("UserID").child("\(email.removeCharacters(from: "."))").setValue("\(self.user.userID)")
                         self.user.email = email
                         let todayInterval = Date().timeIntervalSinceReferenceDate
                         let creationDateInterval = Int(todayInterval/(3600 * 24))
+                        print("creationDateInterval is \(creationDateInterval)")
                         ref.child("Profile").child("\(self.user.userID)").child("createDate").setValue(creationDateInterval)
                         self.user.createDate = creationDateInterval
                         self.performSegue(withIdentifier: "goToFillProfile", sender: self)
@@ -121,4 +122,15 @@ extension Date {
         return dateFormatter.string(from: self)
     }
     
+}
+extension String {
+    
+    func removeCharacters(from forbiddenChars: CharacterSet) -> String {
+        let passed = self.unicodeScalars.filter { !forbiddenChars.contains($0) }
+        return String(String.UnicodeScalarView(passed))
+    }
+    
+    func removeCharacters(from: String) -> String {
+        return removeCharacters(from: CharacterSet(charactersIn: from))
+    }
 }

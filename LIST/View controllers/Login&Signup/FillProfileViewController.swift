@@ -96,9 +96,10 @@ class FillProfileViewController: UIViewController, UIPickerViewDelegate, UIPicke
         let dateString = formatter.string(from: picker.date)
         
         dateField.text = "\(dateString)"
-        self.view.endEditing(true)
         print("user birthDate is \(dateString)")
         user.birthDate = dateString
+        self.view.endEditing(true)
+        
     }
     
     // MARK: Set the gender picker

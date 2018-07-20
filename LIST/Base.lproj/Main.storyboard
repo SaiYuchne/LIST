@@ -897,7 +897,6 @@
                                 </state>
                                 <connections>
                                     <action selector="imReadyTapped:" destination="wmb-UM-jhN" eventType="touchUpInside" id="YO5-TO-spS"/>
-                                    <action selector="letsGoTapped:" destination="IsK-ZV-RzF" eventType="touchUpInside" id="O4i-WT-MiX"/>
                                     <segue destination="iNI-ex-1km" kind="presentation" identifier="goToHomePageAfterSignUp" id="R1l-s4-xFz"/>
                                 </connections>
                             </button>
@@ -2751,7 +2750,7 @@
     <inferredMetricsTieBreakers>
         <segue reference="qJl-re-xWu"/>
         <segue reference="YYj-6l-CVf"/>
-        <segue reference="QLM-yM-RsG"/>
+        <segue reference="R1l-s4-xFz"/>
         <segue reference="ifN-rr-Tp4"/>
         <segue reference="zsO-Lm-bwN"/>
         <segue reference="COX-zx-wt0"/>

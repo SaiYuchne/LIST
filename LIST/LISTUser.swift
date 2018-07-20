@@ -11,9 +11,7 @@ import FirebaseAuth
 import FirebaseDatabase
 
 class LISTUser {
-    var userID: String {
-        return Auth.auth().currentUser!.uid
-    }
+    var userID = String()
     let ref = Database.database().reference()
     lazy var profileRef = ref.child("Profile")
     
@@ -101,6 +99,12 @@ class LISTUser {
         }
         set{
             profileRef.child(userID).child("pic").setValue(newValue)
+        }
+    }
+    
+    init() {
+        if let id = Auth.auth().currentUser?.uid {
+            userID = id
         }
     }
 }

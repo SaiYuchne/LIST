@@ -15,7 +15,6 @@ class SignUpViewController: UIViewController ,UITextFieldDelegate {
     lazy var user = LISTUser()
     
     @IBOutlet weak var emailField: UITextField!
-    @IBOutlet weak var codeField: UITextField!
     @IBOutlet weak var rePasswordField: UITextField!
     @IBOutlet weak var passwordField: UITextField!
     
@@ -23,7 +22,6 @@ class SignUpViewController: UIViewController ,UITextFieldDelegate {
         super.viewDidLoad()
 
         emailField.delegate = self
-        codeField.delegate = self
         passwordField.delegate = self
         rePasswordField.delegate = self
     }
@@ -92,8 +90,9 @@ class SignUpViewController: UIViewController ,UITextFieldDelegate {
                         let todayInterval = Date().timeIntervalSinceReferenceDate
                         let creationDateInterval = Int(todayInterval/(3600 * 24))
                         print("creationDateInterval is \(creationDateInterval)")
-                        ref.child("Profile").child("\(self.user.userID)").child("createDate").setValue(creationDateInterval)
-                        self.user.createDate = creationDateInterval
+                        ref.child("Profile").child("\(self.user.userID)").child("creationDays").setValue(creationDateInterval)
+                        self.user.creationDays = creationDateInterval
+                        self.user.creationDate = Date().toString(dateFormat: "dd-mm-yyyy")
                         self.performSegue(withIdentifier: "goToFillProfile", sender: self)
                     }
                 }
@@ -115,7 +114,7 @@ class SignUpViewController: UIViewController ,UITextFieldDelegate {
     }
 }
 extension Date {
-    func toString( dateFormat format  : String ) -> String
+    func toString(dateFormat format  : String ) -> String
     {
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = format

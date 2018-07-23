@@ -19,12 +19,19 @@ class ProfileExtractView: UIView {
         }
     }
     
+    var userName = String()
+    var motto: String?
+    var creationDays = Int()
+    
     // MARK: mottoLabel
     private lazy var mottoLabel = createMottoLabel()
     
     private var mottoString: NSAttributedString {
 //        return centeredAttributedString("\"Just do it!\"", fontSize: cornerFontSize, isParagraphStyleNatural:true)
-        return createAttributedString("\"\(user.motto)\"", fontSize: cornerFontSize, isParagraphStyleNatural:true)
+        if let motto = motto {
+            return createAttributedString("\"\(motto)\"", fontSize: cornerFontSize, isParagraphStyleNatural:true)
+        }
+        return createAttributedString("\"You only live once\"", fontSize: cornerFontSize, isParagraphStyleNatural:true)
     }
     
     private func createMottoLabel() -> UILabel {
@@ -44,7 +51,7 @@ class ProfileExtractView: UIView {
     
     private var usernameString: NSAttributedString {
 //        return createAttributedString("Testname", fontSize: cornerFontSize*0.8, isParagraphStyleNatural:true)
-        return createAttributedString("\(user.userName)", fontSize: cornerFontSize*0.8, isParagraphStyleNatural:true)
+        return createAttributedString("\(userName)", fontSize: cornerFontSize*0.8, isParagraphStyleNatural:true)
     }
     
     private func createUsernameLabel() -> UILabel {
@@ -85,7 +92,7 @@ class ProfileExtractView: UIView {
     private var dayString: NSAttributedString {
         
 //        return createAttributedString("LIST has been there with you for\n 40 days!", fontSize: cornerFontSize*0.8, isParagraphStyleNatural:false)
-        return createAttributedString("LIST has been there with you for\n \(calculateDateDifference(from: user.createDate)) days!", fontSize: cornerFontSize*0.8, isParagraphStyleNatural:false)
+        return createAttributedString("LIST has been there with you for\n \(calculateDateDifference(from: creationDays)) days!", fontSize: cornerFontSize*0.8, isParagraphStyleNatural:false)
     }
     
     private func createDayLabel() -> UILabel {

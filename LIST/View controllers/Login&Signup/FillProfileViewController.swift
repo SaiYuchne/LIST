@@ -8,10 +8,12 @@
 
 import UIKit
 import FirebaseAuth
+import FirebaseDatabase
 
 class FillProfileViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataSource, UITextFieldDelegate {
     
     var user = LISTUser()
+    let ref = Database.database().reference()
     
     @IBOutlet weak var dateField: UITextField!
     
@@ -169,5 +171,17 @@ class FillProfileViewController: UIViewController, UIPickerViewDelegate, UIPicke
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         textField.resignFirstResponder()
         return true
+    }
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if segue.identifier == "goToHomePageAfterSignUp" {
+            if let destination = segue.destination as? HomePageViewController {
+                destination.profileExtract.userName = nameField.text!
+                destination.profileExtract.motto = mottoField.text
+                ref.child("Profile").child(user.userID).child("creationDays").observeSingleEvent(of: .value, with: { (snapshot) in
+                        destination.profileExtract.creationDays = snapshot.value as! Int
+                })
+            }
+        }
     }
 }

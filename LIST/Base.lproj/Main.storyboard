@@ -201,7 +201,7 @@
                                                     <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                                 </state>
                                                 <connections>
-                                                    <segue destination="xZz-Jt-yGc" kind="show" id="ngK-ns-OQ0"/>
+                                                    <segue destination="xZz-Jt-yGc" kind="show" identifier="goToArchive" id="ngK-ns-OQ0"/>
                                                 </connections>
                                             </button>
                                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="dsf-cr-QA6">
@@ -262,7 +262,6 @@
                                 </state>
                                 <connections>
                                     <action selector="signOutTapped:" destination="AWy-QC-cra" eventType="touchUpInside" id="3TR-bR-POU"/>
-                                    <segue destination="BYZ-38-t0r" kind="presentation" identifier="goToLoginAfterSignOut" id="Rru-Cz-kwg"/>
                                 </connections>
                             </button>
                         </subviews>
@@ -290,6 +289,7 @@
                     <connections>
                         <outlet property="profileExtract" destination="zMH-yI-ThU" id="IZl-j8-LEp"/>
                         <segue destination="W9g-Yc-DPZ" kind="show" identifier="goToMajorList" id="b38-u7-0VJ"/>
+                        <segue destination="BYZ-38-t0r" kind="presentation" identifier="afterSignOut" id="vYN-BI-2bV"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="qUm-US-kdX" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -656,7 +656,7 @@
                                 <nil key="highlightedColor"/>
                             </label>
                             <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="10" translatesAutoresizingMaskIntoConstraints="NO" id="5gS-LY-S5l">
-                                <rect key="frame" x="40" y="263" width="334" height="150"/>
+                                <rect key="frame" x="40" y="263" width="334" height="110"/>
                                 <subviews>
                                     <stackView opaque="NO" contentMode="scaleToFill" spacing="100" translatesAutoresizingMaskIntoConstraints="NO" id="4og-7T-RYT">
                                         <rect key="frame" x="0.0" y="0.0" width="334" height="30"/>
@@ -712,28 +712,10 @@
                                             </textField>
                                         </subviews>
                                     </stackView>
-                                    <stackView opaque="NO" contentMode="scaleToFill" spacing="12" translatesAutoresizingMaskIntoConstraints="NO" id="taO-jG-bu8">
-                                        <rect key="frame" x="0.0" y="120" width="334" height="30"/>
-                                        <subviews>
-                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" text="Verification code" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="EFj-bg-CRu">
-                                                <rect key="frame" x="0.0" y="0.0" width="109.33333333333333" height="30"/>
-                                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                                <nil key="textColor"/>
-                                                <nil key="highlightedColor"/>
-                                            </label>
-                                            <textField opaque="NO" contentMode="scaleToFill" ambiguous="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="check your email for the code" textAlignment="natural" minimumFontSize="17" clearButtonMode="whileEditing" translatesAutoresizingMaskIntoConstraints="NO" id="2PL-XS-V6G">
-                                                <rect key="frame" x="121.33333333333336" y="0.0" width="212.66666666666663" height="30"/>
-                                                <color key="backgroundColor" white="1" alpha="0.59999999999999998" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                                <nil key="textColor"/>
-                                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                                                <textInputTraits key="textInputTraits"/>
-                                            </textField>
-                                        </subviews>
-                                    </stackView>
                                 </subviews>
                             </stackView>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="8Mf-7b-5uF">
-                                <rect key="frame" x="169.66666666666666" y="478" width="75" height="36"/>
+                                <rect key="frame" x="169.66666666666666" y="438" width="75" height="36"/>
                                 <color key="backgroundColor" red="0.90196079019999997" green="0.90196079019999997" blue="0.90196079019999997" alpha="1" colorSpace="calibratedRGB"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="75" id="hIk-6P-DCC"/>
@@ -788,7 +770,6 @@
                         <viewLayoutGuide key="safeArea" id="ydp-fR-3Vz"/>
                     </view>
                     <connections>
-                        <outlet property="codeField" destination="2PL-XS-V6G" id="PyW-4A-GWm"/>
                         <outlet property="emailField" destination="nBq-xb-OoK" id="aic-A3-9PZ"/>
                         <outlet property="passwordField" destination="ZEA-d8-S2j" id="x2u-xd-IAp"/>
                         <outlet property="rePasswordField" destination="Oi0-X1-0wg" id="ojh-yC-f5f"/>
@@ -2750,9 +2731,9 @@
     <inferredMetricsTieBreakers>
         <segue reference="qJl-re-xWu"/>
         <segue reference="YYj-6l-CVf"/>
-        <segue reference="R1l-s4-xFz"/>
+        <segue reference="QLM-yM-RsG"/>
         <segue reference="ifN-rr-Tp4"/>
-        <segue reference="zsO-Lm-bwN"/>
-        <segue reference="COX-zx-wt0"/>
+        <segue reference="b38-u7-0VJ"/>
+        <segue reference="vYN-BI-2bV"/>
     </inferredMetricsTieBreakers>
 </document>

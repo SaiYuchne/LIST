@@ -20,27 +20,70 @@ class ViewListMenuViewController: UIViewController {
         // Do any additional setup after loading the view.
     }
     
+    override func shouldPerformSegue(withIdentifier identifier: String, sender: Any?) -> Bool {
+        print("Check: should perform segue:")
+        var shouldPerform = true
+        
+        if identifier == "viewByPriority" {
+            print("viewByPriority")
+            ref.child("PriorityList").child(user.userID).observeSingleEvent(of: .value, with: { (snapshot) in
+                if !snapshot.exists() {
+                    print("snapshot does not exist")
+                    shouldPerform = false
+                    let alert = UIAlertController(title: "Sorry", message: "You haven't created any list. You can go to create one and then come back.", preferredStyle: .alert)
+                    let ok = UIAlertAction(title: "Ok", style: .default, handler: { (action) in
+                        self.navigationController?.popViewController(animated: true)
+                    })
+                    alert.addAction(ok)
+                    self.present(alert, animated: true, completion: nil)
+                }
+            })
+        } else if identifier == "viewByDeadline" {
+            print("viewByDeadline")
+            ref.child("DeadlineList").child(user.userID).observeSingleEvent(of: .value, with: { (snapshot) in
+                if !snapshot.exists() {
+                    print("snapshot does not exist")
+                    shouldPerform = false
+                    let alert = UIAlertController(title: "Sorry", message: "You haven't created any list. You can go to create one and then come back.", preferredStyle: .alert)
+                    let ok = UIAlertAction(title: "Ok", style: .default, handler: { (action) in
+                        self.navigationController?.popViewController(animated: true)
+                    })
+                    alert.addAction(ok)
+                    self.present(alert, animated: true, completion: nil)
+                }
+            })
+        } else {
+            print("viewByTag")
+            ref.child("TagList").child(user.userID).observeSingleEvent(of: .value, with: { (snapshot) in
+                if !snapshot.exists() {
+                    print("snapshot does not exist")
+                    shouldPerform = false
+                    let alert = UIAlertController(title: "Sorry", message: "You haven't added any tags to your lists or haven't created a list before. You may view your lists by priority level or deadline and then add some tags to your lists.", preferredStyle: .alert)
+                    let ok = UIAlertAction(title: "Ok", style: .default, handler: { (action) in
+                        self.navigationController?.popViewController(animated: true)
+                    })
+                    alert.addAction(ok)
+                    self.present(alert, animated: true, completion: nil)
+                }
+            })
+        }
+        
+        return shouldPerform
+    }
+    
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "viewByPriority" {
             if let destination = segue.destination as? ViewListViewController {
-                destination.byPriority = true
+                destination.byTag = true
             }
         } else if segue.identifier == "viewByDeadline" {
             if let destination = segue.destination as? ViewListViewController {
                 destination.byDeadline = true
             }
         } else {
-            ref.child("TagList").child(user.userID).observeSingleEvent(of: .value, with: { (snapshot) in
-                if snapshot.value == nil {
-                    let alert = UIAlertController(title: "Sorry", message: "You haven't added any tags to your lists. You may view your lists by priority level or deadline and then add some tags to your lists.", preferredStyle: .alert)
-                    alert.addAction(UIAlertAction(title: "Ok", style: .default, handler: nil))
-                    self.present(alert, animated: true, completion: nil)
-                } else {
-                    if let destination = segue.destination as? ViewListViewController {
-                        destination.byTag = true
-                    }
-                }
-            })
+            if let destination = segue.destination as? ViewListViewController {
+                destination.byTag = true
+            }
         }
     }
 

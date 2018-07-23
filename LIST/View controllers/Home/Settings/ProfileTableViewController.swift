@@ -20,6 +20,34 @@ class ProfileTableViewController: UITableViewController, UITextFieldDelegate {
     var newDate: String?
     
     private var infoTitle = ["Icon", "Username", "Gender", "Birth date", "Life motto", "Email"]
+    var infoContent = [String]()
+    var userName = String()
+    var gender = String()
+    var birthDate  = String()
+    var motto = String()
+    var email = String()
+
+//    override func viewDidLoad() {
+//        super.viewDidLoad()
+//        
+//        let userRef = Database.database().reference().child("Profile").child(user.userID)
+//        userRef.observeSingleEvent(of: .value, with: { (snapshot) in
+//            if let userInfo = snapshot.value as? [String: AnyObject] {
+//                self.userName = userInfo["userName"] as! String
+//                print(userInfo["userName"] as! String)
+//                self.gender = userInfo["gender"] as! String
+//                print(userInfo["gender"] as! String)
+//                self.birthDate = userInfo["birthDate"] as! String
+//                print(userInfo["birthDate"] as! String)
+//                self.motto = userInfo["motto"] as! String
+//                print(userInfo["motto"] as! String)
+//                self.email = userInfo["email"] as! String
+//                print(userInfo["email"] as! String)
+//            }
+//        })
+//        
+//        tableView.reloadData()
+//    }
     
     // MARK: - Table view data source
 
@@ -43,25 +71,25 @@ class ProfileTableViewController: UITableViewController, UITextFieldDelegate {
                 break
             case "Username":
                 print("check")
-                print("username is \(user.userName)")
-                cell.detailTextLabel?.text = user.userName
+                print("username is \(userName)")
+                cell.detailTextLabel?.text = userName
             case "Gender":
                 print("check")
-                print("user gender is \(user.gender)")
-                cell.detailTextLabel?.text = user.gender
-            case "Birthdate":
+                print("user gender is \(gender)")
+                cell.detailTextLabel?.text = gender
+            case "Birth date":
                 print("check")
-                print("user birth date is \(user.birthDate)")
-                cell.detailTextLabel?.text = user.birthDate
+                print("user birth date is \(birthDate)")
+                cell.detailTextLabel?.text = birthDate
             case "Life motto":
                 print("check")
-                print("user motto is \(user.motto)")
-                cell.detailTextLabel?.text = user.motto
+                print("user motto is \"\(motto)\"")
+                cell.detailTextLabel?.text = motto
             case "Email":
                 cell.accessoryType = .none
                 print("check")
-                print("user email is \(user.email)")
-                cell.detailTextLabel?.text = user.email
+                print("user email is \(email)")
+                cell.detailTextLabel?.text = email
             default:
                 break
             }
@@ -91,9 +119,10 @@ class ProfileTableViewController: UITableViewController, UITextFieldDelegate {
                 if newName != nil {
                     // change the list name in database
                     self.user.userName = newName!
+                    self.userName = newName!
                     print(newName!)
                     if let cell = tableView.cellForRow(at: indexPath) {
-                        cell.detailTextLabel?.text = newName
+                        cell.detailTextLabel?.text = newName!
                     }
                 }
             }
@@ -107,6 +136,7 @@ class ProfileTableViewController: UITableViewController, UITextFieldDelegate {
             alert.addAction(UIAlertAction(title: "Male", style: .default, handler: { (action) in
                 //update the priority level in the database
                 self.user.gender = "Male"
+                self.gender = "Male"
                 if let cell = tableView.cellForRow(at: indexPath) {
                     cell.detailTextLabel?.text = "Male"
                 }
@@ -114,6 +144,7 @@ class ProfileTableViewController: UITableViewController, UITextFieldDelegate {
             alert.addAction(UIAlertAction(title: "Female", style: .default, handler: { (action) in
                 //update the priority level in the database
                 self.user.gender = "Female"
+                self.gender = "Female"
                 if let cell = tableView.cellForRow(at: indexPath) {
                     cell.detailTextLabel?.text = "Female"
                 }
@@ -131,12 +162,12 @@ class ProfileTableViewController: UITableViewController, UITextFieldDelegate {
                 let cancel = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
                 let edit = UIAlertAction(title: "OK", style: .default) { (_) in
                     self.alert.textFields?[0].text = self.newDate
-                    if let newDate = self.alert.textFields?[0].text {
+                    if let newBirthDate = self.alert.textFields?[0].text {
                         // change the birth date in database
-                        self.user.birthDate = newDate
-                        print("the new date is \(newDate)")
+                        self.user.birthDate = newBirthDate
+                        print("the new date is \(newBirthDate)")
                         if let cell = tableView.cellForRow(at: indexPath) {
-                            cell.detailTextLabel?.text = newDate
+                            cell.detailTextLabel?.text = newBirthDate
                         }
                     }
                 }
@@ -158,9 +189,10 @@ class ProfileTableViewController: UITableViewController, UITextFieldDelegate {
                 if newMotto != nil {
                     // change the list name in database
                     self.user.motto = newMotto!
+                    self.motto = newMotto!
                     print(newMotto!)
                     if let cell = tableView.cellForRow(at: indexPath) {
-                        cell.detailTextLabel?.text = newMotto
+                        cell.detailTextLabel?.text = "\"\(newMotto!)\""
                     }
                 }
             }
@@ -189,7 +221,6 @@ class ProfileTableViewController: UITableViewController, UITextFieldDelegate {
         
         // format picker for date
         picker.datePickerMode = .date
-        textField.text = newDate
     }
     
     @objc func donePressed() {
@@ -205,7 +236,7 @@ class ProfileTableViewController: UITableViewController, UITextFieldDelegate {
         
         newDate = "\(dateString)"
         print(newDate!)
-        alert.textFields?[0].text = newDate
+        alert.textFields?[0].text = newDate!
         self.view.endEditing(true)
     }
     

@@ -78,6 +78,11 @@ class ViewListViewController: UIViewController, UITableViewDelegate, UITableView
         }
     }
     
+    func presentAlert() {
+        let alert = UIAlertController(title: "No list", message: "You haven't created a list.", preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "Ok", style: .default, handler: nil))
+    }
+    
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "goToAList" {
             if let destination = segue.destination as? SingleListViewController {

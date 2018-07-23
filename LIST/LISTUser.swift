@@ -11,7 +11,7 @@ import FirebaseAuth
 import FirebaseDatabase
 
 class LISTUser {
-    var userID = String()
+    var userID = ""
     let ref = Database.database().reference()
     lazy var profileRef = ref.child("Profile")
     
@@ -53,16 +53,28 @@ class LISTUser {
             profileRef.child(userID).child("birthDate").setValue(newValue)
         }
     }
-    var createDate: Int {
+    var creationDays: Int {
         get{
-            var createDate: Int?
-            profileRef.child(userID).child("createDate").observe(.value, with: { (snapshot) in
-                createDate = snapshot.value as? Int
+            var creationDays: Int?
+            profileRef.child(userID).child("creationDays").observe(.value, with: { (snapshot) in
+                creationDays = snapshot.value as? Int
             })
-            return createDate ?? 0
+            return creationDays ?? 0
         }
         set{
-            profileRef.child(userID).child("createDate").setValue(newValue)
+            profileRef.child(userID).child("creationDays").setValue(newValue)
+        }
+    }
+    var creationDate: String {
+        get{
+            var creationDate: String?
+            profileRef.child(userID).child("creationDate").observe(.value, with: { (snapshot) in
+                creationDate = snapshot.value as? String
+            })
+            return creationDate ?? ""
+        }
+        set{
+            profileRef.child(userID).child("creationDate").setValue(newValue)
         }
     }
     var userName: String {

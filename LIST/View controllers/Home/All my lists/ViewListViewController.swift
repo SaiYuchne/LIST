@@ -16,6 +16,16 @@ class ViewListViewController: UIViewController, UITableViewDelegate, UITableView
     @IBOutlet weak var tableView: UITableView!
     
     var tableViewData = [cellData]()
+    var priorityListsData = [
+        cellData(opened: false, title: "⭐️⭐️⭐️⭐️⭐️", sectionData: [String](), listID: [String]()),
+        cellData(opened: false, title: "⭐️⭐️⭐️⭐️", sectionData: [String](), listID: [String]()),
+        cellData(opened: false, title: "⭐️⭐️⭐️", sectionData: [String](), listID: [String]()),
+        cellData(opened: false, title: "⭐️⭐️", sectionData: [String](), listID: [String]()),
+        cellData(opened: false, title: "⭐️", sectionData: [String](), listID: [String]())]
+    private let priorityLevel = ["1": "⭐️", "2": "⭐️⭐️", "3": "⭐️⭐️⭐️", "4": "⭐️⭐️⭐️⭐️", "5": "⭐️⭐️⭐️⭐️⭐️"]
+    
+    var deadlineListsData = [cellData]()
+    var tagListsData = [cellData]()
     
     var byPriority = false
     var byDeadline = false
@@ -24,22 +34,29 @@ class ViewListViewController: UIViewController, UITableViewDelegate, UITableView
     var chosenSection: Int?
     var chosenRow: Int?
     
-    private let priorityLevel = ["1": "⭐️", "2": "⭐️⭐️", "3": "⭐️⭐️⭐️", "4": "⭐️⭐️⭐️⭐️", "5": "⭐️⭐️⭐️⭐️⭐️",]
-    
     override func viewDidLoad() {
         super.viewDidLoad()
 
         tableView.delegate = self
         tableView.dataSource = self
-        
-        getTableViewDataFromDatabase()
     }
 
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+
+        tableView.reloadData()
+    }
+    
     func numberOfSections(in tableView: UITableView) -> Int {
         return tableViewData.count
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        if(byPriority) {
+            tableViewData[section].sectionData = [String]()
+            tableViewData[section].sectionData = priorityListsData[section].sectionData
+            tableViewData[section].listID = priorityListsData[section].listID
+        }
         if tableViewData[section].opened {
             return tableViewData[section].sectionData.count + 1
         } else {
@@ -61,13 +78,17 @@ class ViewListViewController: UIViewController, UITableViewDelegate, UITableView
     }
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        print("didSelectRowAt: section = \(indexPath.section)")
+        print("row = \(indexPath.row)")
         if indexPath.row == 0 {
             if tableViewData[indexPath.section].opened {
                 tableViewData[indexPath.section].opened = false
+                print("previously opened, closing..")
                 let sections = IndexSet.init(integer: indexPath.section)
                 tableView.reloadSections(sections, with: .none)
             } else {
                 tableViewData[indexPath.section].opened = true
+                print("previously closed, now openning..")
                 let sections = IndexSet.init(integer: indexPath.section)
                 tableView.reloadSections(sections, with: .none)
             }
@@ -78,42 +99,101 @@ class ViewListViewController: UIViewController, UITableViewDelegate, UITableView
         }
     }
     
-    func presentAlert() {
-        let alert = UIAlertController(title: "No list", message: "You haven't created a list.", preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "Ok", style: .default, handler: nil))
-    }
-    
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "goToAList" {
             if let destination = segue.destination as? SingleListViewController {
                 destination.listName = tableViewData[chosenSection!].sectionData[chosenRow!]
                 destination.listID = tableViewData[chosenSection!].listID[chosenRow!]
                 destination.isNew = false
+                ref.child("ListItem").child(destination.listID!).queryOrdered(byChild: "creationDays").observe(.value, with: { (snapshot) in
+                    destination.goalData.removeAll()
+                    if let snapshots = snapshot.children.allObjects as? [DataSnapshot] {
+                        for snap in snapshots {
+                            if let itemInfo = snap.value as? [String: Any] {
+                                let itemID = snap.key
+                                destination.goalData.append(SingleListViewController.listCellData(opened: false, itemID: itemID, title: itemInfo["content"] as! String, isGoalFinished: itemInfo["isFinished"] as! Bool, subgoalID: [String](), sectionData: [String](), isSubgoalFinished: [Bool]()))
+                            
+                               // retrive subgoal info
+                                self.ref.child("Subgoal").child(itemID).queryOrdered(byChild: "creationDays").observe(.value, with: { (snapshot) in
+                                    print("retriving subgoal info in database...")
+                                    if destination.goalData.count > 0 {
+                                    destination.goalData[destination.goalData.count - 1].subgoalID.removeAll()
+                                    destination.goalData[destination.goalData.count - 1].isSubgoalFinished.removeAll()
+                                    destination.goalData[destination.goalData.count - 1].sectionData.removeAll()
+                                    }
+                                    
+                                    if let subsnapshots = snapshot.children.allObjects as? [DataSnapshot] {
+                                        for subsnap in subsnapshots {
+                                            if let subItemInfo = subsnap.value as?[String: Any] {
+                                                destination.goalData[destination.goalData.count - 1].subgoalID.append(subsnap.key)
+                                               
+                                                destination.goalData[destination.goalData.count - 1].sectionData.append(subItemInfo["content"] as! String)
+                                                print("has found subgoal: \(subItemInfo["content"] as! String)")
+                                                destination.goalData[destination.goalData.count - 1].isSubgoalFinished.append(subItemInfo["isFinished"] as! Bool)
+                                                
+                                            }
+                                        }
+                                    } // end subgoal info retrival
+                                    
+                                })
+                            } // if itemInfo as [String: Any]
+                        } // end list item info retrival
+                    }
+                    
+                    destination.tableView.reloadData()
+                    self.ref.child("List").child(destination.listID!).child("userID").observeSingleEvent(of: .value, with: { (snapshot) in
+                        if let creatorID = snapshot.value as? String {
+                            if creatorID == self.user.userID {
+                                destination.isEditable = true
+                            } else {
+                                destination.isEditable = false
+                            }
+                        }
+                    })
+                })
             }
         }
     }
     
     // MARK: database operations
     func getTableViewDataFromDatabase() {
+        // section data (listTitle) & listID
         if(byPriority){
+            print("going to fetch lists from database")
             let priorityListRef = ref.child("PriorityList").child(user.userID)
-            var index = 6
-            for _ in 0...5 {
-                index -= 1
-                priorityListRef.child("\(index)").observeSingleEvent(of: .value, with: { (snapshot) in
-                    if let ids = snapshot.value as? [String] {
-                        self.tableViewData.append(cellData(opened: false, title: self.priorityLevel["\(index)"]!, sectionData: [String](), listID: ids))
+            for index in priorityListsData.indices {
+                print("index = \(index)")
+                let level = priorityListsData[index].title
+                print(level)
+                priorityListRef.child(level).observeSingleEvent(of: .value, with: { (snapshot) in
+                    print("observing...")
+                    if(!snapshot.exists()) {
+                        print("snapshot does not exist")
+                        
+                        // should have no lists under that priority level
+                        print("priorityListsData[index].listID.count = \(self.priorityListsData[index].listID.count)")
+                        self.priorityListsData[index].sectionData = [String]()
+                        self.tableView.reloadData()
+                    } else {
+                        print("snapshot does exist")
+                        self.priorityListsData[index].listID = [String]()
+                        if let ids = snapshot.children.allObjects as? [DataSnapshot] {
+                            for id in ids {
+                                self.priorityListsData[index].listID.append(id.value as! String)
+                            }
+                            print("priorityListsData[index].listID.count = \(self.priorityListsData[index].listID.count)")
+                            self.priorityListsData[index].sectionData = [String]()
+                            for listid in self.priorityListsData[index].listID {
+                                self.ref.child("List").child(listid).observeSingleEvent(of: .value, with: { (snapshot) in
+                                    if let tempData = snapshot.value as? [String: Any] {
+                                        let listName = tempData["listTitle"] as? String
+                                        self.priorityListsData[index].sectionData.append(listName!)
+                                    }
+                                })
+                            }
+                        }
                     }
                 })
-                for index in tableViewData[tableViewData.count - 1].listID.indices {
-                    let listID = tableViewData[tableViewData.count - 1].listID[index]
-                    ref.child("List").child(listID).observeSingleEvent(of: .value, with: { (snapshot) in
-                        if let tempData = snapshot.value as? Dictionary<String, Any> {
-                            let listName = tempData["listTitle"] as? String
-                            self.tableViewData[self.tableViewData.count - 1].sectionData.append(listName!)
-                        }
-                    })
-                }
             }
             byPriority = !byPriority
         } else if (byDeadline){
@@ -155,6 +235,7 @@ class ViewListViewController: UIViewController, UITableViewDelegate, UITableView
             })
             byTag = !byTag
         }
+        tableView.reloadData()
     }
 }
 

@@ -74,7 +74,42 @@ class ViewListMenuViewController: UIViewController {
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "viewByPriority" {
             if let destination = segue.destination as? ViewListViewController {
-                destination.byTag = true
+                destination.byPriority = true
+                destination.byDeadline = false
+                destination.byTag = false
+                // pass data
+                let priorityListRef = ref.child("PriorityList").child(user.userID)
+                for index in destination.priorityListsData.indices {
+                    let level = destination.priorityListsData[index].title
+                    print(level)
+                    priorityListRef.child(level).observe(.value, with: { (snapshot) in
+                            if(!snapshot.exists()) {
+                            
+                                // should have no lists under that priority level
+                                destination.priorityListsData[index].sectionData = [String]()
+                                destination.tableView.reloadData()
+                            } else {
+                                destination.priorityListsData[index].listID = [String]()
+                                if let ids = snapshot.children.allObjects as? [DataSnapshot] {
+                                    for id in ids {
+                                        print("adding id: \(id.value as! String)")
+                                    destination.priorityListsData[index].listID.append(id.value as! String)
+                                    }
+                                    destination.priorityListsData[index].sectionData = [String]()
+                                    for listid in destination.priorityListsData[index].listID {
+                                        self.ref.child("List").child(listid).observeSingleEvent(of: .value, with: { (snapshot) in
+                                                if let tempData = snapshot.value as? [String: Any] {
+                                                let listName = tempData["listTitle"] as? String
+                                            destination.priorityListsData[index].sectionData.append(listName!)
+                                                }
+                                            })
+                                    } // end for loop
+                            } // end else
+                        }
+                        destination.tableViewData = destination.priorityListsData
+                        destination.tableView.reloadData()
+                    }) // end observing
+                }
             }
         } else if segue.identifier == "viewByDeadline" {
             if let destination = segue.destination as? ViewListViewController {

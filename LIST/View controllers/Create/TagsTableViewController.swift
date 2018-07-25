@@ -14,7 +14,7 @@ class TagsTableViewController: UITableViewController {
     let ref = Database.database().reference()
     var listID: String?
     
-    private var cellTitle = ["Love", "Travel", "YOLO", "Add more tags"]
+    var cellTitle = ["Add more tags"]
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -31,7 +31,6 @@ class TagsTableViewController: UITableViewController {
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        getTableViewDataFromDatabase()
         
         if indexPath.row+1 < cellTitle.count {
             let cell = tableView.dequeueReusableCell(withIdentifier: "userTagCell", for: indexPath)
@@ -83,17 +82,25 @@ class TagsTableViewController: UITableViewController {
         if segue.identifier == "goToTagCollection"{
             if let destination = segue.destination as? TagCollectionTableViewController{
                 destination.listID = listID
-            }
-        }
-    }
-    
-    // MARK: database operations
-    func getTableViewDataFromDatabase() {
-        ref.child("List").child(listID!).child("tag").queryOrdered(byChild: "tagName").observeSingleEvent(of: .value) { (snapshot) in
-            if let tags = snapshot.children.allObjects as? [String] {
-                for tag in tags {
-                    self.cellTitle.insert(tag, at: self.cellTitle.count-1)
-                }
+                ref.child("Tag").child("tags").queryOrdered(byChild: "tagName").observe(.value, with: { (snapshot) in
+                    destination.tags.removeAll()
+                    if let snapshots = snapshot.children.allObjects as? [DataSnapshot] {
+                        for snap in snapshots {
+                            destination.tags.append(snap.key)
+                        }
+                    }
+                    self.ref.child("List").child(self.listID!).child("tag").queryOrdered(byChild: "tagName").observe(.value, with: { (snapshot) in
+                        destination.listTags.removeAll()
+                        if snapshot.exists() {
+                            if let snapshots = snapshot.children.allObjects as? [DataSnapshot] {
+                                for snap in snapshots {
+                                    destination.listTags.append(snap.key)
+                                }
+                            }
+                        }
+                    })
+                    destination.tableView.reloadData()
+                })
             }
         }
     }

@@ -29,15 +29,25 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
         super.viewWillAppear(true)
         
         self.view.window?.rootViewController?.dismiss(animated: true, completion: nil)
-        if Auth.auth().currentUser?.uid != nil {
-            print("user is not nil, hence the app will be directed to the personal home page")
-            let homePage = HomePageViewController()
-            self.performSegue(withIdentifier: "goToHomePage", sender: self)
-            self.dismiss(animated: false, completion: nil)
-            print("check point1")
-            self.emailField.text = nil
-            self.passwordField.text = nil
+        
+        Auth.auth().addStateDidChangeListener { (auth, user) in
+            if user != nil {
+                // User is signed in.
+                print("user is not nil, hence the app will be directed to the personal home page")
+                self.performSegue(withIdentifier: "goToHomePage", sender: self)
+                self.emailField.text = nil
+                self.passwordField.text = nil
+            }
         }
+        
+//        if Auth.auth().currentUser?.uid != nil {
+//            print("userID is \(Auth.auth().currentUser?.uid)")
+//            print("user is not nil, hence the app will be directed to the personal home page")
+//            self.performSegue(withIdentifier: "goToHomePage", sender: self)
+//            self.dismiss(animated: false, completion: nil)
+//            print("check point1")
+//            
+//        }
     }
     
     // MARK: Dismiss the keyboard

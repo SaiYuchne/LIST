@@ -33,13 +33,14 @@ class ListItemTableViewCell: UITableViewCell {
 
     @IBAction func completeButtonTapped(_ sender: Any) {
         if completeButton.titleLabel?.text == "🔲" {
+            print("from cell")
             ref.child("ListItem").child(listID!).child(itemID!).child("isFinished").setValue(true)
             completeButton.setTitle("✔️", for: .normal)
         } else {
+            print("from cell")
             ref.child("ListItem").child(listID!).child(itemID!).child("isFinished").setValue(false)
             completeButton.setTitle("🔲", for: .normal)
         }
     }
-  
     
 }

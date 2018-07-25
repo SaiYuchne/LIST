@@ -27,9 +27,11 @@ class SubgoalTableViewCell: UITableViewCell {
 
     @IBAction func completeGoalButtonTapped(_ sender: Any) {
         if completeGoalButton.titleLabel?.text == "⚪️" {
+            print("from cell")
             completeGoalButton.setTitle("✔️", for: .normal)
             ref.child("Subgoal").child(itemID!).child(subgoalID!).child("isFinished").setValue(true)
         } else {
+            print("from cell")
             completeGoalButton.setTitle("⚪️", for: .normal)
             ref.child("Subgoal").child(itemID!).child(subgoalID!).child("isFinished").setValue(false)
         }

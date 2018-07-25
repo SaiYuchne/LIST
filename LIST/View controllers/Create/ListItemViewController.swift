@@ -14,16 +14,15 @@ class ListItemViewController: UIViewController {
     let ref = Database.database().reference()
     
     @IBOutlet weak var itemNameLabel: UILabel!
+    var listID: String?
     var itemName: String?
     var itemID: String?
-    private var selectedNodeID: String?
+    var selectedNodeID: String?
     
     @IBOutlet weak var timeLineView: UIView!
     lazy var timeline = ISTimeline(frame: timeLineView.bounds)
     
-    var points = [ISPoint]()
-    
-    private var addNode = false
+    var addNode = false
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -33,6 +32,10 @@ class ListItemViewController: UIViewController {
         initializeTimeline()
     }
 
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+    }
+    
     func configureItemNameLabel(_ label: UILabel){
         if let name = itemName {
             itemNameLabel.attributedText = centeredAttributedString(name, fontSize: itemNameLabel.bounds.size.height * 0.7)
@@ -50,8 +53,6 @@ class ListItemViewController: UIViewController {
         timeline.pointDiameter = 7.0
         timeline.lineWidth = 2.0
         timeline.bubbleRadius = 0.0
-        
-        timeline.points = points
         
         let point = ISPoint(title: "Click here to add a node")
         point.description = "Document your progress so when you look back, you will thank yourself!"
@@ -105,9 +106,10 @@ class ListItemViewController: UIViewController {
             newName = alert.textFields?[0].text
             if newName != nil {
                 // change the list name in database
-                self.ref.child("ListItem").child(self.itemID!).child("content").setValue(newName!)
+                self.ref.child("ListItem").child(self.listID!).child(self.itemID!).child("content").setValue(newName!)
                 print(newName!)
-                self.itemNameLabel.text = newName!
+                self.itemName = newName!
+                self.configureItemNameLabel(self.itemNameLabel)
             }
         }
         alert.addAction(cancel)
@@ -117,9 +119,13 @@ class ListItemViewController: UIViewController {
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "goToNodeSetting" {
+            print("prepare segue: goToNodeSetting")
             if let destination = segue.destination as? DocumentNodeViewController {
+                print("addNode = \(addNode)")
                 destination.addNode = self.addNode
+                print("mark 2")
                 destination.itemID = self.itemID
+                print("mark 3")
                 if !self.addNode {
                     destination.nodeID = selectedNodeID
                 }
@@ -142,13 +148,17 @@ class ListItemViewController: UIViewController {
     // MARK: database operation
     func getNodeDataFromDatabase() {
         let progressRef = ref.child("Progress").child(itemID!)
-        progressRef.observeSingleEvent(of: .value) { (snapshot) in
+        progressRef.queryOrdered(byChild: "creationDays").observe(.value) { (snapshot) in
+            let firstNode = self.timeline.points[0]
+            self.timeline.points.removeAll()
+            self.timeline.points.append(firstNode)
+            
             if let snapshots = snapshot.children.allObjects as? [DataSnapshot]{
                 for snap in snapshots {
-                    let tempData = snap.value as! Dictionary<String, String>
-                    let point = ISPoint(title: tempData["date"]!)
+                    let tempData = snap.value as! Dictionary<String, Any>
+                    let point = ISPoint(title: tempData["date"] as! String)
                     point.nodeID = snap.key
-                    point.description = tempData["content"]
+                    point.description = tempData["content"] as! String
                     point.lineColor = .black
                     point.pointColor = point.lineColor
                     point.touchUpInside =

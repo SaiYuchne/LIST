@@ -87,6 +87,7 @@ class DocumentNodeViewController: UIViewController, UITextFieldDelegate{
         let no = UIAlertAction(title: "No", style: .cancel, handler: nil)
         let yes = UIAlertAction(title: "Yes", style: .default) { (_) in
             // delete data from the database
+            self.deleteNodeInDatabase()
             // go back to the previous page
             _ = self.navigationController?.popViewController(animated: true)
         }
@@ -109,17 +110,21 @@ class DocumentNodeViewController: UIViewController, UITextFieldDelegate{
     
     // MARK: database operations
     func getDataFromDatabase() {
-        let date = ref.child("Progress").child(itemID!).child(nodeID!).value(forKey: "date") as? String
-        let content = ref.child("Progress").child(itemID!).child(nodeID!).value(forKey: "content") as? String
-        dateTextField.text = date
-        descriptionTextView.text = content
+        ref.child("Progress").child(itemID!).child(nodeID!).observe(.value) { (snapshot) in
+            if let nodeInfo = snapshot.value as? [String: String] {
+                let date = nodeInfo["date"]
+                let content = nodeInfo["content"]
+                self.dateTextField.text = date
+                self.descriptionTextView.text = content
+            }
+        }
     }
     
     func addNewNodeInDatabase() {
         let progressRef = ref.child("Progress").child(itemID!)
         let nodeID = progressRef.childByAutoId().key
         
-        let nodeInfo = ["date": dateTextField.text!, "content": descriptionTextView.text] as [String: Any]
+        let nodeInfo = ["date": dateTextField.text!, "content": descriptionTextView.text, "creationDays": Date().timeIntervalSinceReferenceDate] as [String: Any]
         progressRef.child(nodeID).setValue(nodeInfo)
     }
     
@@ -130,4 +135,7 @@ class DocumentNodeViewController: UIViewController, UITextFieldDelegate{
         nodeRef.setValue(nodeInfo)
     }
 
+    func deleteNodeInDatabase() {
+        ref.child("Progress").child(itemID!).child(nodeID!).removeValue()
+    }
 }

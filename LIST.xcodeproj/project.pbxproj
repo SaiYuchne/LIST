@@ -17,6 +17,7 @@
 		401470CA20D11151008B5846 /* DocumentNodeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 401470C920D11151008B5846 /* DocumentNodeViewController.swift */; };
 		4051D75C20FEE37800A3CFC9 /* IconViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4051D75B20FEE37800A3CFC9 /* IconViewController.swift */; };
 		4051D75E20FEE98B00A3CFC9 /* ProfileIconTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4051D75D20FEE98A00A3CFC9 /* ProfileIconTableViewCell.swift */; };
+		406DD2E02106C76E00B38BB7 /* ListCellData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 406DD2DF2106C76E00B38BB7 /* ListCellData.swift */; };
 		4098461A20F6FEA300DCAF22 /* SystemTagCollectionTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4098461920F6FEA300DCAF22 /* SystemTagCollectionTableViewController.swift */; };
 		4098461C20F7088E00DCAF22 /* MotivationQuoteViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4098461B20F7088E00DCAF22 /* MotivationQuoteViewController.swift */; };
 		4098461E20F709C200DCAF22 /* MotivationQuoteView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4098461D20F709C200DCAF22 /* MotivationQuoteView.swift */; };
@@ -102,6 +103,7 @@
 		401470C920D11151008B5846 /* DocumentNodeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DocumentNodeViewController.swift; sourceTree = "<group>"; };
 		4051D75B20FEE37800A3CFC9 /* IconViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IconViewController.swift; sourceTree = "<group>"; };
 		4051D75D20FEE98A00A3CFC9 /* ProfileIconTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProfileIconTableViewCell.swift; sourceTree = "<group>"; };
+		406DD2DF2106C76E00B38BB7 /* ListCellData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListCellData.swift; sourceTree = "<group>"; };
 		4098461920F6FEA300DCAF22 /* SystemTagCollectionTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SystemTagCollectionTableViewController.swift; sourceTree = "<group>"; };
 		4098461B20F7088E00DCAF22 /* MotivationQuoteViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MotivationQuoteViewController.swift; sourceTree = "<group>"; };
 		4098461D20F709C200DCAF22 /* MotivationQuoteView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MotivationQuoteView.swift; sourceTree = "<group>"; };
@@ -248,6 +250,7 @@
 			isa = PBXGroup;
 			children = (
 				40CF0C0320C23C23003039A6 /* LISTUser.swift */,
+				406DD2DF2106C76E00B38BB7 /* ListCellData.swift */,
 				401470C720D0C50B008B5846 /* ISPoint.swift */,
 				4098461F20F85A8400DCAF22 /* StringUtils.swift */,
 				40CF0BFE20C18E33003039A6 /* LIST.entitlements */,
@@ -702,6 +705,7 @@
 				40E919CA20F301080022D0E6 /* SingleFavouriteListViewController.swift in Sources */,
 				401470BA20CE58C0008B5846 /* ViewListMenuViewController.swift in Sources */,
 				40E919D420F30DCD0022D0E6 /* FavListNameTableViewCell.swift in Sources */,
+				406DD2E02106C76E00B38BB7 /* ListCellData.swift in Sources */,
 				40A8693920D25A12007A079C /* TagCollectionTableViewController.swift in Sources */,
 				40DC376C20DBDB6500EADAD1 /* CollaboratorTableViewController.swift in Sources */,
 				40CF0C2120CAB706003039A6 /* RoundRecView.swift in Sources */,

@@ -24,6 +24,7 @@ class CreateViewController: UIViewController, UITextFieldDelegate,  UIPickerView
     var privacyLevel: String?
     var deadline: String?
     var priorityLevel: String?
+    var deadlineDate: Date?
     
     let picker = UIDatePicker()
     let priorityPicker = UIPickerView()
@@ -152,7 +153,6 @@ class CreateViewController: UIViewController, UITextFieldDelegate,  UIPickerView
     
     // MARK: Set the date picker with a tool bar
     func createDatePicker(){
-        print("createDatePicker is called")
         // toolbar
         let toolbar = UIToolbar()
         toolbar.sizeToFit()
@@ -170,7 +170,6 @@ class CreateViewController: UIViewController, UITextFieldDelegate,  UIPickerView
     }
     
     @objc func deadlineDonePressed() {
-        print("deadlineDonePressed is called")
         // format date
         let formatter = DateFormatter()
         formatter.dateStyle = .medium
@@ -178,11 +177,11 @@ class CreateViewController: UIViewController, UITextFieldDelegate,  UIPickerView
         
         let formatterForDatabase = DateFormatter()
         // MARK: TO DO: format style is not dd-mm-yyyy
-        formatterForDatabase.dateFormat = "dd-mm-yyyy"
+        formatterForDatabase.dateFormat = "dd-MM-yyyy"
         let dateString = formatter.string(from: picker.date)
+        deadlineDate = picker.date
         
         deadline = "\(dateString)"
-        print(deadline!)
         deadlineTextField.text = deadline
         self.view.endEditing(true)
     }
@@ -224,6 +223,7 @@ class CreateViewController: UIViewController, UITextFieldDelegate,  UIPickerView
                 destination.listName = listName
                 destination.listID = listID
                 destination.isNew = true
+                destination.isEditable = true
             }
         }
     }
@@ -234,22 +234,18 @@ class CreateViewController: UIViewController, UITextFieldDelegate,  UIPickerView
         
         // check if all the necessary information is collected
         if listName?.count == 0 {
-            print("no list name")
             let alert = UIAlertController(title: "Sorry", message: "A list name is needed", preferredStyle: .alert)
             alert.addAction(UIAlertAction(title: "Ok", style: .default, handler: nil))
             present(alert, animated: true, completion: nil)
         } else if priorityLevel?.count == 0 {
-            print("no priorityLevel")
             let alert = UIAlertController(title: "Sorry", message: "Priority level is needed", preferredStyle: .alert)
             alert.addAction(UIAlertAction(title: "Ok", style: .default, handler: nil))
             present(alert, animated: true, completion: nil)
         } else if privacyLevel?.count == 0 {
-            print("no privacyLevel")
             let alert = UIAlertController(title: "Sorry", message: "Privacy level is needed", preferredStyle: .alert)
             alert.addAction(UIAlertAction(title: "Ok", style: .default, handler: nil))
             present(alert, animated: true, completion: nil)
         } else if deadline == nil {
-            print("no deadline")
             let alert = UIAlertController(title: "Sorry", message: "A deadline is needed", preferredStyle: .alert)
             alert.addAction(UIAlertAction(title: "Ok", style: .default, handler: nil))
             present(alert, animated: true, completion: nil)
@@ -260,7 +256,7 @@ class CreateViewController: UIViewController, UITextFieldDelegate,  UIPickerView
             
             // update List
             // List section
-            let defaultListInfo = ["listTitle": listName!, "userID": user.userID, "privacy": privacyLevel!, "priority": priorityLevel!, "creationDate": Date().toString(dateFormat: "dd-MM-yyyy"), "deadline": deadline!, "tag": [String](), "collaborator": [String](), "isFinished": false] as [String : Any?]
+            let defaultListInfo = ["listTitle": listName!, "userID": user.userID, "privacy": privacyLevel!, "priority": priorityLevel!, "remainingDays": calculateDaysLeft(deadLineString: deadline!), "creationDate": Date().toString(dateFormat: "dd-MM-yyyy"), "deadline": deadline!, "tag": [String: String](), "collaborator": [String: String](), "isFinished": false, "totalNumOfItems": 0, "numOfCompletedItems": 0] as [String : Any?]
             ref.child("List").child(key).setValue(defaultListInfo)
             
             // PriorityList, DeadlineList sections
@@ -268,6 +264,16 @@ class CreateViewController: UIViewController, UITextFieldDelegate,  UIPickerView
             let deadlineUpdate = ["listTitle": listName!, "deadline": deadline!]
             ref.child("DeadlineList").child(user.userID).child(listID!).setValue(deadlineUpdate)
         }
+    }
+    
+    func calculateDaysLeft(deadLineString: String) -> Int {
+        var daysLeft = 0
+        let todayInterval = Int(Date().timeIntervalSinceReferenceDate/(3600 * 24))
+        let deadlineInterval = Int(deadlineDate!.timeIntervalSinceReferenceDate/(3600 * 24))
+    
+        daysLeft = deadlineInterval - todayInterval
+        
+        return daysLeft < 0 ? 0 : daysLeft
     }
 
 }

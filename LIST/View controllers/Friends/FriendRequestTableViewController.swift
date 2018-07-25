@@ -14,12 +14,7 @@ class FriendRequestTableViewController: UITableViewController {
     let ref = Database.database().reference()
     var userID: String?
     var requestID = [String]()
-    
-    override func viewDidLoad() {
-        super.viewDidLoad()
-
-        getTableViewDataFromDatabase()
-    }
+    var messages = [String]()
 
    
     // MARK: - Table view data source
@@ -33,42 +28,34 @@ class FriendRequestTableViewController: UITableViewController {
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "friendRequestTableViewCell") as! FriendRequestTableViewCell
-        ref.child("User").child(requestID[indexPath.row]).observeSingleEvent(of: .value) { (snapshot) in
-            if let friendInfo = snapshot.value as? Dictionary<String, Any> {
-                cell.usernameLabel.text = friendInfo["username"] as? String
-                // iconPic
+        ref.child("Profile").child(requestID[indexPath.row]).observeSingleEvent(of: .value) { (snapshot) in
+            if let friendInfo = snapshot.value as? [String: Any] {
+                cell.usernameLabel.text = friendInfo["userName"] as! String
+                cell.infoLabel.text = self.messages[indexPath.row]
+                // MARK: TODO: iconPic
             }
-        }
-            self.ref.child("FriendRequest").child(userID!).child(requestID[indexPath.row]).observeSingleEvent(of: .value) { (snapshot) in
-                if let friendInfo = snapshot.value as? String {
-                    cell.infoLabel.text = friendInfo
-                }
         }
         return cell
     }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let alert = UIAlertController(title: "Add new friend", message: nil, preferredStyle: .alert)
+        let alert = UIAlertController(title: "Add new friend", message: "Would you like to accept the request?", preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "Yes", style: .default, handler: { (action) in
             let friendID = self.requestID[indexPath.row]
             self.ref.child("Friend").child(self.userID!).child(friendID).setValue(friendID)
-            self.ref.child("Friend").child(friendID).child(self.userID!).setValue(friendID)
+            self.ref.child("Friend").child(friendID).child(self.userID!).setValue(self.userID!)
             self.ref.child("FriendRequest").child(self.userID!).child(friendID).removeValue()
+            self.messages.remove(at: indexPath.row)
+            self.requestID.remove(at: indexPath.row)
+            self.tableView.deleteRows(at: [indexPath], with: .fade)
         }))
-        alert.addAction(UIAlertAction(title: "No", style: .cancel, handler: nil))
+        alert.addAction(UIAlertAction(title: "No", style: .cancel, handler: {(action) in
+            let friendID = self.requestID[indexPath.row]
+            self.ref.child("FriendRequest").child(self.userID!).child(friendID).removeValue()
+            self.messages.remove(at: indexPath.row)
+            self.requestID.remove(at: indexPath.row)
+            self.tableView.deleteRows(at: [indexPath], with: .fade)
+        }))
         self.present(alert, animated: true, completion: nil)
     }
-
-    // MARK: database operations
-    func getTableViewDataFromDatabase() {
-        let requestRef = ref.child("Friend").child(userID!)
-        requestRef.observeSingleEvent(of: .value) { (snapshot) in
-            if let snapshots = snapshot.children.allObjects as? [DataSnapshot] {
-                for snap in snapshots {
-                    self.requestID.append(snap.value as! String)
-                }
-            }
-        }
-    }
-    
 }

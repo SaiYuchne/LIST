@@ -13,17 +13,24 @@ class SingleListViewController: UIViewController, UITableViewDelegate, UITableVi
     
     let ref = Database.database().reference()
     private lazy var user = LISTUser()
-    var isEditable: Bool {
-        var id: String?
-        ref.child("List").child(listID!).child("userID").observeSingleEvent(of: .value) { (snapshot) in
-            id = snapshot.value as? String
-        }
-        return id == user.userID
-    }
+    // MARK: to do: should be decided by segue preparation
+    var isEditable: Bool?
     
     var isNew: Bool?
+    private var totalNumOfItems: Int {
+        var count = 0
+        count += goalData.count
+        for listData in goalData {
+            count += listData.subgoalID.count
+        }
+        
+        print("counting totalNumOfItems: \(count)")
+        return count
+    }
+
+    var numOfCompletedItems = 0
     
-    struct cellData{
+    struct listCellData {
         var opened = Bool()
         
         var itemID = String()
@@ -34,8 +41,8 @@ class SingleListViewController: UIViewController, UITableViewDelegate, UITableVi
         var sectionData = [String]()
         var isSubgoalFinished = [Bool]()
     }
-
-    var goalData = [cellData]()
+    
+    var goalData = [listCellData]()
     
     @IBOutlet weak var tableView: UITableView!
     
@@ -44,14 +51,23 @@ class SingleListViewController: UIViewController, UITableViewDelegate, UITableVi
     var listID: String?
     var selectedWishIndex: Array<Any>.Index?
     
-    private var totalNumOfItems = 0
-    private var numOfCompletedItems = 0 {
-        didSet {
-            if numOfCompletedItems == totalNumOfItems {
-                completeWholeList()
-            }
-        }
-    }
+//    private var numOfCompletedItems: Int {
+//        var count = 1
+//        for listData in goalData {
+//            if listData.isGoalFinished {
+//                print(listData.title)
+//                count += 1
+//            }
+//            for isFinished in listData.isSubgoalFinished {
+//                if isFinished {
+//                    count += 1
+//                }
+//            }
+//        }
+//        
+//        print("counting numOfCompletedItems: \(count)")
+//        return count
+//    }
     
     override func viewDidLoad() {
         print("listID is \(listID!)")
@@ -61,12 +77,36 @@ class SingleListViewController: UIViewController, UITableViewDelegate, UITableVi
         configureListNameLabel(listNameLabel)
         
         // get the tableViewData from the database if the list is not newly created
-        if !isNew! {
-            getTableViewDataFromDatabase()
-        }
+//        if !isNew! {
+//            getTableViewDataFromDatabase()
+//        }
 
     }
 
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        numOfCompletedItems = 0
+        var itemIDs = [String]()
+        
+        ref.child("ListItem").child(listID!).queryOrdered(byChild: "isFinished").queryEqual(toValue: true).observeSingleEvent(of: .value) { (snapshot) in
+            if let snapshots = snapshot.children.allObjects as? [DataSnapshot] {
+                self.numOfCompletedItems += snapshots.count
+                for snap in snapshots {
+                    itemIDs.append(snap.key)
+                }
+            }
+            
+            for id in itemIDs {
+                self.ref.child("Subgoal").child(id).queryOrdered(byChild: "isFinished").queryEqual(toValue: true).observeSingleEvent(of: .value, with: { (snapshot) in
+                    if let snapshots = snapshot.children.allObjects as? [DataSnapshot] {
+                        self.numOfCompletedItems += snapshots.count
+                    }
+                })
+            }
+            print("numOfCompletedItems = \(self.numOfCompletedItems)")
+        }
+    }
     func configureListNameLabel(_ label: UILabel){
         if let name = listName {
             listNameLabel.attributedText = centeredAttributedString(name, fontSize: listNameLabel.bounds.size.height * 0.7)
@@ -94,31 +134,30 @@ class SingleListViewController: UIViewController, UITableViewDelegate, UITableVi
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        print("tableView.numberOfSections = \(tableView.numberOfSections)")
         if indexPath.section+1 != tableView.numberOfSections{
             if indexPath.row == 0 {
                 guard let cell = tableView.dequeueReusableCell(withIdentifier: "listItemCell") as? ListItemTableViewCell else {return UITableViewCell()}
-                print("indexPath.section is \(indexPath.section) \n indexPath.row is \(indexPath.row)")
                 cell.goalLabel.text = goalData[indexPath.section].title
+                cell.listID = listID
+                cell.itemID = goalData[indexPath.section].itemID
                 if(goalData[indexPath.section].isGoalFinished){
                     cell.completeButton.setTitle("✔️", for: .normal)
-                    cell.listID = listID
-                    cell.itemID = goalData[indexPath.section].itemID
-                    numOfCompletedItems += 1
                 }
-                totalNumOfItems += 1
                 return cell
             } else {
+                print("row is \(indexPath.row)")
                 let indexData = indexPath.row - 1
                 guard let cell = tableView.dequeueReusableCell(withIdentifier: "subgoalCell") as? SubgoalTableViewCell else {return UITableViewCell()}
+                print("configure a subgoalCell")
                 cell.subgoalLabel.text = goalData[indexPath.section].sectionData[indexData]
+                print("the subgoal is \(goalData[indexPath.section].sectionData[indexData])")
+                cell.itemID = goalData[indexPath.section].itemID
+                print("the itemID is \(goalData[indexPath.section].itemID)")
+                cell.subgoalID = goalData[indexPath.section].subgoalID[indexData]
+                print("the subgoalID is \(goalData[indexPath.section].subgoalID[indexData])")
                 if(goalData[indexPath.section].isSubgoalFinished[indexData]){
                     cell.completeGoalButton.setTitle("✔️", for: .normal)
-                    cell.itemID = goalData[indexPath.section].itemID
-                    cell.subgoalID = goalData[indexPath.section].subgoalID[indexPath.row]
-                    numOfCompletedItems += 1
                 }
-                totalNumOfItems += 1
                 return cell
             }
         }
@@ -135,10 +174,11 @@ class SingleListViewController: UIViewController, UITableViewDelegate, UITableVi
         let add = UIAlertAction(title: "Add", style: .default) { (_) in
             if let wish = alert.textFields?[0].text{
                 let key = self.ref.child("ListItem").child(self.listID!).child("items").childByAutoId().key
-                self.goalData.append(cellData(opened: false, itemID: key,  title: wish, isGoalFinished: false, subgoalID: [], sectionData: [], isSubgoalFinished: []))
+                self.goalData.append(listCellData(opened: false, itemID: key,  title: wish, isGoalFinished: false, subgoalID: [], sectionData: [], isSubgoalFinished: []))
                 // add the wish in the database
                 self.addWishInDatabase(key: key, wish: wish)
-                self.totalNumOfItems += 1
+                print("totalNumOfItems will be added 1")
+                
                 self.tableView.reloadData()
             }
         }
@@ -148,7 +188,6 @@ class SingleListViewController: UIViewController, UITableViewDelegate, UITableVi
     }
     
     @IBAction func goalSettingsTapped(_ sender: UIButton) {
-        
         let alert = UIAlertController(title: "What do you want to do?", message: nil, preferredStyle: .actionSheet)
         alert.addAction(UIAlertAction(title: "Add a subgoal", style: .default, handler: { (action) in
             let alert = UIAlertController(title: "Add a subgoal", message: nil, preferredStyle: .alert)
@@ -158,13 +197,13 @@ class SingleListViewController: UIViewController, UITableViewDelegate, UITableVi
             let cancel = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
             let add = UIAlertAction(title: "Add", style: .default) { (_) in
                 //add a subgoal in the database
-                let goal: String
+                let goalID: String
                 var wishIndex: Array<Any>.Index?
                 if let subgoal = alert.textFields?[0].text{
                     if let superView = sender.superview?.superview as? ListItemTableViewCell {
-                        goal = superView.goalLabel.text!
+                        goalID = superView.itemID!
                         for index in self.goalData.indices {
-                            if self.goalData[index].title == goal {
+                            if self.goalData[index].itemID == goalID {
                                
                                wishIndex = index
                                 self.goalData[index].sectionData.append(subgoal)
@@ -173,7 +212,9 @@ class SingleListViewController: UIViewController, UITableViewDelegate, UITableVi
                         }
                     }
                     self.addSubgoalInDatabase(wishIndex: wishIndex!, subgoal: subgoal)
-                    self.totalNumOfItems += 1
+                    self.goalData[wishIndex!].opened = true
+                    let sections = IndexSet.init(integer: wishIndex!)
+                    self.tableView.reloadSections(sections, with: .none)
                 }
             }
             alert.addAction(cancel)
@@ -209,15 +250,31 @@ class SingleListViewController: UIViewController, UITableViewDelegate, UITableVi
                 if indexPath.row == 0 {
                     let alert = UIAlertController(title: "Warning", message: "Delete this wish?", preferredStyle: .alert)
                     let no = UIAlertAction(title: "No", style: .cancel, handler: nil)
-                    let yes = UIAlertAction(title: "Yes", style: .default) { (_) in
-                        self.totalNumOfItems -= 1
+                    let yes = UIAlertAction(title: "Yes", style: .default, handler: { (action) in
                         // delete data in the database
                         self.deleteWishFromDatabase(itemID: self.goalData[indexPath.section].itemID)
-                        self.totalNumOfItems -= self.goalData[indexPath.section].sectionData.count
+                        // update numOfCompletedItems
+                        print("updating numOfCompletedItems")
+                        print("there are \(self.goalData[indexPath.section].isSubgoalFinished.count) subgoals in total")
+                        for index in self.goalData[indexPath.section].sectionData.indices {
+                            print("subgoal\(index): \(self.goalData[indexPath.section].sectionData[index]) finished: \(self.goalData[indexPath.section].isSubgoalFinished[index])")
+                            if self.goalData[indexPath.section].isSubgoalFinished[index] {
+                                print("numOfCompletedItems decrease one")
+                                self.numOfCompletedItems -= 1
+                            }
+                        }
+                        if self.goalData[indexPath.section].isGoalFinished {
+                            print("the goal itself is finished, hence decrease one")
+                            self.numOfCompletedItems -= 1
+                        }
+                        
                         self.goalData.remove(at: indexPath.section)
                         let indexSet = IndexSet(arrayLiteral: indexPath.section)
                         self.tableView.deleteSections(indexSet, with: .fade)
-                    }
+                        if self.totalNumOfItems == self.numOfCompletedItems, self.totalNumOfItems != 0 {
+                            self.completeWholeList()
+                        }
+                    })
                     alert.addAction(no)
                     alert.addAction(yes)
                     present(alert, animated: true, completion: nil)
@@ -225,12 +282,16 @@ class SingleListViewController: UIViewController, UITableViewDelegate, UITableVi
                     let alert = UIAlertController(title: "Warning", message: "Delete this subgoal?", preferredStyle: .alert)
                     let no = UIAlertAction(title: "No", style: .cancel, handler: nil)
                     let yes = UIAlertAction(title: "Yes", style: .default) { (_) in
-                        self.totalNumOfItems -= 1
                         // delete data in the database
-                        self.goalData[indexPath.section].sectionData.remove(at: indexPath.row)
-                        // the following code may need modification
+                        self.deleteSubgoalFromDatabase(itemID: self.goalData[indexPath.section].itemID, subgoalID: self.goalData[indexPath.section].subgoalID[indexPath.row - 1])
+                        if self.goalData[indexPath.section].isSubgoalFinished[indexPath.row - 1] {
+                            self.numOfCompletedItems -= 1
+                        }
+                        self.goalData[indexPath.section].sectionData.remove(at: indexPath.row - 1)
                         self.tableView.deleteRows(at: [indexPath], with: .fade)
-                        self.deleteSubgoalFromDatabase(itemID: self.goalData[indexPath.section].itemID, subgoalID: self.goalData[indexPath.section].subgoalID[indexPath.row])
+                        if self.totalNumOfItems == self.numOfCompletedItems, self.totalNumOfItems != 0 {
+                            self.completeWholeList()
+                        }
                     }
                     alert.addAction(no)
                     alert.addAction(yes)
@@ -261,18 +322,24 @@ class SingleListViewController: UIViewController, UITableViewDelegate, UITableVi
                 if sender is UIButton {
                     if let superView = (sender as! UIButton).superview?.superview as? ListItemTableViewCell {
                         destination.itemName = superView.goalLabel.text
-                        // there is a problem here (force unwrapping)
                         destination.itemID = self.goalData[selectedWishIndex!].itemID
+                        destination.listID = listID!
                     }
                 }
             }
         } else if segue.identifier == "goToListSettings" {
-            print("segue name is goToListSettings")
-            if isEditable{
+            if isEditable!{
                 print("isEditable is true")
                 if let destination = segue.destination as? ListSettingsTableViewController {
-                    print("has prepared segue for goToListSettings")
                     destination.listID = listID
+                    ref.child("List").child(listID!).observeSingleEvent(of: .value, with: { (snapshot) in
+                        // MARK: to do: tags and collaborators retrieval
+                        if let listSettings = snapshot.value as? [String: Any] {
+                            destination.settings = ["List name": listSettings["listTitle"] as! String, "Creation date": listSettings["creationDate"] as! String, "Deadline": listSettings["deadline"] as! String, "Priority level": listSettings["priority"] as! String, "Who can view this list": listSettings["privacy"] as! String, "Tags": nil, "Collaborators": nil, "Delete this list": nil]
+                            destination.tableView.reloadData()
+                        }
+                    })
+                    
                 }
             } else {
                 print("isEditable is false")
@@ -286,21 +353,77 @@ class SingleListViewController: UIViewController, UITableViewDelegate, UITableVi
     // MARK: complete wish/subgoal button tapped
     @IBAction func completeGoalButtonTapped(_ sender: UIButton) {
         if sender.titleLabel?.text == "🔲" {
+            print("from vc: previously🔲")
             sender.setTitle("✔️", for: .normal)
-            numOfCompletedItems += 1
+            if isNew!, let superView = sender.superview?.superview as? ListItemTableViewCell {
+                let goalID = superView.itemID!
+                for index in self.goalData.indices {
+                    if self.goalData[index].itemID == goalID {
+                        
+                        self.goalData[index].isGoalFinished = true
+                    }
+                }
+            }
+            self.numOfCompletedItems += 1
         } else {
+            print("from vc: previously✔️")
             sender.setTitle("🔲", for: .normal)
-            numOfCompletedItems -= 1
+            if isNew!, let superView = sender.superview?.superview as? ListItemTableViewCell {
+                let goalID = superView.itemID!
+                for index in self.goalData.indices {
+                    if self.goalData[index].itemID == goalID {
+                        
+                        self.goalData[index].isGoalFinished = false
+                    }
+                }
+            }
+            self.numOfCompletedItems -= 1
+        }
+        if self.totalNumOfItems == self.numOfCompletedItems, self.totalNumOfItems != 0 {
+            print("\(totalNumOfItems)")
+            completeWholeList()
         }
     }
     
     @IBAction func completeSubgoalButtonTapped(_ sender: UIButton) {
         if sender.titleLabel?.text == "⚪️" {
+            print("from vc")
             sender.setTitle("✔️", for: .normal)
-            numOfCompletedItems += 1
+            if isNew!, let superView = sender.superview?.superview as? SubgoalTableViewCell {
+                let goalID = superView.itemID!
+                let subgoalID = superView.subgoalID!
+                for index in self.goalData.indices {
+                    if self.goalData[index].itemID == goalID {
+                        for subIndex in self.goalData[index].subgoalID.indices {
+                            if self.goalData[index].subgoalID[subIndex] == subgoalID {
+                                self.goalData[index].isSubgoalFinished[subIndex] = true
+                            }
+                        }
+                    }
+                }
+            }
+            self.numOfCompletedItems += 1
         } else {
+            print("from vc")
             sender.setTitle("⚪️", for: .normal)
-            numOfCompletedItems -= 1
+            if isNew!, let superView = sender.superview?.superview as? SubgoalTableViewCell {
+                let goalID = superView.itemID!
+                let subgoalID = superView.subgoalID!
+                for index in self.goalData.indices {
+                    if self.goalData[index].itemID == goalID {
+                        for subIndex in self.goalData[index].subgoalID.indices {
+                            if self.goalData[index].subgoalID[subIndex] == subgoalID {
+                                self.goalData[index].isSubgoalFinished[subIndex] = false
+                            }
+                        }
+                    }
+                }
+            }
+            self.numOfCompletedItems -= 1
+        }
+        if self.totalNumOfItems == self.numOfCompletedItems, self.totalNumOfItems != 0 {
+            print("\(totalNumOfItems)")
+            self.completeWholeList()
         }
     }
     
@@ -315,7 +438,7 @@ class SingleListViewController: UIViewController, UITableViewDelegate, UITableVi
                     var tempData = snap.value as! Dictionary<String, Any>
                     let key = snap.key
                     
-                    self.goalData.append(cellData(opened: false, itemID: key, title: tempData["content"] as! String, isGoalFinished: tempData["isFinished"] as! Bool, subgoalID: [],  sectionData: [],  isSubgoalFinished: []))
+                    self.goalData.append(listCellData(opened: false, itemID: key, title: tempData["content"] as! String, isGoalFinished: tempData["isFinished"] as! Bool, subgoalID: [],  sectionData: [],  isSubgoalFinished: []))
                     let _ = self.ref.child("Subgoal").child(key).observeSingleEvent(of: .value, with: { (snapshot) in
                         if let snapshots = snapshot.children.allObjects as? [DataSnapshot]{
                             for snap in snapshots{
@@ -339,7 +462,7 @@ class SingleListViewController: UIViewController, UITableViewDelegate, UITableVi
     func addWishInDatabase(key: String, wish: String) {
         let listItemRef = ref.child("ListItem").child(listID!)
         
-        let defaultListItemInfo = ["content": wish, "isFinished": false] as [String : Any?]
+        let defaultListItemInfo = ["content": wish, "isFinished": false, "creationDays": Int(Date().timeIntervalSinceReferenceDate)] as [String : Any?]
         
         // update ListItem
         listItemRef.child(key).setValue(defaultListItemInfo)
@@ -351,13 +474,15 @@ class SingleListViewController: UIViewController, UITableViewDelegate, UITableVi
         let subgoalRef = ref.child("Subgoal").child(goalData[wishIndex].itemID)
         
         let subgoalID = subgoalRef.childByAutoId().key
-        let subgoalInfo = ["content": subgoal, "isFinished": false] as [String : Any?]
+        let subgoalInfo = ["content": subgoal, "isFinished": false, "creationDays": Int(Date().timeIntervalSinceReferenceDate)] as [String : Any?]
         subgoalRef.child(subgoalID).setValue(subgoalInfo)
         goalData[wishIndex].subgoalID.append(subgoalID)
+        print("has added subgoal \(subgoal) in database")
     }
     
     // delete wish including all its subgoals from database
     func deleteWishFromDatabase(itemID: String){
+        print("delete from database")
         let listItemRef = ref.child("ListItem").child(listID!)
         listItemRef.child(itemID).removeValue()
         
@@ -371,33 +496,44 @@ class SingleListViewController: UIViewController, UITableViewDelegate, UITableVi
     }
     
     func completeWholeList() {
-        let alert = UIAlertController(title: "Congratulations!", message: "You have completed all goals in this list!", preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "Thanks", style: .default, handler: nil))
-        
         ref.child("List").child(listID!).child("isFinished").setValue(true)
-        let archiveRef = ref.child("Archive").child(listID!)
+        let archiveRef = ref.child("Archive").child(user.userID).child(listID!)
         ref.child("List").child(listID!).observeSingleEvent(of: .value) { (snapshot) in
-            let tempData = snapshot.value as? Dictionary<String, Any>
-            let listTitle = tempData!["listTitle"] as? String
-            let userID = tempData!["userID"] as? String
-            let privacy = tempData!["privacy"] as? String
-            let priority = tempData!["priority"] as? String
-            let creationDate = tempData!["creationDate"] as? String
-            let deadline = tempData!["deadline"] as? String
-            let tag = tempData!["userID"] as? [String]
-            let collaborator = tempData!["collaborator"] as? [String]
+            let tempData = snapshot.value as! Dictionary<String, Any>
+            let listTitle = tempData["listTitle"] as! String
+            let userID = tempData["userID"] as! String
+            let privacy = tempData["privacy"] as! String
+            let priority = tempData["priority"] as! String
+            let creationDate = tempData["creationDate"] as! String
+            let deadline = tempData["deadline"] as! String
+            let tag = tempData["tag"] as? [String: String]
+            let collaborator = tempData["collaborator"] as? [String: String]
             let completionDate = Date().toString(dateFormat: "dd-MM-yyyy")
-            let archiveInfo = ["listTitle": listTitle, "userID": userID, "privacy": privacy, "priority": priority, "creationDate": creationDate, "deadline": deadline, "tag": tag, "collaborator": collaborator, "cimpletionDate": completionDate] as [String : Any?]
+            let archiveInfo = ["listTitle": listTitle, "userID": userID, "privacy": privacy, "priority": priority, "creationDate": creationDate, "deadline": deadline, "tag": tag, "collaborator": collaborator, "completionDate": completionDate] as [String : Any]
             archiveRef.setValue(archiveInfo)
+
+            //remove the list in any other place
+            self.ref.child("PriorityList").child(self.user.userID).child(priority).child(self.listID!).removeValue()
+            self.ref.child("DeadlineList").child(self.user.userID).child(self.listID!).removeValue()
+
+            // MARK: todo: remove from other places
+            self.ref.child("List").child(self.listID!).removeValue()
         }
-        ref.child("List").child(listID!).removeValue()
         
         // update the count of completed lists
-        if let count = ref.child("Archive").child("count").value(forKey: user.userID) as? Int {
-            ref.child("Archive").child("count").child(user.userID).setValue(count+1)
-        } else {
-            ref.child("Archive").child("count").child(user.userID).setValue(1)
+        ref.child("Archive").child("count").child(user.userID).observeSingleEvent(of: .value) { (snapshot) in
+            if !snapshot.exists() {
+                self.ref.child("Archive").child("count").child(self.user.userID).setValue(1)
+            } else {
+                self.ref.child("Archive").child("count").child(self.user.userID).setValue((snapshot.value as! Int) + 1)
+            }
         }
+        
+        let alert = UIAlertController(title: "Congratulations!", message: "You have completed all goals in this list!", preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "Thanks!", style: .default, handler: { (action) in
+            self.performSegue(withIdentifier: "afterCompleteList", sender: self)
+        }))
+        present(alert, animated: true, completion: nil)
     }
 }
 

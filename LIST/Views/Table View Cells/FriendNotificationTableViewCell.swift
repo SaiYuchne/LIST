@@ -22,14 +22,6 @@ class FriendNotificationTableViewCell: UITableViewCell {
         super.awakeFromNib()
         // Initialization code
         
-        ref.child("FriendRequest").child(user.userID).observeSingleEvent(of: .value) { (snapshot) in
-            if snapshot.value != nil {
-                self.newRequestButton.titleLabel?.text = "🔉New request!"
-            } else {
-                self.newRequestButton.titleLabel?.text = "🔇No request yet"
-            }
-        }
-        
     }
     
 

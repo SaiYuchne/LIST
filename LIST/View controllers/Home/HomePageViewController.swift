@@ -15,6 +15,11 @@ class HomePageViewController: UIViewController {
     let ref = Database.database().reference()
     var user = LISTUser()
     
+    struct tag {
+        var title = String()
+        var tags = [String]()
+    }
+    
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
@@ -35,21 +40,16 @@ class HomePageViewController: UIViewController {
         }
         
         ref.child("Profile").child(user.userID).observeSingleEvent(of: .value, with: { (snapshot) in
-            print("trying to get in...")
             if let tempData = snapshot.value as? [String: Any] {
-                print("get in!")
                 self.profileExtract.userName = tempData["userName"] as! String
-                print("userName is \(tempData["userName"] as! String)")
                 self.profileExtract.motto = tempData["motto"] as? String
-                if let motto = tempData["motto"] as? String {
-                    print("motto is \(motto)")
-                }
                 self.profileExtract.creationDays = tempData["creationDays"] as! Int
-                print("creationDays is \(tempData["creationDays"] as! Int)")
             }
-            
+            self.profileExtract.layoutSubviews()
         })
         
+        // initialize the tag systems of the app
+//        initializeTagSystem()
     }
     
     override func viewDidLoad() {
@@ -140,5 +140,24 @@ class HomePageViewController: UIViewController {
         alert.addAction(yes)
         alert.addAction(no)
         present(alert, animated: true, completion: nil)
+    }
+    
+    func initializeTagSystem() {
+       
+        var systemTags = [
+            tag(title: "Study", tags: ["review", "preview", "course", "lessons", "self-learning", "research", "exam", "interview", "academy", "knowledge"]),
+            tag ( title : "Life", tags : ["society", "community", "communication", "leadership"])
+            ]
+        var totalNumOfTags = 0
+        for index in systemTags.indices {
+            for subIndex in systemTags[index].tags.indices {
+            ref.child("Tag").child("tags").child(systemTags[index].title).child(systemTags[index].tags[subIndex]).child("tagName").setValue(systemTags[index].tags[subIndex])
+                ref.child("Tag").child("tags").child(systemTags[index].title).child(systemTags[index].tags[subIndex]).child("listCount").setValue(0)
+            }
+            totalNumOfTags += 1
+            totalNumOfTags += systemTags[index].tags.count
+        }
+        
+        ref.child("Tag").child("numOfTags").setValue(totalNumOfTags)
     }
 }

@@ -1329,8 +1329,7 @@
                                                             </constraints>
                                                             <state key="normal" image="write"/>
                                                             <connections>
-                                                                <action selector="goalSettingsTapped:" destination="W9g-Yc-DPZ" eventType="touchUpInside" id="LoZ-ut-A1f"/>
-                                                                <segue destination="xN1-UT-pJ0" kind="show" identifier="goToGoalSettings" id="lZR-kQ-SYG"/>
+                                                                <action selector="goalSettingsTapped:" destination="W9g-Yc-DPZ" eventType="touchUpInside" id="9wf-XL-5hU"/>
                                                             </connections>
                                                         </button>
                                                     </subviews>
@@ -1461,6 +1460,8 @@
                     <connections>
                         <outlet property="listNameLabel" destination="Ky2-yK-W4f" id="IBi-Lq-0NY"/>
                         <outlet property="tableView" destination="nHV-h5-krv" id="1j0-B0-mNs"/>
+                        <segue destination="xN1-UT-pJ0" kind="show" identifier="goToGoalSettings" id="Mhg-s5-z9w"/>
+                        <segue destination="iNI-ex-1km" kind="presentation" identifier="afterCompleteList" id="Hzm-bz-HIt"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Ydl-eb-Osm" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -1504,13 +1505,13 @@
                                         </connections>
                                     </button>
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="SjW-r3-LcN">
-                                        <rect key="frame" x="15" y="85.666666666666657" width="344" height="437.33333333333337"/>
+                                        <rect key="frame" x="15" y="85.666666666666657" width="344" height="487.33333333333337"/>
                                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                     </view>
                                 </subviews>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                 <constraints>
-                                    <constraint firstAttribute="bottom" secondItem="SjW-r3-LcN" secondAttribute="bottom" constant="70" id="3OI-sH-pF2"/>
+                                    <constraint firstAttribute="bottom" secondItem="SjW-r3-LcN" secondAttribute="bottom" constant="20" id="3OI-sH-pF2"/>
                                     <constraint firstItem="tdW-us-F2i" firstAttribute="leading" secondItem="Zan-Ts-u4b" secondAttribute="leading" constant="20" id="HEQ-GL-de9"/>
                                     <constraint firstItem="SjW-r3-LcN" firstAttribute="top" secondItem="9bq-dE-LrM" secondAttribute="bottom" constant="20" id="YhC-FP-7Ha"/>
                                     <constraint firstItem="9bq-dE-LrM" firstAttribute="top" secondItem="Zan-Ts-u4b" secondAttribute="top" constant="10" id="Zy5-f6-KMv"/>
@@ -1580,10 +1581,9 @@
                                         <nil key="textColor"/>
                                         <nil key="highlightedColor"/>
                                     </label>
-                                    <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" textAlignment="natural" translatesAutoresizingMaskIntoConstraints="NO" id="tRb-pt-ODd">
+                                    <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" text="What have you done? How did you feel?" textAlignment="natural" translatesAutoresizingMaskIntoConstraints="NO" id="tRb-pt-ODd">
                                         <rect key="frame" x="15" y="150.33333333333334" width="354" height="392.66666666666663"/>
                                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                        <string key="text">Lorem ipsum dolor sit er elit lamet, consectetaur cillium adipisicing pecu, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Nam liber te conscient to factor tum poen legum odioque civiuda.</string>
                                         <fontDescription key="fontDescription" type="system" pointSize="20"/>
                                         <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
                                     </textView>
@@ -2072,6 +2072,7 @@
             <objects>
                 <tabBarController automaticallyAdjustsScrollViewInsets="NO" id="iNI-ex-1km" sceneMemberID="viewController">
                     <toolbarItems/>
+                    <navigationItem key="navigationItem" id="mFc-8B-0bk"/>
                     <tabBar key="tabBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="2MW-Rd-U6r">
                         <rect key="frame" x="0.0" y="0.0" width="1000" height="1000"/>
                         <autoresizingMask key="autoresizingMask"/>
@@ -2082,7 +2083,7 @@
                         <segue destination="ssl-gG-Usa" kind="relationship" relationship="viewControllers" id="CPM-tZ-cyw"/>
                         <segue destination="Y8X-As-aFG" kind="relationship" relationship="viewControllers" id="WcX-X6-uT2"/>
                         <segue destination="0AV-P8-oeT" kind="relationship" relationship="viewControllers" id="bDN-mM-WeV"/>
-                        <segue destination="4Cj-fv-rig" kind="relationship" relationship="viewControllers" id="mAg-zX-Ovj"/>
+                        <segue destination="U5h-U3-6nv" kind="relationship" relationship="viewControllers" id="vxC-VG-bNu"/>
                     </connections>
                 </tabBarController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="uba-Bv-ZLF" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -2107,6 +2108,23 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="7wh-Zq-Sff" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="13.043478260869566" y="1466.5760869565217"/>
+        </scene>
+        <!--Friends-->
+        <scene sceneID="7VP-ZT-dNM">
+            <objects>
+                <navigationController id="U5h-U3-6nv" sceneMemberID="viewController">
+                    <tabBarItem key="tabBarItem" title="Friends" id="T3d-Bp-eQX"/>
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="dff-Lp-2Ya">
+                        <rect key="frame" x="0.0" y="20" width="414" height="44"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </navigationBar>
+                    <connections>
+                        <segue destination="4Cj-fv-rig" kind="relationship" relationship="rootViewController" id="pRm-cg-NsS"/>
+                    </connections>
+                </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="XAA-8N-Hw0" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-761" y="2153"/>
         </scene>
         <!--Friends-->
         <scene sceneID="cz5-Ll-UJz">
@@ -2175,18 +2193,18 @@
                                     <outlet property="userNameLabel" destination="e34-2A-1Ea" id="bdB-7v-yck"/>
                                 </connections>
                             </tableViewCell>
-                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="friendNotificationCell" rowHeight="70" id="QDw-a2-hmD" customClass="FriendNotificationTableViewCell" customModule="LIST" customModuleProvider="target">
-                                <rect key="frame" x="0.0" y="128" width="414" height="70"/>
+                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="friendNotificationCell" rowHeight="100" id="QDw-a2-hmD" customClass="FriendNotificationTableViewCell" customModule="LIST" customModuleProvider="target">
+                                <rect key="frame" x="0.0" y="128" width="414" height="100"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="QDw-a2-hmD" id="evM-n2-otu">
-                                    <rect key="frame" x="0.0" y="0.0" width="414" height="70"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="414" height="100"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
                                         <stackView opaque="NO" contentMode="scaleToFill" distribution="fillEqually" spacing="10" translatesAutoresizingMaskIntoConstraints="NO" id="HVT-OD-95g">
-                                            <rect key="frame" x="0.0" y="0.0" width="414" height="70"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="414" height="100"/>
                                             <subviews>
                                                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="jGB-LN-d4b">
-                                                    <rect key="frame" x="0.0" y="0.0" width="202" height="70"/>
+                                                    <rect key="frame" x="0.0" y="0.0" width="202" height="100"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="20"/>
                                                     <state key="normal" title="➕Add new friend"/>
                                                     <connections>
@@ -2194,9 +2212,9 @@
                                                     </connections>
                                                 </button>
                                                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="p87-3s-evH">
-                                                    <rect key="frame" x="212" y="0.0" width="202" height="70"/>
+                                                    <rect key="frame" x="212" y="0.0" width="202" height="100"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="20"/>
-                                                    <state key="normal" title="🔉New request!"/>
+                                                    <state key="normal" title="🔇No request"/>
                                                     <connections>
                                                         <action selector="newRequestButtonTapped:" destination="4Cj-fv-rig" eventType="touchUpInside" id="Y1r-mm-Iwz"/>
                                                     </connections>
@@ -2223,13 +2241,14 @@
                         </connections>
                     </tableView>
                     <tabBarItem key="tabBarItem" title="Friends" id="3r4-f1-oyP"/>
+                    <navigationItem key="navigationItem" id="I1T-IM-yuN"/>
                     <connections>
                         <segue destination="e5u-Mh-aHk" kind="show" identifier="goToFriendRequest" id="rYf-MV-TUq"/>
                     </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="6xc-gC-zeq" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="13.043478260869566" y="2152.989130434783"/>
+            <point key="canvasLocation" x="14" y="2153"/>
         </scene>
         <!--Message-->
         <scene sceneID="Fqi-bI-tOL">
@@ -2729,9 +2748,10 @@
         <image name="write" width="2000" height="2000"/>
     </resources>
     <inferredMetricsTieBreakers>
+        <segue reference="YTz-wV-O8W"/>
         <segue reference="qJl-re-xWu"/>
         <segue reference="YYj-6l-CVf"/>
-        <segue reference="QLM-yM-RsG"/>
+        <segue reference="Hzm-bz-HIt"/>
         <segue reference="ifN-rr-Tp4"/>
         <segue reference="b38-u7-0VJ"/>
         <segue reference="vYN-BI-2bV"/>

@@ -20,7 +20,7 @@ class ProfileExtractView: UIView {
     }
     
     var userName = String()
-    var motto: String?
+    var motto: String? 
     var creationDays = Int()
     
     // MARK: mottoLabel
@@ -108,6 +108,8 @@ class ProfileExtractView: UIView {
     }
     
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+        super.traitCollectionDidChange(previousTraitCollection)
+        
         setNeedsLayout()
         setNeedsDisplay()
     }

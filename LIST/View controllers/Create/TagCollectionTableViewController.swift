@@ -15,7 +15,7 @@ class TagCollectionTableViewController: UITableViewController, UISearchResultsUp
     var listID: String?
     var listTags = [String]()
     
-    private var tags = ["Animal", "Cat", "Clothes", "Diet", "Family", "Fashion", "Food", "Love", "Romance", "Sports", "Study", "Travel", "YOLO"]
+    var tags = ["Animal", "Cat", "Clothes", "Diet", "Family", "Fashion", "Food", "Love", "Romance", "Sports", "Study", "Travel", "YOLO"]
     private var filteredTags = [String]()
     
     let searchController = UISearchController(searchResultsController: nil)

@@ -92,7 +92,7 @@ class SignUpViewController: UIViewController ,UITextFieldDelegate {
                         print("creationDateInterval is \(creationDateInterval)")
                         ref.child("Profile").child("\(self.user.userID)").child("creationDays").setValue(creationDateInterval)
                         self.user.creationDays = creationDateInterval
-                        self.user.creationDate = Date().toString(dateFormat: "dd-mm-yyyy")
+                        self.user.creationDate = Date().toString(dateFormat: "dd-MM-yyyy")
                         self.performSegue(withIdentifier: "goToFillProfile", sender: self)
                     }
                 }

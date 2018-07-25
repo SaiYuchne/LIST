@@ -12,6 +12,7 @@ import FirebaseDatabase
 class ListSettingsTableViewController: UITableViewController,  UITextFieldDelegate {
     
     let ref = Database.database().reference()
+    let user = LISTUser()
     
     var listID: String?
     let picker = UIDatePicker()
@@ -19,7 +20,7 @@ class ListSettingsTableViewController: UITableViewController,  UITextFieldDelega
     var newDdl: String?
     var dateStringForDatabase: String?
     
-    private var settings = ["List name": "list name", "Creation date": "2018-07-01", "Deadline": "2018-12-31", "Priority level": "⭐️⭐️⭐️⭐️", "Who can view this list": "personal", "Tags": nil, "Collaborators": nil, "Delete this list": nil]
+    var settings = ["List name": "list name", "Creation date": "2018-07-01", "Deadline": "2018-12-31", "Priority level": "⭐️⭐️⭐️⭐️", "Who can view this list": "personal", "Tags": nil, "Collaborators": nil, "Delete this list": nil]
     private let priorityLevel = ["⭐️": 1, "⭐️⭐️": 2, "⭐️⭐️⭐️": 3, "⭐️⭐️⭐️⭐️": 4, "⭐️⭐️⭐️⭐️⭐️": 5]
     
     override func viewDidLoad() {
@@ -41,7 +42,6 @@ class ListSettingsTableViewController: UITableViewController,  UITextFieldDelega
         it from the databse
      */
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        getTableViewDataFromDatabase()
         
         if indexPath.row+1 < settings.count {
             let cell = tableView.dequeueReusableCell(withIdentifier: "listSettingsCell", for: indexPath)
@@ -133,42 +133,59 @@ class ListSettingsTableViewController: UITableViewController,  UITextFieldDelega
             tableView.reloadData()
         // MARK: change the priority level
         case 3:
+            let previousLevel = settings["Priority level"] as! String
             let alert = UIAlertController(title: "Priority level", message: "Please choose the priority level", preferredStyle: .actionSheet)
             alert.addAction(UIAlertAction(title: "⭐️", style: .default, handler: { (action) in
+                self.settings["Priority level"] = "⭐️"
                 //update the priority level in the database
-                self.ref.child("List").child(self.listID!).child("priority").setValue(self.priorityLevel["⭐️"])
+                self.ref.child("List").child(self.listID!).child("priority").setValue("⭐️")
+                self.ref.child("PriorityList").child(self.user.userID).child(previousLevel).child(self.listID!).removeValue()
+                self.ref.child("PriorityList").child(self.user.userID).child("⭐️").child(self.listID!).setValue(self.listID!)
                 if let cell = tableView.cellForRow(at: indexPath) {
                     cell.detailTextLabel?.text = "⭐️"
                 }
             }))
             alert.addAction(UIAlertAction(title: "⭐️⭐️", style: .default, handler: { (action) in
+                self.settings["Priority level"] = "⭐️⭐️"
                 //update the priority level in the database
-                self.ref.child("List").child(self.listID!).child("priority").setValue(self.priorityLevel["⭐️"])
+                self.ref.child("List").child(self.listID!).child("priority").setValue("⭐️⭐️")
+                self.ref.child("PriorityList").child(self.user.userID).child(previousLevel).child(self.listID!).removeValue()
+                self.ref.child("PriorityList").child(self.user.userID).child("⭐️⭐️").child(self.listID!).setValue(self.listID!)
                 if let cell = tableView.cellForRow(at: indexPath) {
                     cell.detailTextLabel?.text = "⭐️⭐️"
                 }
             }))
             alert.addAction(UIAlertAction(title: "⭐️⭐️⭐️", style: .default, handler: { (action) in
+                self.settings["Priority level"] = "⭐️⭐️⭐️"
                 //update the priority level in the database
-                self.ref.child("List").child(self.listID!).child("priority").setValue(self.priorityLevel["⭐️⭐️⭐️"])
+                self.ref.child("List").child(self.listID!).child("priority").setValue("⭐️⭐️⭐️")
+                self.ref.child("PriorityList").child(self.user.userID).child(previousLevel).child(self.listID!).removeValue()
+                self.ref.child("PriorityList").child(self.user.userID).child("⭐️⭐️⭐️").child(self.listID!).setValue(self.listID!)
                 if let cell = tableView.cellForRow(at: indexPath) {
                     cell.detailTextLabel?.text = "⭐️⭐️⭐️"
                 }
             }))
             alert.addAction(UIAlertAction(title: "⭐️⭐️⭐️⭐️", style: .default, handler: { (action) in
+                self.settings["Priority level"] = "⭐️⭐️⭐️⭐️"
                 //update the priority level in the database
-                self.ref.child("List").child(self.listID!).child("priority").setValue(self.priorityLevel["⭐️⭐️⭐️⭐️"])
+                self.ref.child("List").child(self.listID!).child("priority").setValue("⭐️⭐️⭐️⭐️")
+                self.ref.child("PriorityList").child(self.user.userID).child(previousLevel).child(self.listID!).removeValue()
+                self.ref.child("PriorityList").child(self.user.userID).child("⭐️⭐️⭐️⭐️").child(self.listID!).setValue(self.listID!)
                 if let cell = tableView.cellForRow(at: indexPath) {
                     cell.detailTextLabel?.text = "⭐️⭐️⭐️⭐️"
                 }
             }))
             alert.addAction(UIAlertAction(title: "⭐️⭐️⭐️⭐️⭐️", style: .default, handler: { (action) in
+                self.settings["Priority level"] = "⭐️⭐️⭐️⭐️⭐️"
                 //update the priority level in the database
-                self.ref.child("List").child(self.listID!).child("priority").setValue(self.priorityLevel["⭐️⭐️⭐️⭐️⭐️"])
+                self.ref.child("List").child(self.listID!).child("priority").setValue("⭐️⭐️⭐️⭐️⭐️")
+                self.ref.child("PriorityList").child(self.user.userID).child(previousLevel).child(self.listID!).removeValue()
+                self.ref.child("PriorityList").child(self.user.userID).child("⭐️⭐️⭐️⭐️⭐️").child(self.listID!).setValue(self.listID!)
                 if let cell = tableView.cellForRow(at: indexPath) {
                     cell.detailTextLabel?.text = "⭐️⭐️⭐️⭐️⭐️"
                 }
             }))
+            alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
             self.present(alert, animated: true, completion: nil)
             tableView.reloadData()
         // MARK: change the privacy level
@@ -202,6 +219,7 @@ class ListSettingsTableViewController: UITableViewController,  UITextFieldDelega
                     cell.detailTextLabel?.text = "the public"
                 }
             }))
+            alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
             self.present(alert, animated: true, completion: nil)
             tableView.reloadData()
         case 5:
@@ -228,6 +246,10 @@ class ListSettingsTableViewController: UITableViewController,  UITextFieldDelega
                 
                 // delete the list in database
                 self.ref.child("List").child(self.listID!).removeValue()
+                // including deadlineList, priorityList and tagList
+                self.ref.child("PriorityList").child(self.user.userID).child(self.settings["Priority level"] as! String).child(self.listID!).removeValue()
+                self.ref.child("DeadlineList").child(self.user.userID).child(self.listID!).removeValue()
+                // MARK: todo: delete from tagList and collaborators' access
                 self.performSegue(withIdentifier: "afterDeleteList", sender: self)
             }
             alert.addAction(no)
@@ -280,30 +302,25 @@ class ListSettingsTableViewController: UITableViewController,  UITextFieldDelega
         if segue.identifier == "goToTagSettings"{
             if let destination = segue.destination as? TagsTableViewController {
                 destination.listID = listID
+                // retrieve tags of the list in database
+                ref.child("List").child(listID!).child("tag").queryOrdered(byChild: "tagName").observe(.value, with: { (snapshot) in
+                    destination.cellTitle.removeAll()
+                    destination.cellTitle.append("Add more tags")
+                    if snapshot.exists() {
+                        if let snapshots = snapshot.children.allObjects as? [DataSnapshot] {
+                            for snap in snapshots {
+                                destination.cellTitle.insert(snap.value as! String, at: 0)
+                            }
+                        }
+                    }
+                    destination.tableView.reloadData()
+                })
             }
         } else if segue.identifier == "goToCollaborators"{
             if let destination = segue.destination as? CollaboratorTableViewController {
                 if let collaborators = ref.child("List").child(listID!).value(forKey: "collaborator") as? [String] {
                     destination.collaborators = collaborators
                 }
-            }
-        }
-    }
-    
-    // MARK: database operations
-    func getTableViewDataFromDatabase(){
-        let listItemRef = ref.child(listID!)
-        
-        listItemRef.observeSingleEvent(of: .value) { (snapshot) in
-            let value = snapshot.value as? NSDictionary
-            if let listName = value?["listTitle"] as? String {
-                self.settings["List name"] = listName
-            }
-            if let creationDate = value?["creationDate"] as? String {
-                self.settings["Creation date"] = creationDate
-            }
-            if let privacy = value?["privacy"] as? String {
-                self.settings["Who can view this list"] = privacy
             }
         }
     }

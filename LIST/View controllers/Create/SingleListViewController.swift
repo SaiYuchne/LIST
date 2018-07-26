@@ -497,35 +497,52 @@ class SingleListViewController: UIViewController, UITableViewDelegate, UITableVi
     
     func completeWholeList() {
         ref.child("List").child(listID!).child("isFinished").setValue(true)
-        let archiveRef = ref.child("Archive").child(user.userID).child(listID!)
-        ref.child("List").child(listID!).observeSingleEvent(of: .value) { (snapshot) in
-            let tempData = snapshot.value as! Dictionary<String, Any>
-            let listTitle = tempData["listTitle"] as! String
-            let userID = tempData["userID"] as! String
-            let privacy = tempData["privacy"] as! String
-            let priority = tempData["priority"] as! String
-            let creationDate = tempData["creationDate"] as! String
-            let deadline = tempData["deadline"] as! String
-            let tag = tempData["tag"] as? [String: String]
-            let collaborator = tempData["collaborator"] as? [String: String]
-            let completionDate = Date().toString(dateFormat: "dd-MM-yyyy")
-            let archiveInfo = ["listTitle": listTitle, "userID": userID, "privacy": privacy, "priority": priority, "creationDate": creationDate, "deadline": deadline, "tag": tag, "collaborator": collaborator, "completionDate": completionDate] as [String : Any]
-            archiveRef.setValue(archiveInfo)
-
-            //remove the list in any other place
-            self.ref.child("PriorityList").child(self.user.userID).child(priority).child(self.listID!).removeValue()
-            self.ref.child("DeadlineList").child(self.user.userID).child(self.listID!).removeValue()
-
-            // MARK: todo: remove from other places
-            self.ref.child("List").child(self.listID!).removeValue()
-        }
-        
-        // update the count of completed lists
-        ref.child("Archive").child("count").child(user.userID).observeSingleEvent(of: .value) { (snapshot) in
-            if !snapshot.exists() {
-                self.ref.child("Archive").child("count").child(self.user.userID).setValue(1)
-            } else {
-                self.ref.child("Archive").child("count").child(self.user.userID).setValue((snapshot.value as! Int) + 1)
+        ref.child("List").child(listID!).child("collaborator").observeSingleEvent(of: .value) { (snapshot) in
+            if let snapshots = snapshot.children.allObjects as? [DataSnapshot] {
+                var participants = [String]()
+                for snap in snapshots {
+                    participants.append(snap.key)
+                }
+                self.ref.child("List").child(self.listID!).observeSingleEvent(of: .value, with: { (snapshot) in
+                    if let tempData = snapshot.value as? [String: Any] {
+                        if let creatorID = tempData["userID"] as? String {
+                            participants.append(creatorID)
+                        }
+                        let priority = tempData["priority"] as! String
+                        // remove list in PriorityList & DeadlineList
+                        for person in participants {
+                            self.ref.child("PriorityList").child(person).child(priority).child(self.listID!).removeValue()
+                                    self.ref.child("DeadlineList").child(person).child(self.listID!).removeValue()
+                        }
+                        
+                        self.ref.child("List").child(self.listID!).child("tag").observeSingleEvent(of: .value, with: { (snapshot) in
+                            if let snapshots = snapshot.children.allObjects as? [DataSnapshot] {
+                                for snap in snapshots {
+                                    for person in participants {
+                                        self.ref.child("TagList").child(person).child(snap.key).child(self.listID!).removeValue()
+                                    }
+                                }
+                            }
+                        })
+                        
+                    }
+                    
+                    // update archive
+                    let archiveRef = self.ref.child("Archive")
+                    for person in participants {
+                        archiveRef.child(person).child(self.listID!).setValue(self.listID!)
+                        
+                        archiveRef.child("count").child(person).observeSingleEvent(of: .value) { (snapshot) in
+                            if !snapshot.exists() {
+                                self.ref.child("Archive").child("count").child(person).setValue(1)
+                            } else {
+                                self.ref.child("Archive").child("count").child(person).setValue((snapshot.value as! Int) + 1)
+                            }
+                        }
+                    }
+                    let completionDate = Date().toString(dateFormat: "dd-MM-yyyy")
+                    self.ref.child("List").child(self.listID!).child("completionDate").setValue(completionDate)
+                })
             }
         }
         

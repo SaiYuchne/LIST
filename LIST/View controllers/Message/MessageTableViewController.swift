@@ -16,9 +16,21 @@ class MessageTableViewController: UITableViewController {
     var senderIDs = [String]()
     let user = LISTUser()
     
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        getDataFromDatabase()
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        let invitationRef = ref.child("CollaborationInvitation").child(user.userID)
+        invitationRef.observe(.value) { (snapshot) in
+            if let snapshots = snapshot.children.allObjects as? [DataSnapshot] {
+                self.invitationListIDs.removeAll()
+                self.senderIDs.removeAll()
+                for snap in snapshots {
+                    self.invitationListIDs.append(snap.key)
+                    self.senderIDs.append(snap.value as! String)
+                }
+            }
+            self.tableView.reloadData()
+        }
     }
 
     // MARK: - Table view data source
@@ -36,26 +48,33 @@ class MessageTableViewController: UITableViewController {
         // Configure the cell
         cell.senderID = senderIDs[indexPath.row]
         cell.listID = invitationListIDs[indexPath.row]
-        let senderName = ref.child("Profile").child(cell.senderID!).value(forKey: "username") as! String
-        cell.label.text = "\(senderName) sends you an invitation"
+        ref.child("Profile").child(cell.senderID!).child("userName").observeSingleEvent(of: .value) { (snapshot) in
+            let senderName = snapshot.value as! String
+            cell.label.text = "\(senderName) sends you an invitation"
+        }
         return cell
     }
    
-
-    // Override to support conditional editing of the table view.
     override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
-        // Return false if you do not want the specified item to be editable.
         return true
     }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let cell = tableView.cellForRow(at: indexPath) as! InvitationTableViewCell
-        let senderName = ref.child("Profile").child(cell.senderID!).value(forKey: "username") as! String
-        let listName = ref.child("List").child(cell.listID!).value(forKey: "listTitle") as! String
-        
-        let alert = UIAlertController(title: "Invitation", message: "\(senderName) has invited you to complete \"\(listName)\". Now you can access the list.", preferredStyle: .actionSheet)
-        alert.addAction(UIAlertAction(title: "Ok", style: .default, handler: nil))
-        present(alert, animated: true, completion: nil)
+        ref.child("List").child(cell.listID!).child("listTitle").observeSingleEvent(of: .value) { (snapshot) in
+            let listName = snapshot.value as! String
+            self.ref.child("Profile").child(cell.senderID!).child("userName").observeSingleEvent(of: .value, with: { (snapshot) in
+                let senderName = snapshot.value as! String
+                
+                let alert = UIAlertController(title: "Invitation", message: "\(senderName) has invited you to complete \"\(listName)\". Now you can access the list.", preferredStyle: .alert)
+                alert.addAction(UIAlertAction(title: "Ok", style: .default, handler: nil))
+                self.present(alert, animated: true, completion: nil)
+            })
+        }
+        self.deleteInvitationInDatabase(listID: invitationListIDs[indexPath.row])
+        self.senderIDs.remove(at: indexPath.row)
+        self.invitationListIDs.remove(at: indexPath.row)
+        self.tableView.deleteRows(at: [indexPath], with: .fade)
     }
 
     /*
@@ -69,17 +88,7 @@ class MessageTableViewController: UITableViewController {
         }    
     }
     */
-
-    // Database operations
-    func getDataFromDatabase() {
-        let invitationRef = ref.child("CollaborationInvitation")
-        invitationRef.observeSingleEvent(of: .value) { (snapshot) in
-            if let snapshots = snapshot.children.allObjects as? [DataSnapshot] {
-                for snap in snapshots {
-                    self.invitationListIDs.append(snap.key)
-                    self.senderIDs.append(snap.value as! String)
-                }
-            }
-        }
+    func deleteInvitationInDatabase(listID: String) {
+        ref.child("CollaborationInvitation").child(user.userID).child(listID).removeValue()
     }
 }

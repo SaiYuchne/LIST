@@ -25,7 +25,6 @@ class ViewListMenuViewController: UIViewController {
         var shouldPerform = true
         
         if identifier == "viewByPriority" {
-            print("viewByPriority")
             ref.child("PriorityList").child(user.userID).observeSingleEvent(of: .value, with: { (snapshot) in
                 if !snapshot.exists() {
                     print("snapshot does not exist")
@@ -81,7 +80,6 @@ class ViewListMenuViewController: UIViewController {
                 let priorityListRef = ref.child("PriorityList").child(user.userID)
                 for index in destination.priorityListsData.indices {
                     let level = destination.priorityListsData[index].title
-                    print(level)
                     priorityListRef.child(level).observe(.value, with: { (snapshot) in
                             if(!snapshot.exists()) {
                             
@@ -92,7 +90,6 @@ class ViewListMenuViewController: UIViewController {
                                 destination.priorityListsData[index].listID = [String]()
                                 if let ids = snapshot.children.allObjects as? [DataSnapshot] {
                                     for id in ids {
-                                        print("adding id: \(id.value as! String)")
                                     destination.priorityListsData[index].listID.append(id.value as! String)
                                     }
                                     destination.priorityListsData[index].sectionData = [String]()

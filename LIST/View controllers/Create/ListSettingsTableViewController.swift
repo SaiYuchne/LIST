@@ -318,9 +318,18 @@ class ListSettingsTableViewController: UITableViewController,  UITextFieldDelega
             }
         } else if segue.identifier == "goToCollaborators"{
             if let destination = segue.destination as? CollaboratorTableViewController {
-                if let collaborators = ref.child("List").child(listID!).value(forKey: "collaborator") as? [String] {
-                    destination.collaborators = collaborators
-                }
+                destination.listID = listID!
+                ref.child("List").child(listID!).child("collaborator").observe(.value, with: { (snapshot) in
+                    destination.collaborators.removeAll()
+                    if snapshot.exists() {
+                        if let snapshots = snapshot.children.allObjects as? [DataSnapshot] {
+                            for snap in snapshots {
+                                destination.collaborators.append(snap.key)
+                            }
+                        }
+                    }
+                    destination.tableView.reloadData()
+                })
             }
         }
     }

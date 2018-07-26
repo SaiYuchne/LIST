@@ -15,10 +15,10 @@ class ArchiveHomePageView: RoundRecView {
     private let user = LISTUser()
     
     private lazy var label = createLabel()
+    var creationDate = String()
+    var count = Int()
     
     private var labelString: NSAttributedString {
-        let creationDate = ref.child("User").child(user.userID).value(forKey: "creationDate") as! String
-        let count = ref.child("Archive").child("count").value(forKey: user.userID) as! Int
         return centeredAttributedString(first: "Since \(creationDate), \n you have completed ", second: "\n \(count) \n", third: "lists in total\n Flip to go through\n your amazing journey", fontSize: fontSize)
     }
     
@@ -53,11 +53,11 @@ class ArchiveHomePageView: RoundRecView {
         let paragraphStyle = NSMutableParagraphStyle()
         paragraphStyle.alignment = .center
         let attributesForSecondWord = [
-            NSAttributedStringKey.foregroundColor : UIColor(red: 13/255.0, green: 196/255.0, blue: 224/255.0, alpha: 1.0)
+            NSAttributedStringKey.foregroundColor : UIColor(red: CGFloat(13/255.0), green: CGFloat(196/255.0), blue: CGFloat(224/255.0), alpha: 1.0)
                     ]
-        
-        result.setAttributes(attributesForSecondWord, range: string.range(of: second))
-        result.setAttributes([.paragraphStyle:paragraphStyle,.font:font], range: string.range(of: string as String))
+        result.setAttributes(attributesForSecondWord, range: string.localizedStandardRange(of: second))
+//        print("the range of second = \(string.localizedStandardRange(of: second))")
+        result.setAttributes([.paragraphStyle:paragraphStyle,.font:font], range: string.localizedStandardRange(of: string as String))
         
         return NSAttributedString(attributedString: result)
     }
@@ -65,6 +65,6 @@ class ArchiveHomePageView: RoundRecView {
 }
 extension ArchiveHomePageView {
     var fontSize: CGFloat {
-        return bounds.size.height * 0.2
+        return bounds.size.height * 0.05
     }
 }

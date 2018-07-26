@@ -14,15 +14,15 @@ class TagCollectionTableViewController: UITableViewController, UISearchResultsUp
     let ref = Database.database().reference()
     var listID: String?
     var listTags = [String]()
+    let user = LISTUser()
     
-    var tags = ["Animal", "Cat", "Clothes", "Diet", "Family", "Fashion", "Food", "Love", "Romance", "Sports", "Study", "Travel", "YOLO"]
+    var tags = [String]()
     private var filteredTags = [String]()
     
     let searchController = UISearchController(searchResultsController: nil)
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        getTableViewDataFromDatabase()
         
         filteredTags = tags
         searchController.searchResultsUpdater = self
@@ -30,48 +30,49 @@ class TagCollectionTableViewController: UITableViewController, UISearchResultsUp
         definesPresentationContext = true
         self.tableView.tableHeaderView = searchController.searchBar
         
-        self.tableView.register(UITableViewCell.self, forCellReuseIdentifier: "systemTagCell")
         self.tableView.reloadData()
     }
-
+    
     // MARK: - Table view data source
     override func numberOfSections(in tableView: UITableView) -> Int {
         return 1
     }
-
+    
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return filteredTags.count
     }
-
-
+    
+    
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "systemTagCell", for: indexPath)
-        cell.textLabel?.text = filteredTags[indexPath.row]
+        let cell = tableView.dequeueReusableCell(withIdentifier: "systemTagCell", for: indexPath) as! SystemTagTableViewCell
+        cell.tagLabel.text = filteredTags[indexPath.row]
         if listTags.contains(filteredTags[indexPath.row]) {
-            cell.detailTextLabel?.text = "✔️"
+            cell.stateLabel.text = "✔️"
         } else {
-            cell.detailTextLabel?.text = ""
+            cell.stateLabel.text = " "
         }
         return cell
     }
-
+    
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        if let cell = tableView.cellForRow(at: indexPath) {
-            if cell.detailTextLabel?.text == "" {
-                cell.detailTextLabel?.text = "✔️"
+        if let cell = tableView.cellForRow(at: indexPath) as? SystemTagTableViewCell {
+            if cell.stateLabel.text == " " {
+                cell.stateLabel.text = "✔️"
+                print("\(filteredTags[indexPath.row]) has been chosen")
                 listTags.append(filteredTags[indexPath.row])
                 // add the tag in the database
                 addTagInDatabase(row: indexPath.row)
             } else {
-                cell.detailTextLabel?.text = ""
+                print("\(filteredTags[indexPath.row]) has been chosen")
+                cell.stateLabel.text = " "
                 listTags.remove(at: listTags.index(of: filteredTags[indexPath.row])!)
                 // delete the tag in the database
-               let tagToBeDeleted = filteredTags[indexPath.row]
+                let tagToBeDeleted = filteredTags[indexPath.row]
                 deleteTagInDatabase(tagToBeDeleted: tagToBeDeleted)
             }
         }
     }
-
+    
     func updateSearchResults(for searchController: UISearchController) {
         if searchController.searchBar.text! == "" {
             filteredTags = tags
@@ -82,49 +83,37 @@ class TagCollectionTableViewController: UITableViewController, UISearchResultsUp
     }
     
     // MARK: database operations
-    func getTableViewDataFromDatabase() {
-        // get all the system tags
-        let systemTagRef = ref.child("Tag").queryOrdered(byChild: "tagName")
-        systemTagRef.observeSingleEvent(of: .value) { (snapshot) in
-            if let snapshots = snapshot.children.allObjects as? [DataSnapshot]{
-                for snap in snapshots{
-                    self.tags.append(snap.key)
-                }
-            }
-        }
-        
-        // get all the tags pinned to this list
-        ref.child("List").child(listID!).child("tag").queryOrdered(byChild: "tagName").observeSingleEvent(of: .value) { (snapshot) in
-            if let tags = snapshot.children.allObjects as? [String] {
-                for tag in tags {
-                    self.listTags.append(tag)
-                }
-            }
-        }
-    }
     
     private func addTagInDatabase(row: Int) {
         // change the list settings
+        print("add tag in list setting")
         ref.child("List").child(listID!).child("tag").child(filteredTags[row]).setValue(filteredTags[row])
         
         // update the app's tag system
         ref.child("Tag").child("tags").child(filteredTags[row]).child("listCount").observeSingleEvent(of: .value) { (snapshot) in
-                let listCount = snapshot.value as! Int
-                self.ref.child("Tag").child("tags").child(self.filteredTags[row]).child("listCount").setValue(listCount + 1)
+            let listCount = snapshot.value as! Int
+            self.ref.child("Tag").child("tags").child(self.filteredTags[row]).child("listCount").setValue(listCount + 1)
         }
         ref.child("Tag").child("tags").child(filteredTags[row]).child("listIDs").child(listID!).setValue(listID!)
+        // update the user's tagList
+        ref.child("List").child(listID!).child("listTitle").observeSingleEvent(of: .value) { (snapshot) in
+            if let listTitle = snapshot.value as? String {
+                self.ref.child("TagList").child(self.user.userID).child(self.filteredTags[row]).child(self.listID!).setValue(listTitle)
+            }
+        }
     }
     
     private func deleteTagInDatabase (tagToBeDeleted: String) {
-       // change the list settings
+        // change the list settings
         ref.child("List").child(listID!).child("tag").child(tagToBeDeleted).removeValue()
         
-       // update the app's tag system
-        ref.child("Tag").child("tags").child("tagToBeDeleted").child("listCount").observeSingleEvent(of: .value) { (snapshot) in
+        // update the app's tag system
+        ref.child("Tag").child("tags").child("\(tagToBeDeleted)").child("listCount").observeSingleEvent(of: .value) { (snapshot) in
             let listCount = snapshot.value as! Int
-            self.ref.child("Tag").child("tags").child("tagToBeDeleted").child("listCount").setValue(listCount - 1)
+            self.ref.child("Tag").child("tags").child(tagToBeDeleted).child("listCount").setValue(listCount - 1)
         }
-       
-        ref.child("Tag").child("tags").child("tagToBeDeleted").child("listIDs").child(listID!).removeValue()
+        ref.child("Tag").child("tags").child(tagToBeDeleted).child("listIDs").child(listID!).removeValue()
+        // update the user's tagList
+        ref.child("TagList").child(user.userID).child(tagToBeDeleted).child(listID!).removeValue()
     }
 }

@@ -18,6 +18,8 @@
 		4051D75C20FEE37800A3CFC9 /* IconViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4051D75B20FEE37800A3CFC9 /* IconViewController.swift */; };
 		4051D75E20FEE98B00A3CFC9 /* ProfileIconTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4051D75D20FEE98A00A3CFC9 /* ProfileIconTableViewCell.swift */; };
 		406DD2E02106C76E00B38BB7 /* ListCellData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 406DD2DF2106C76E00B38BB7 /* ListCellData.swift */; };
+		406DD2E2210873A500B38BB7 /* SystemTagTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 406DD2E1210873A500B38BB7 /* SystemTagTableViewCell.swift */; };
+		406DD2E421096CE300B38BB7 /* ListParticipantsTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 406DD2E321096CE300B38BB7 /* ListParticipantsTableViewController.swift */; };
 		4098461A20F6FEA300DCAF22 /* SystemTagCollectionTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4098461920F6FEA300DCAF22 /* SystemTagCollectionTableViewController.swift */; };
 		4098461C20F7088E00DCAF22 /* MotivationQuoteViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4098461B20F7088E00DCAF22 /* MotivationQuoteViewController.swift */; };
 		4098461E20F709C200DCAF22 /* MotivationQuoteView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4098461D20F709C200DCAF22 /* MotivationQuoteView.swift */; };
@@ -104,6 +106,8 @@
 		4051D75B20FEE37800A3CFC9 /* IconViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IconViewController.swift; sourceTree = "<group>"; };
 		4051D75D20FEE98A00A3CFC9 /* ProfileIconTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProfileIconTableViewCell.swift; sourceTree = "<group>"; };
 		406DD2DF2106C76E00B38BB7 /* ListCellData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListCellData.swift; sourceTree = "<group>"; };
+		406DD2E1210873A500B38BB7 /* SystemTagTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SystemTagTableViewCell.swift; sourceTree = "<group>"; };
+		406DD2E321096CE300B38BB7 /* ListParticipantsTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListParticipantsTableViewController.swift; sourceTree = "<group>"; };
 		4098461920F6FEA300DCAF22 /* SystemTagCollectionTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SystemTagCollectionTableViewController.swift; sourceTree = "<group>"; };
 		4098461B20F7088E00DCAF22 /* MotivationQuoteViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MotivationQuoteViewController.swift; sourceTree = "<group>"; };
 		4098461D20F709C200DCAF22 /* MotivationQuoteView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MotivationQuoteView.swift; sourceTree = "<group>"; };
@@ -378,6 +382,7 @@
 				40E919CD20F305AD0022D0E6 /* FavListSubgoalTableViewCell.swift */,
 				40E919D320F30DCD0022D0E6 /* FavListNameTableViewCell.swift */,
 				4051D75D20FEE98A00A3CFC9 /* ProfileIconTableViewCell.swift */,
+				406DD2E1210873A500B38BB7 /* SystemTagTableViewCell.swift */,
 			);
 			path = "Table View Cells";
 			sourceTree = "<group>";
@@ -397,6 +402,7 @@
 				40DC376320DA46DC00EADAD1 /* ArchiveHomePageViewController.swift */,
 				40DC376720DB93AF00EADAD1 /* ArchiveListViewController.swift */,
 				40DC376920DBA4C500EADAD1 /* PageViewController.swift */,
+				406DD2E321096CE300B38BB7 /* ListParticipantsTableViewController.swift */,
 			);
 			path = Archive;
 			sourceTree = "<group>";
@@ -667,6 +673,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				4098462020F85A8400DCAF22 /* StringUtils.swift in Sources */,
+				406DD2E2210873A500B38BB7 /* SystemTagTableViewCell.swift in Sources */,
 				401470BC20CE5ACE008B5846 /* ViewListMenuView.swift in Sources */,
 				40E919DA20F46A580022D0E6 /* TopTrendingTagsLabelView.swift in Sources */,
 				40DC375D20D8A48400EADAD1 /* FriendNotificationTableViewCell.swift in Sources */,
@@ -696,6 +703,7 @@
 				40BE768320BADE690025D5BE /* FillProfileViewController.swift in Sources */,
 				401470CA20D11151008B5846 /* DocumentNodeViewController.swift in Sources */,
 				40E919C720F06AC10022D0E6 /* InspirationPoolViewController.swift in Sources */,
+				406DD2E421096CE300B38BB7 /* ListParticipantsTableViewController.swift in Sources */,
 				40A8693720D25599007A079C /* TagsTableViewController.swift in Sources */,
 				40CF0C1320CA6BA6003039A6 /* SettingsTableViewController.swift in Sources */,
 				40CF0C1D20CA7A2B003039A6 /* CreateView.swift in Sources */,

@@ -76,10 +76,13 @@ class FriendsTableViewController: UITableViewController {
         } else {
             let cell = tableView.dequeueReusableCell(withIdentifier: "friendCell") as! FriendTableViewCell
             cell.cellView.layer.cornerRadius = cell.cellView.frame.height / 2
-            ref.child("User").child(friendIDs[indexPath.row]).observeSingleEvent(of: .value, with: { (snapshot) in
-                if let friendInfo = snapshot.value as? Dictionary<String, Any> {
-                    cell.userNameLabel.text = friendInfo["username"] as? String
-                    cell.mottoLabel.text = friendInfo["motto"] as? String
+            ref.child("Profile").child(friendIDs[indexPath.row]).observeSingleEvent(of: .value, with: { (snapshot) in
+                if let friendInfo = snapshot.value as? [String: Any] {
+                    cell.userNameLabel.text = friendInfo["userName"] as! String
+                    cell.mottoLabel.text = friendInfo["motto"] as! String
+                    cell.iconPic.image = UIImage(named: "icon")
+                    cell.iconPic.layer.cornerRadius = cell.iconPic.frame.height / 2
+                    cell.iconPic.clipsToBounds = true
                 }
             })
             return cell
@@ -211,6 +214,7 @@ class FriendsTableViewController: UITableViewController {
                 }
             }
             self.ref.child("FriendRequest").child(self.user.userID).observe(.value) { (snapshot) in
+                self.hasFriendRequest = false
                 if snapshot.exists() {
                     self.hasFriendRequest = true
                     print("self.hasFriendRequest = true")

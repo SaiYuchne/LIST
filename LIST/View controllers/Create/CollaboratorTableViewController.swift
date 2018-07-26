@@ -12,16 +12,39 @@ import FirebaseDatabase
 class CollaboratorTableViewController: UITableViewController {
 
     let ref = Database.database().reference()
-    var collaborators = [String]()
+    var collaborators = [String]() // IDs
     let user = LISTUser()
     var listID: String?
     
-    override func viewDidLoad() {
-        super.viewDidLoad()
+    var newCollaboratorEmail = String()
+    var invitationUpdate: Int = 0 {
+        didSet {
+            print("invitationUpdate has been set")
+            let path = newCollaboratorEmail.removeCharacters(from: ".")
+            ref.child("UserID").child(path).observeSingleEvent(of: .value, with: { (snapshot) in
+                if snapshot.exists() {
+                    let collaboratorID = snapshot.value as! String
+                    if(self.isNewCollaborator(collaboratorID)){
+                        self.ref.child("CollaborationInvitation").child(collaboratorID).child(self.listID!).setValue(self.user.userID)
+                        
+                        self.ref.child("List").child(self.listID!).child("collaborator").child(collaboratorID).setValue(collaboratorID)
+                        
+                        self.updateAccessInDatabase(receiverID: collaboratorID)
+                        self.presentInvitationHasBeenSentAlert()
+                    } else {
+                        if(collaboratorID == self.user.userID) {
+                            self.presentAddSelfAlert()
+                        }
+                        self.presentOldCollaboratorAlert()
+                    }
+                } else {
+                    self.presentNonUserAlert()
+                }
+            })
+        }
     }
     
     // MARK: - Table view data source
-    
     override func numberOfSections(in tableView: UITableView) -> Int {
         return 2
     }
@@ -35,16 +58,19 @@ class CollaboratorTableViewController: UITableViewController {
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        if indexPath.section == 1{
+        if indexPath.section == 0_{
             let cell = tableView.dequeueReusableCell(withIdentifier: "addCollaboratorCell")
             return cell!
         } else {
             let cell = tableView.dequeueReusableCell(withIdentifier: "friendCell") as! FriendTableViewCell
             cell.cellView.layer.cornerRadius = cell.cellView.frame.height / 2
-            ref.child("User").child(collaborators[indexPath.row]).observeSingleEvent(of: .value, with: { (snapshot) in
-                if let collaboratorInfo = snapshot.value as? Dictionary<String, Any> {
-                    cell.userNameLabel.text = collaboratorInfo["username"] as? String
+            ref.child("Profile").child(collaborators[indexPath.row]).observeSingleEvent(of: .value, with: { (snapshot) in
+                if let collaboratorInfo = snapshot.value as? [String: Any] {
+                    cell.userNameLabel.text = collaboratorInfo["userName"] as! String
                     cell.mottoLabel.text = collaboratorInfo["motto"] as? String
+                    cell.iconPic.image = UIImage(named: "icon")
+                    cell.iconPic.layer.cornerRadius = cell.iconPic.frame.height / 2
+                    cell.iconPic.clipsToBounds = true
                 }
             })
             return cell
@@ -53,17 +79,20 @@ class CollaboratorTableViewController: UITableViewController {
     
     // MARK: delete list items
     override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
-        return true
+        if indexPath.section != 0 {
+            return true
+        }
+        return false
     }
     
     override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
         if (editingStyle == UITableViewCellEditingStyle.delete) {
-            if indexPath.row == 0 {
+            if indexPath.section != 0 {
                 let alert = UIAlertController(title: "Warning", message: "Delete this collaborator?", preferredStyle: .alert)
                 let no = UIAlertAction(title: "No", style: .cancel, handler: nil)
                 let yes = UIAlertAction(title: "Yes", style: .default) { (_) in
                     // delete data in the database
-                    self.deleteCollaboratorFromDatabase(email: self.collaborators[indexPath.row])
+                    self.deleteCollaboratorFromDatabase(collaboratorID: self.collaborators[indexPath.row])
                     self.collaborators.remove(at: indexPath.row)
                 }
                 alert.addAction(no)
@@ -83,20 +112,8 @@ class CollaboratorTableViewController: UITableViewController {
         let ok = UIAlertAction(title: "Ok", style: .default) { (_) in
             email = alert.textFields?[0].text
             if email != nil {
-                var doesExist = false
-                self.ref.child("UserID").child(email!).observeSingleEvent(of: .value, with: { (snapshot) in
-                    if snapshot.value != nil {
-                        doesExist = true
-                    }
-                })
-                if(doesExist) {
-                    self.updateAccessInDatabase(email: email!)
-                    self.addInvitationMessageInDatabase(email: email!)
-                } else {
-                    let alert = UIAlertController(title: "Sorry", message: "The user you try to find does not exist.", preferredStyle: .alert)
-                    alert.addAction(UIAlertAction(title: "Ok", style: .default, handler: nil))
-                    self.present(alert, animated: true, completion: nil)
-                }
+                self.newCollaboratorEmail = email!
+                self.invitationUpdate = 1
             } else {
                 let alert = UIAlertController(title: "Error", message: "Email cannot be blank.", preferredStyle: .alert)
                 alert.addAction(UIAlertAction(title: "Ok", style: .default, handler: nil))
@@ -108,53 +125,103 @@ class CollaboratorTableViewController: UITableViewController {
         present(alert, animated: true, completion: nil)
     }
     
+    func presentOldCollaboratorAlert() {
+        let alert = UIAlertController(title: "Sorry", message: "The user is already a collaborator of this list.", preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "Ok", style: .default, handler: nil))
+        present(alert, animated: true, completion: nil)
+    }
+    
+    func presentNonUserAlert() {
+        let alert = UIAlertController(title: "Sorry", message: "The user does not exist.", preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "Ok", style: .default, handler: nil))
+        present(alert, animated: true, completion: nil)
+    }
+    
+    func presentAddSelfAlert() {
+        let alert = UIAlertController(title: "Sorry", message: "You are already the creator of this list.", preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "Ok", style: .default, handler: nil))
+        present(alert, animated: true, completion: nil)
+    }
+    
+    func presentInvitationHasBeenSentAlert() {
+        let alert = UIAlertController(title: "Successful", message: "The user has become a new collaborator of this list", preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "Ok", style: .default, handler: nil))
+        present(alert, animated: true, completion: nil)
+    }
+    
     // MARK: database operations
-    func deleteCollaboratorFromDatabase(email: String) {
-        var newCollaborators = [String]()
-        let collaboratorID = ref.child("UserID").value(forKey: email) as! String
-        ref.child("List").child(listID!).child("collaborator").observeSingleEvent(of: .value) { (snapshot) in
-            if let tempData = snapshot.value as? [String] {
-                newCollaborators = tempData
+    func deleteCollaboratorFromDatabase(collaboratorID: String) {
+            ref.child("List").child(listID!).child("collaborator").child(collaboratorID).removeValue()
+            
+            // delete the collaborator's access to this list
+            
+            ref.child("List").child(listID!).child("priority").observeSingleEvent(of: .value) { (snapshot) in
+                let priorityLevel = snapshot.value as! String
+                var tags = [String]()
+                self.ref.child("List").child(self.listID!).child("tag").observeSingleEvent(of: .value) { (snapshot) in
+                    tags.removeAll()
+                    if let snapshots = snapshot.children.allObjects as? [DataSnapshot] {
+                        for snap in snapshots {
+                            tags.append(snap.value as! String)
+                        }
+                    }
+                }
+                
+                // PriorityList
+                self.ref.child("PriorityList").child(collaboratorID).child(priorityLevel).child(self.listID!).removeValue()
+                // DeadlineList
+                self.ref.child("DeadlineList").child(collaboratorID).child(self.listID!).removeValue()
+                //TagList
+                for tag in tags {
+                    self.ref.child("TagList").child(collaboratorID).child(tag).child(self.listID!).removeValue()
+                }
             }
             
-            newCollaborators.remove(at: newCollaborators.index(of: collaboratorID)!)
-            self.ref.child("List").child(self.listID!).child("collaborator").setValue(newCollaborators)
-        }
-        // delete the collaborator's access to this list
-        // priority list
-        let priorityLevel = ref.child("List").child(listID!).value(forKey: "priority") as! String
-        ref.child("PriorityList").child(collaboratorID).child(priorityLevel).observeSingleEvent(of: .value) { (snapshot) in
-            if var lists = snapshot.value as? [String] {
-                lists.remove(at: lists.index(of: self.listID!)!)
-                self.ref.child("PriorityList").child(collaboratorID).child(priorityLevel).setValue(lists)
+        
+    }
+    
+    func updateAccessInDatabase(receiverID: String) {
+        
+        ref.child("List").child(listID!).observeSingleEvent(of: .value) { (snapshot) in
+            var tags = [String]()
+                if let listInfo = snapshot.value as? [String: Any] {
+                let priorityLevel = listInfo["priority"] as! String
+                let deadline = listInfo["deadline"] as! String
+                let listTitle = listInfo["listTitle"] as! String
+                print("priorityLevel = \(priorityLevel)")
+                    print("deadline = \(deadline)")
+                    print("listTitle = \(listTitle)")
+                    
+                    self.ref.child("List").child(self.listID!).child("tag").observeSingleEvent(of: .value) { (snapshot) in
+                        tags.removeAll()
+                        if let snapshots = snapshot.children.allObjects as? [DataSnapshot] {
+                            for snap in snapshots {
+                                tags.append(snap.value as! String)
+                            }
+                        }
+                    }
+                    
+                    // PriorityList
+                    self.ref.child("PriorityList").child(receiverID).child(priorityLevel).child(self.listID!).setValue(self.listID!)
+                    // DeadlineList
+                    let deadlineListInfo = ["listTitle": listTitle, "deadline": deadline]
+                    self.ref.child("DeadlineList").child(receiverID).child(self.listID!).setValue(deadlineListInfo)
+                    //TagList
+                    for tag in tags {
+                        self.ref.child("TagList").child(receiverID).child(tag).child(self.listID!).setValue(listTitle)
+                    }
             }
         }
-        // deadline list
-        ref.child("DeadlineList").child(collaboratorID).child(listID!).removeValue()
-        // tag list
-        ref.child("TagList").child(collaboratorID).child(listID!).removeValue()
+        
     }
     
-    func updateAccessInDatabase(email: String) {
-        let receiverID = ref.child("UserID").value(forKey: email) as! String
-        let priorityLevel = ref.child("List").child(listID!).value(forKey: "priority") as! String
-        let deadline = ref.child("List").child(listID!).value(forKey: "deadline") as! String
-        let listTitle = ref.child("List").child(listID!).value(forKey: "listTitle") as! String
-        let tags = ref.child("List").child(listID!).value(forKey: "tag") as! [String]
-        // PriorityList
-        var priorityLists = ref.child("PriorityList").child(receiverID).value(forKey: priorityLevel) as! [String]
-        priorityLists.append(listID!)
-        ref.child("PriorityList").child(receiverID).child(priorityLevel).setValue(priorityLists)
-        // DeadlineList
-        let listInfo1 = ["listTitle": listTitle, "deadline": deadline]
-        ref.child("DeadlineList").child(receiverID).child(listID!).setValue(listInfo1)
-        //TagList
-        let listInfo2 = ["listTitle": listTitle, "tag": tags] as [String : Any]
-        ref.child("TagList").child(receiverID).child(listID!).setValue(listInfo2)
-    }
-    
-    func addInvitationMessageInDatabase(email: String) {
-        let receiverID = ref.child("UserID").value(forKey: email) as! String
-        ref.child("CollaborationInvitation").child(receiverID).child(listID!).setValue(user.userID)
+    func isNewCollaborator(_ collaboratorID: String) -> Bool{
+        var doesExist = false
+        ref.child("List").child(listID!).child("collaborator").child(collaboratorID).observe(.value) { (snapshot) in
+            if snapshot.exists() {
+                doesExist = true
+            }
+        }
+        return !doesExist
     }
 }

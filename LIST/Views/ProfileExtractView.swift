@@ -27,7 +27,6 @@ class ProfileExtractView: UIView {
     private lazy var mottoLabel = createMottoLabel()
     
     private var mottoString: NSAttributedString {
-//        return centeredAttributedString("\"Just do it!\"", fontSize: cornerFontSize, isParagraphStyleNatural:true)
         if let motto = motto {
             return createAttributedString("\"\(motto)\"", fontSize: cornerFontSize, isParagraphStyleNatural:true)
         }

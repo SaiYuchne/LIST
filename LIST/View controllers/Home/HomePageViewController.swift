@@ -49,7 +49,7 @@ class HomePageViewController: UIViewController {
         })
         
         // initialize the tag systems of the app
-//        initializeTagSystem()
+        initializeTagSystem()
     }
     
     override func viewDidLoad() {
@@ -87,8 +87,11 @@ class HomePageViewController: UIViewController {
         }
     }
   
+    @IBAction func myArchiveTapped(_ sender: UIButton) {
+        performSegue(withIdentifier: "goToArchive", sender: self)
+    }
+    
     override func shouldPerformSegue(withIdentifier identifier: String, sender: Any?) -> Bool {
-        print("Check: should perform segue:")
         if identifier == "goToProfilePage", sender is UIButton{
             return false
         } else if identifier == "goToViewFavLists" {
@@ -114,14 +117,19 @@ class HomePageViewController: UIViewController {
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "goToArchive" {
             if let destination = segue.destination as? PageViewController {
-                let tryDatabase = ref.child("Archive").child(user.userID).queryOrdered(byChild: "completionDate")
-                tryDatabase.observeSingleEvent(of: .value, with: { (snapshot) in
-                    if let snapshots = snapshot.children.allObjects as? [DataSnapshot]{
+                print("prepare segue: goToArchive")
+                ref.child("Archive").child(user.userID).observeSingleEvent(of: .value) { (snapshot) in
+                    if let snapshots = snapshot.children.allObjects as? [DataSnapshot] {
+                        destination.listIDs.removeAll()
                         for snap in snapshots {
                             destination.listIDs.append(snap.key)
                         }
+                        if let firstViewController = destination.subviewControllers.first {
+                            destination.setViewControllers([firstViewController], direction: .forward, animated: true, completion: nil)
+                        }
+                        
                     }
-                })
+                }
             }
         }
     }
@@ -144,20 +152,12 @@ class HomePageViewController: UIViewController {
     
     func initializeTagSystem() {
        
-        var systemTags = [
-            tag(title: "Study", tags: ["review", "preview", "course", "lessons", "self-learning", "research", "exam", "interview", "academy", "knowledge"]),
-            tag ( title : "Life", tags : ["society", "community", "communication", "leadership"])
-            ]
-        var totalNumOfTags = 0
+        var systemTags = ["Study", "Mood", "Arts", "Animal", "Family", "YOLO", "Romance", "Diet", "Work", "Life", "Hobby", "Skill", "Sports", "Travel", "Food"]
         for index in systemTags.indices {
-            for subIndex in systemTags[index].tags.indices {
-            ref.child("Tag").child("tags").child(systemTags[index].title).child(systemTags[index].tags[subIndex]).child("tagName").setValue(systemTags[index].tags[subIndex])
-                ref.child("Tag").child("tags").child(systemTags[index].title).child(systemTags[index].tags[subIndex]).child("listCount").setValue(0)
-            }
-            totalNumOfTags += 1
-            totalNumOfTags += systemTags[index].tags.count
+            ref.child("Tag").child("tags").child(systemTags[index]).child("tagName").setValue(systemTags[index])
+            ref.child("Tag").child("tags").child(systemTags[index]).child("listCount").setValue(0)
         }
         
-        ref.child("Tag").child("numOfTags").setValue(totalNumOfTags)
+        ref.child("Tag").child("numOfTags").setValue(systemTags.count)
     }
 }

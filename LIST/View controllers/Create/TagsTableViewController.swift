@@ -13,6 +13,7 @@ class TagsTableViewController: UITableViewController {
 
     let ref = Database.database().reference()
     var listID: String?
+    let user = LISTUser()
     
     var cellTitle = ["Add more tags"]
     
@@ -62,12 +63,8 @@ class TagsTableViewController: UITableViewController {
                 let no = UIAlertAction(title: "No", style: .cancel, handler: nil)
                 let yes = UIAlertAction(title: "Yes", style: .default) { (_) in
                     // remove the tag from the database
-                    self.ref.child("List").child(self.listID!).child("tags").observeSingleEvent(of: .value, with: { (snapshot) in
-                        if var tags = snapshot.value as? [String]{
-                            tags.remove(at: indexPath.row)
-                            self.ref.child("List").child(self.listID!).child("tags").setValue(tags)
-                        }
-                    })
+                    self.removeTagFromDatabase(tag: self.cellTitle[indexPath.row])
+
                     self.cellTitle.remove(at: indexPath.row)
                     self.tableView.deleteRows(at: [indexPath], with: .fade)
                 }
@@ -82,26 +79,42 @@ class TagsTableViewController: UITableViewController {
         if segue.identifier == "goToTagCollection"{
             if let destination = segue.destination as? TagCollectionTableViewController{
                 destination.listID = listID
-                ref.child("Tag").child("tags").queryOrdered(byChild: "tagName").observe(.value, with: { (snapshot) in
+                ref.child("Tag").child("tags").observe(.value, with: { (snapshot) in
                     destination.tags.removeAll()
                     if let snapshots = snapshot.children.allObjects as? [DataSnapshot] {
                         for snap in snapshots {
                             destination.tags.append(snap.key)
+                            print("\(snap.key) added")
                         }
-                    }
-                    self.ref.child("List").child(self.listID!).child("tag").queryOrdered(byChild: "tagName").observe(.value, with: { (snapshot) in
-                        destination.listTags.removeAll()
-                        if snapshot.exists() {
-                            if let snapshots = snapshot.children.allObjects as? [DataSnapshot] {
-                                for snap in snapshots {
-                                    destination.listTags.append(snap.key)
+                        self.ref.child("List").child(self.listID!).child("tag").queryOrdered(byChild: "tagName").observe(.value, with: { (snapshot) in
+                            destination.listTags.removeAll()
+                            if snapshot.exists() {
+                                print("list Tag does exist")
+                                if let snapshots = snapshot.children.allObjects as? [DataSnapshot] {
+                                    for snap in snapshots {
+                                        destination.listTags.append(snap.key)
+                                    }
                                 }
+                            } else {
+                                print("list Tag does not exist")
                             }
-                        }
-                    })
+                        })
+                    }
                     destination.tableView.reloadData()
                 })
             }
         }
+    }
+    
+    func removeTagFromDatabase(tag: String) {
+        ref.child("List").child(listID!).child("tag").child(tag).removeValue()
+        // update the app's tag system
+        ref.child("Tag").child("tags").child(tag).child("listCount").observeSingleEvent(of: .value) { (snapshot) in
+            let listCount = snapshot.value as! Int
+            self.ref.child("Tag").child("tags").child(tag).child("listCount").setValue(listCount - 1)
+        }
+        ref.child("Tag").child("tags").child(tag).child("listIDs").child(listID!).removeValue()
+        // update the user's tagList
+        ref.child("TagList").child(user.userID).child(tag).child(listID!).removeValue()
     }
 }

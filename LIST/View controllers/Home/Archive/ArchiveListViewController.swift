@@ -11,7 +11,7 @@ import FirebaseDatabase
 
 class ArchiveListViewController: UIViewController {
     
-    let archiveRef = Database.database().reference().child("Archive")
+    let listRef = Database.database().reference().child("List")
     var listID: String?
     
     @IBOutlet weak var listTitleLabel: UILabel!
@@ -31,57 +31,72 @@ class ArchiveListViewController: UIViewController {
     @IBOutlet weak var tagButton: UIButton!
     @IBOutlet weak var viewDetailButton: UIButton!
     
-    override func viewDidLoad() {
-        super.viewDidLoad()
-
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        listRef.child(listID!).observeSingleEvent(of: .value) { (snapshot) in
+            if let tempData = snapshot.value as? [String: Any] {
+                self.creationDateLabel.text = tempData["creationDate"] as? String
+                self.deadlineLabel.text = tempData["deadline"] as? String
+                self.completionDateLabel.text = tempData["completionDate"] as? String
+                self.priorityLabel.text = tempData["priority"] as? String
+                self.privacyLabel.text = tempData["privacy"] as? String
+                self.listTitleLabel.text = tempData["listTitle"] as? String
+            }
+        }
         configureTitleLabel()
-        getDataFromDatabase()
         configureLabel()
         configureButton()
     }
-
+    
     func configureTitleLabel() {
         creationDateTitleLabel.text = "Creation date"
-        creationDateTitleLabel.font = UIFont.systemFont(ofSize: creationDateTitleLabel.bounds.size.height * 0.8)
+        creationDateTitleLabel.font = UIFont.systemFont(ofSize: creationDateTitleLabel.bounds.size.height * 0.3)
         deadlineTitleLabel.text = "Deadline"
-        deadlineTitleLabel.font = UIFont.systemFont(ofSize: deadlineTitleLabel.bounds.size.height * 0.8)
+        deadlineTitleLabel.font = UIFont.systemFont(ofSize: deadlineTitleLabel.bounds.size.height * 0.3)
         completionDateTitleLabel.text = "Completion date"
-        completionDateTitleLabel.font = UIFont.systemFont(ofSize: completionDateTitleLabel.bounds.size.height * 0.8)
+        completionDateTitleLabel.font = UIFont.systemFont(ofSize: completionDateTitleLabel.bounds.size.height * 0.3)
         priorityTitleLabel.text = "Priority"
-        priorityTitleLabel.font = UIFont.systemFont(ofSize: priorityTitleLabel.bounds.size.height * 0.8)
+        priorityTitleLabel.font = UIFont.systemFont(ofSize: priorityTitleLabel.bounds.size.height * 0.3)
         privacyTitleLabel.text = "Privacy"
-        privacyTitleLabel.font = UIFont.systemFont(ofSize: privacyTitleLabel.bounds.size.height * 0.8)
+        privacyTitleLabel.font = UIFont.systemFont(ofSize: privacyTitleLabel.bounds.size.height * 0.3)
         collaboratorTitleLabel.text = "Collaborators"
-        collaboratorTitleLabel.font = UIFont.systemFont(ofSize: collaboratorTitleLabel.bounds.size.height * 0.8)
+        collaboratorTitleLabel.font = UIFont.systemFont(ofSize: collaboratorTitleLabel.bounds.size.height * 0.3)
         tagTitleLabel.text = "Tags"
-        tagTitleLabel.font = UIFont.systemFont(ofSize: tagTitleLabel.bounds.size.height * 0.8)
+        tagTitleLabel.font = UIFont.systemFont(ofSize: tagTitleLabel.bounds.size.height * 0.3)
+        listTitleLabel.font = UIFont.systemFont(ofSize: listTitleLabel.bounds.size.height * 0.7)
     }
     
     func configureLabel() {
-        creationDateTitleLabel.font = UIFont.systemFont(ofSize: tagTitleLabel.bounds.size.height * 0.8)
-        deadlineTitleLabel.font = UIFont.systemFont(ofSize: deadlineTitleLabel.bounds.size.height * 0.8)
-        completionDateTitleLabel.font = UIFont.systemFont(ofSize: completionDateTitleLabel.bounds.size.height * 0.8)
-        priorityTitleLabel.font = UIFont.systemFont(ofSize: priorityTitleLabel.bounds.size.height * 0.8)
-        privacyTitleLabel.font = UIFont.systemFont(ofSize: privacyTitleLabel.bounds.size.height * 0.8)
+        creationDateLabel.font = UIFont.systemFont(ofSize: creationDateLabel.bounds.size.height * 0.3)
+        deadlineLabel.font = UIFont.systemFont(ofSize: deadlineLabel.bounds.size.height * 0.3)
+        completionDateLabel.font = UIFont.systemFont(ofSize: completionDateLabel.bounds.size.height * 0.3)
+        priorityLabel.font = UIFont.systemFont(ofSize: priorityLabel.bounds.size.height * 0.3)
+        privacyLabel.font = UIFont.systemFont(ofSize: privacyLabel.bounds.size.height * 0.3)
     }
     
     func configureButton() {
-        collaboratorButton.titleLabel?.font = UIFont.systemFont(ofSize: collaboratorButton.bounds.size.height * 0.8)
-        tagButton.titleLabel?.font = UIFont.systemFont(ofSize: tagButton.bounds.size.height * 0.8)
+        collaboratorButton.titleLabel?.font = UIFont.systemFont(ofSize: collaboratorButton.bounds.size.height * 0.3)
+        tagButton.titleLabel?.font = UIFont.systemFont(ofSize: tagButton.bounds.size.height * 0.3)
         viewDetailButton.titleLabel?.font = UIFont.systemFont(ofSize: viewDetailButton.bounds.size.height * 0.8)
     }
     
-    // MARK: database operations
-    func getDataFromDatabase() {
-        archiveRef.child(listID!).observeSingleEvent(of: .value) { (snapshot) in
-            if let tempData = snapshot.value as? Dictionary<String, Any> {
-                self.creationDateTitleLabel.text = tempData["creationDate"] as? String
-                self.deadlineTitleLabel.text = tempData["deadline"] as? String
-                self.completionDateTitleLabel.text = tempData["completionDate"] as? String
-                self.priorityTitleLabel.text = tempData["priority"] as? String
-                self.privacyTitleLabel.text = tempData["privacy"] as? String
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if segue.identifier == "goToSeeParticipants" {
+            if let destination = segue.destination as? ListParticipantsTableViewController {
+                listRef.child(listID!).child("collaborator").observe(.value, with: { (snapshot) in
+                    if let snapshots = snapshot.children.allObjects as? [DataSnapshot] {
+                        destination.participants.removeAll()
+                        for snap in snapshots {
+                            destination.participants.append(snap.key)
+                        }
+                        self.listRef.child(self.listID!).child("userID").observe(.value, with: { (snapshot) in
+                            destination.participants.append(snapshot.value as! String)
+                            destination.tableView.reloadData()
+                        })
+                    }
+                })
             }
         }
     }
-    
 }

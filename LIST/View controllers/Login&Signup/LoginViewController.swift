@@ -30,6 +30,7 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
         
         self.view.window?.rootViewController?.dismiss(animated: true, completion: nil)
         
+        
         Auth.auth().addStateDidChangeListener { (auth, user) in
             if user != nil {
                 // User is signed in.

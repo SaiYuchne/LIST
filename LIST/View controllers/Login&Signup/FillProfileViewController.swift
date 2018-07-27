@@ -35,6 +35,7 @@ class FillProfileViewController: UIViewController, UIPickerViewDelegate, UIPicke
         super.viewDidLoad()
         
         createDatePicker()
+        configureGenderPicker()
         
         genderPicker.delegate = self
         genderPicker.dataSource = self
@@ -72,6 +73,19 @@ class FillProfileViewController: UIViewController, UIPickerViewDelegate, UIPicke
         }
     }
 
+    func configureGenderPicker() {
+        let toolbar = UIToolbar()
+        toolbar.sizeToFit()
+        
+        // done button for toolbar
+        let done = UIBarButtonItem(barButtonSystemItem: .done, target: self, action: #selector(genderDonePressed))
+        toolbar.setItems([done], animated: false)
+        toolbar.isUserInteractionEnabled = true
+        
+        genderField.inputAccessoryView = toolbar
+        genderField.inputView = genderPicker
+    }
+    
     // MARK: Set the date picker with a tool bar
     func createDatePicker(){
         
@@ -88,6 +102,10 @@ class FillProfileViewController: UIViewController, UIPickerViewDelegate, UIPicke
         
         // format picker for date
         picker.datePickerMode = .date
+    }
+    
+    @objc func genderDonePressed() {
+        self.view.endEditing(true)
     }
     
     @objc func donePressed() {
@@ -153,7 +171,12 @@ class FillProfileViewController: UIViewController, UIPickerViewDelegate, UIPicke
             present(alert, animated: true, completion: nil)
             
         } else {
-            user.userName = nameField.text!
+            if let userName = nameField.text {
+                user.userName = userName
+            } else {
+                user.userName = "userName"
+            }
+            
             if let motto = mottoField.text {
                 user.motto = motto
             }

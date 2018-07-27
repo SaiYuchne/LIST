@@ -144,9 +144,10 @@ class ArchiveListViewController: UIViewController {
                                 })
                             } // if itemInfo as [String: Any]
                         } // end list item info retrival
+                        destination.tableView.reloadData()
                     }
                     
-                    destination.tableView.reloadData()
+                    
                 })
             }
         }

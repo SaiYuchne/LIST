@@ -11,7 +11,7 @@ import FirebaseAuth
 import FirebaseDatabase
 
 class LISTUser {
-    var userID = ""
+    var userID = "invalid"
     let ref = Database.database().reference()
     lazy var profileRef = ref.child("Profile")
     

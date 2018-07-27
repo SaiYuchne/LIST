@@ -74,9 +74,12 @@ class ListOverviewViewController: UIViewController, UITableViewDelegate, UITable
                 cell.itemID = goalData[indexPath.section].itemID
                 return cell
             } else {
+                print("configuring a subgoalCell..")
+                print("section = \(indexPath.section), row = \(indexPath.row)")
                 let indexData = indexPath.row - 1
-                guard let cell = tableView.dequeueReusableCell(withIdentifier: "subgoalCell") as? SubgoalOverviewTableViewCell else {return UITableViewCell()}
+                guard let cell = tableView.dequeueReusableCell(withIdentifier: "subgoalOverviewCell") as? SubgoalOverviewTableViewCell else {return UITableViewCell()}
                 cell.subgoalLabel.text = goalData[indexPath.section].sectionData[indexData]
+                print("subgoal = \(goalData[indexPath.section].sectionData[indexData])")
                 cell.itemID = goalData[indexPath.section].itemID
                 cell.subgoalID = goalData[indexPath.section].subgoalID[indexData]
                 return cell
@@ -85,14 +88,18 @@ class ListOverviewViewController: UIViewController, UITableViewDelegate, UITable
     
     // MARK: expand to show subgoals
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        if goalData[indexPath.section].opened {
-            goalData[indexPath.section].opened = false
-            let sections = IndexSet.init(integer: indexPath.section)
-            tableView.reloadSections(sections, with: .none)
-        } else {
-            goalData[indexPath.section].opened = true
-            let sections = IndexSet.init(integer: indexPath.section)
-            tableView.reloadSections(sections, with: .none)
+        if indexPath.row == 0 {
+            if goalData[indexPath.section].opened {
+                print("section\(indexPath.section) closing...")
+                goalData[indexPath.section].opened = false
+                let sections = IndexSet.init(integer: indexPath.section)
+                tableView.reloadSections(sections, with: .none)
+            } else {
+                print("section\(indexPath.section) opening...")
+                goalData[indexPath.section].opened = true
+                let sections = IndexSet.init(integer: indexPath.section)
+                tableView.reloadSections(sections, with: .none)
+            }
         }
     }
     

@@ -84,7 +84,10 @@ class SignUpViewController: UIViewController ,UITextFieldDelegate {
                     } else {
                         print("user email is \(email)")
                         let ref = Database.database().reference()
-                        ref.child("Profile").child("\(self.user.userID)").child("email").setValue("\(email)")
+                        print("mark 1")
+                        ref.child("Profile").child("\(Auth.auth().currentUser?.uid)").child("email").setValue("\(email)")
+                        self.user.userID = (Auth.auth().currentUser?.uid)!
+                        print("mark 2")
                         ref.child("UserID").child("\(email.removeCharacters(from: "."))").setValue("\(self.user.userID)")
                         self.user.email = email
                         let todayInterval = Date().timeIntervalSinceReferenceDate

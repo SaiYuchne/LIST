@@ -147,13 +147,9 @@ class SingleListViewController: UIViewController, UITableViewDelegate, UITableVi
                 print("row is \(indexPath.row)")
                 let indexData = indexPath.row - 1
                 guard let cell = tableView.dequeueReusableCell(withIdentifier: "subgoalCell") as? SubgoalTableViewCell else {return UITableViewCell()}
-                print("configure a subgoalCell")
                 cell.subgoalLabel.text = goalData[indexPath.section].sectionData[indexData]
-                print("the subgoal is \(goalData[indexPath.section].sectionData[indexData])")
                 cell.itemID = goalData[indexPath.section].itemID
-                print("the itemID is \(goalData[indexPath.section].itemID)")
                 cell.subgoalID = goalData[indexPath.section].subgoalID[indexData]
-                print("the subgoalID is \(goalData[indexPath.section].subgoalID[indexData])")
                 if(goalData[indexPath.section].isSubgoalFinished[indexData]){
                     cell.completeGoalButton.setTitle("✔️", for: .normal)
                 }

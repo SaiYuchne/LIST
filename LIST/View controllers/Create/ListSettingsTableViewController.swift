@@ -205,6 +205,9 @@ class ListSettingsTableViewController: UITableViewController,  UITextFieldDelega
                 if let cell = tableView.cellForRow(at: indexPath) {
                     cell.detailTextLabel?.text = "only me"
                 }
+                self.ref.child("FriendList").child(self.user.userID).child(self.listID!).removeValue()
+                // update inspiration pool if necessary
+                self.updateInspirationPool()
             }))
             alert.addAction(UIAlertAction(title: "friends", style: .default, handler: { (action) in
                 //update the priority level in the database
@@ -212,6 +215,10 @@ class ListSettingsTableViewController: UITableViewController,  UITextFieldDelega
                 if let cell = tableView.cellForRow(at: indexPath) {
                     cell.detailTextLabel?.text = "friends"
                 }
+                // update FriendList
+                self.ref.child("FriendList").child(self.user.userID).child(self.listID!).setValue(self.settings["List name"])
+                // update inspiration pool if necessary
+                self.updateInspirationPool()
             }))
             alert.addAction(UIAlertAction(title: "the public but I want to be anonymous", style: .default, handler: { (action) in
                 //update the priority level in the database
@@ -219,6 +226,7 @@ class ListSettingsTableViewController: UITableViewController,  UITextFieldDelega
                 if let cell = tableView.cellForRow(at: indexPath) {
                     cell.detailTextLabel?.text = "the public but I want to be anonomous"
                 }
+                self.inputInspirationPool()
             }))
             alert.addAction(UIAlertAction(title: "the public", style: .default, handler: { (action) in
                 //update the priority level in the database
@@ -226,6 +234,7 @@ class ListSettingsTableViewController: UITableViewController,  UITextFieldDelega
                 if let cell = tableView.cellForRow(at: indexPath) {
                     cell.detailTextLabel?.text = "the public"
                 }
+                self.inputInspirationPool()
             }))
             alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
             self.present(alert, animated: true, completion: nil)
@@ -429,6 +438,38 @@ class ListSettingsTableViewController: UITableViewController,  UITextFieldDelega
                     }
                     destination.tableView.reloadData()
                 })
+            }
+        }
+    }
+    
+    func updateInspirationPool() {
+        ref.child("ListItem").child(self.listID!).observeSingleEvent(of: .value) { (snapshot) in
+            if let snapshots = snapshot.children.allObjects as? [DataSnapshot] {
+                for snap in snapshots {
+                    let itemID = snap.key
+                    self.ref.child("InspirationPool").child(itemID).removeValue()
+                }
+            }
+        }
+    }
+    
+    func inputInspirationPool() {
+        ref.child("List").child(listID!).child("tag").observeSingleEvent(of: .value) { (snapshot) in
+            if snapshot.exists() {
+                self.ref.child("ListItem").child(self.listID!).observeSingleEvent(of: .value) { (snapshot) in
+                    if let snapshots = snapshot.children.allObjects as? [DataSnapshot] {
+                        for snap in snapshots {
+                            let itemID = snap.key
+                            self.ref.child("InspirationPool").child(itemID).observeSingleEvent(of: .value, with: { (snapshot) in
+                                if !snapshot.exists() {
+                                    let itemInfo = snap.value as! [String: Any]
+                                    let addInfo = ["content": itemInfo["content"] as! String, "listID": self.listID!]
+                                    self.ref.child("InspirationPool").child(itemID).setValue(addInfo)
+                                }
+                            })
+                        }
+                    }
+                }
             }
         }
     }

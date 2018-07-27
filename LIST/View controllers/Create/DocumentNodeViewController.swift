@@ -28,8 +28,23 @@ class DocumentNodeViewController: UIViewController, UITextFieldDelegate{
 
         dateTextField.delegate = self
         createDatePicker()
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        print("get in: addNode = \(addNode)")
         if !addNode {
-            getDataFromDatabase()
+            ref.child("Progress").child(itemID!).child(nodeID!).observeSingleEvent(of: .value) { (snapshot) in
+                if let nodeInfo = snapshot.value as? [String: Any] {
+                    let date = nodeInfo["date"] as! String
+                    print("date = \(date)")
+                    let content = nodeInfo["content"] as! String
+                    self.dateTextField.text = date
+                    self.descriptionTextView.text = content
+                }
+                self.view.layoutSubviews()
+            }
         }
     }
 
@@ -86,13 +101,23 @@ class DocumentNodeViewController: UIViewController, UITextFieldDelegate{
         let alert = UIAlertController(title: "Warning", message: "Delete this node?", preferredStyle: .alert)
         let no = UIAlertAction(title: "No", style: .cancel, handler: nil)
         let yes = UIAlertAction(title: "Yes", style: .default) { (_) in
-            // delete data from the database
-            self.deleteNodeInDatabase()
-            // go back to the previous page
-            _ = self.navigationController?.popViewController(animated: true)
+            if self.addNode {
+                self.presentCannotDeleteAlert()
+            } else {
+                // delete data from the database
+                self.deleteNodeInDatabase()
+                // go back to the previous page
+                _ = self.navigationController?.popViewController(animated: true)
+            }
         }
         alert.addAction(no)
         alert.addAction(yes)
+        present(alert, animated: true, completion: nil)
+    }
+    
+    func presentCannotDeleteAlert() {
+        let alert = UIAlertController(title: "Failed", message: "You haven't created this node yet.", preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "Ok", style: .default, handler: nil))
         present(alert, animated: true, completion: nil)
     }
     
@@ -109,16 +134,6 @@ class DocumentNodeViewController: UIViewController, UITextFieldDelegate{
     }
     
     // MARK: database operations
-    func getDataFromDatabase() {
-        ref.child("Progress").child(itemID!).child(nodeID!).observe(.value) { (snapshot) in
-            if let nodeInfo = snapshot.value as? [String: String] {
-                let date = nodeInfo["date"]
-                let content = nodeInfo["content"]
-                self.dateTextField.text = date
-                self.descriptionTextView.text = content
-            }
-        }
-    }
     
     func addNewNodeInDatabase() {
         let progressRef = ref.child("Progress").child(itemID!)

@@ -114,7 +114,7 @@ class ArchiveListViewController: UIViewController {
                 destination.listName = listTitleLabel.text!
                 destination.listID = listID!
                     let ref = Database.database().reference()
-                ref.child("ListItem").child(listID!).queryOrdered(byChild: "creationDays").observe(.value, with: { (snapshot) in
+                ref.child("ListItem").child(listID!).queryOrdered(byChild: "creationDays").observeSingleEvent(of: .value, with: { (snapshot) in
                     destination.goalData.removeAll()
                     if let snapshots = snapshot.children.allObjects as? [DataSnapshot] {
                         for snap in snapshots {
@@ -123,12 +123,12 @@ class ArchiveListViewController: UIViewController {
                                 destination.goalData.append(ListOverviewViewController.listCellData(opened: false, itemID: itemID, title: itemInfo["content"] as! String, subgoalID: [String](), sectionData: [String]()))
                                 
                                 // retrive subgoal info
-                                ref.child("Subgoal").child(itemID).queryOrdered(byChild: "creationDays").observe(.value, with: { (snapshot) in
+                                ref.child("Subgoal").child(itemID).queryOrdered(byChild: "creationDays").observeSingleEvent(of: .value, with: { (snapshot) in
                                     print("retriving subgoal info in database...")
-                                    if destination.goalData.count > 0 {
-                                        destination.goalData[destination.goalData.count - 1].subgoalID.removeAll()
-                                        destination.goalData[destination.goalData.count - 1].sectionData.removeAll()
-                                    }
+//                                    if destination.goalData.count > 0 {
+//                                        destination.goalData[destination.goalData.count - 1].subgoalID.removeAll()
+//                                        destination.goalData[destination.goalData.count - 1].sectionData.removeAll()
+//                                    }
                                     
                                     if let subsnapshots = snapshot.children.allObjects as? [DataSnapshot] {
                                         for subsnap in subsnapshots {
@@ -139,15 +139,15 @@ class ArchiveListViewController: UIViewController {
                                                 print("has found subgoal: \(subItemInfo["content"] as! String)")
                                             }
                                         }
+                                        destination.tableView.reloadData()
                                     } // end subgoal info retrival
                                     
                                 })
                             } // if itemInfo as [String: Any]
                         } // end list item info retrival
-                        destination.tableView.reloadData()
+                        
                     }
-                    
-                    
+                    destination.tableView.reloadData()
                 })
             }
         }

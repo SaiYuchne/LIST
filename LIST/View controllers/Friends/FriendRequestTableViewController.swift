@@ -32,6 +32,9 @@ class FriendRequestTableViewController: UITableViewController {
             if let friendInfo = snapshot.value as? [String: Any] {
                 cell.usernameLabel.text = friendInfo["userName"] as! String
                 cell.infoLabel.text = self.messages[indexPath.row]
+                cell.iconPic.image = UIImage(named: "icon")
+                cell.iconPic.layer.cornerRadius = cell.iconPic.frame.height / 2
+                cell.iconPic.clipsToBounds = true
                 // MARK: TODO: iconPic
             }
         }

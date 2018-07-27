@@ -85,7 +85,7 @@ class ViewListMenuViewController: UIViewController {
                             
                                 // should have no lists under that priority level
                                 destination.priorityListsData[index].sectionData = [String]()
-                                destination.tableView.reloadData()
+//                                destination.tableView.reloadData()
                             } else {
                                 destination.priorityListsData[index].listID = [String]()
                                 if let ids = snapshot.children.allObjects as? [DataSnapshot] {

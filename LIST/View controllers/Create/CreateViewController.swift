@@ -213,7 +213,6 @@ class CreateViewController: UIViewController, UITextFieldDelegate,  UIPickerView
     }
     
     @objc func otherDonePressed() {
-        // MARK: TO DO: the first row cannot be automatically selected
         self.view.endEditing(true)
     }
     
@@ -263,6 +262,11 @@ class CreateViewController: UIViewController, UITextFieldDelegate,  UIPickerView
             ref.child("PriorityList").child(user.userID).child(priorityLevel!).child(listID!).setValue(listID!)
             let deadlineUpdate = ["listTitle": listName!, "deadline": deadline!]
             ref.child("DeadlineList").child(user.userID).child(listID!).setValue(deadlineUpdate)
+            
+            // FriendList section
+            if privacyLevel == "friends" {
+                ref.child("FriendList").child(user.userID).child(listID!).setValue(listName!)
+            }
         }
     }
     

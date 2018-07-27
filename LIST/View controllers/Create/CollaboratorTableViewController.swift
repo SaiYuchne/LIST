@@ -24,19 +24,23 @@ class CollaboratorTableViewController: UITableViewController {
             ref.child("UserID").child(path).observeSingleEvent(of: .value, with: { (snapshot) in
                 if snapshot.exists() {
                     let collaboratorID = snapshot.value as! String
-                    if(self.isNewCollaborator(collaboratorID)){
-                        self.ref.child("CollaborationInvitation").child(collaboratorID).child(self.listID!).setValue(self.user.userID)
-                        
-                        self.ref.child("List").child(self.listID!).child("collaborator").child(collaboratorID).setValue(collaboratorID)
-                        
-                        self.updateAccessInDatabase(receiverID: collaboratorID)
-                        self.presentInvitationHasBeenSentAlert()
-                    } else {
-                        if(collaboratorID == self.user.userID) {
-                            self.presentAddSelfAlert()
+                    print("collaboratorID = \(collaboratorID)")
+                    self.ref.child("List").child(self.listID!).child("collaborator").child(collaboratorID).observeSingleEvent(of: .value) { (snapshot) in
+                        if snapshot.exists() {
+                            self.presentOldCollaboratorAlert()
+                        } else {
+                            if(collaboratorID == self.user.userID) {
+                                self.presentAddSelfAlert()
+                            } else {
+                                self.ref.child("CollaborationInvitation").child(collaboratorID).child(self.listID!).setValue(self.user.userID)
+                                
+                                self.ref.child("List").child(self.listID!).child("collaborator").child(collaboratorID).setValue(collaboratorID)
+                                
+                                self.updateAccessInDatabase(receiverID: collaboratorID)
+                                self.presentInvitationHasBeenSentAlert()
+                            }
                         }
-                        self.presentOldCollaboratorAlert()
-                    }
+                    } // the user exists
                 } else {
                     self.presentNonUserAlert()
                 }
@@ -111,7 +115,8 @@ class CollaboratorTableViewController: UITableViewController {
         let cancel = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
         let ok = UIAlertAction(title: "Ok", style: .default) { (_) in
             email = alert.textFields?[0].text
-            if email != nil {
+            if email?.count != 0 {
+                print("email = \(email)")
                 self.newCollaboratorEmail = email!
                 self.invitationUpdate = 1
             } else {
@@ -213,15 +218,5 @@ class CollaboratorTableViewController: UITableViewController {
             }
         }
         
-    }
-    
-    func isNewCollaborator(_ collaboratorID: String) -> Bool{
-        var doesExist = false
-        ref.child("List").child(listID!).child("collaborator").child(collaboratorID).observe(.value) { (snapshot) in
-            if snapshot.exists() {
-                doesExist = true
-            }
-        }
-        return !doesExist
     }
 }

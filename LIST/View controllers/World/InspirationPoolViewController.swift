@@ -60,13 +60,13 @@ class InspirationPoolViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        let labelFontSize = self.view.bounds.size.height * 0.1
+        let labelFontSize = self.view.bounds.size.height * 0.05
         tagLabel.attributedText = createAttributedString(tag, fontSize: labelFontSize * 0.7, isCentered: false)
         wishLabel.attributedText = createAttributedString(wish, fontSize: labelFontSize, isCentered: true)
     }
     
     override func viewWillAppear(_ animated: Bool) {
-        let labelFontSize = self.view.bounds.size.height * 0.1
+        let labelFontSize = self.view.bounds.size.height * 0.05
         tagLabel.attributedText = createAttributedString(tag, fontSize: labelFontSize * 0.7, isCentered: false)
         wishLabel.attributedText = createAttributedString(wish, fontSize: labelFontSize, isCentered: true)
         

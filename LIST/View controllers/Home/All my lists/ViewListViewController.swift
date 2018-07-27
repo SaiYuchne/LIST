@@ -164,7 +164,6 @@ class ViewListViewController: UIViewController, UITableViewDelegate, UITableView
                             } // if itemInfo as [String: Any]
                         } // end list item info retrival
                     }
-                    
                     destination.tableView.reloadData()
                     self.ref.child("List").child(destination.listID!).child("userID").observeSingleEvent(of: .value, with: { (snapshot) in
                         if let creatorID = snapshot.value as? String {

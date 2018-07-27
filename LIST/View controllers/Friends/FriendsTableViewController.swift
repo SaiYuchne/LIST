@@ -13,9 +13,14 @@ class FriendsTableViewController: UITableViewController {
 
     let ref = Database.database().reference()
     var friendIDs = [String]()
+    var chosenRow = Int()
     let user = LISTUser()
     
-    var hasFriendRequest = false
+    var hasFriendRequest = false {
+        didSet {
+            self.tableView.reloadData()
+        }
+    }
     var newFriendEmail = String()
     var message = String()
     var requestUpdate: Int = 0 {
@@ -90,8 +95,9 @@ class FriendsTableViewController: UITableViewController {
     }
 
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        if indexPath.section == 0 {
-            
+        if indexPath.section == 1 {
+            chosenRow = indexPath.row
+            performSegue(withIdentifier: "goToFriendListMenu", sender: self)
         }
     }
     
@@ -191,6 +197,21 @@ class FriendsTableViewController: UITableViewController {
                         for snap in snapshots {
                             destination.requestID.append(snap.key)
                             destination.messages.append(snap.value as! String)
+                        }
+                    }
+                    destination.tableView.reloadData()
+                })
+            }
+        } else if segue.identifier == "goToFriendListMenu" {
+            if let destination = segue.destination as?
+                FriendListViewController {
+                ref.child("FriendList").child(friendIDs[chosenRow]).observeSingleEvent(of: .value, with: { (snapshot) in
+                    if let snapshots = snapshot.children.allObjects as? [DataSnapshot] {
+                        destination.listTitles.removeAll()
+                        destination.listIDs.removeAll()
+                        for snap in snapshots {
+                            destination.listIDs.append(snap.key)
+                            destination.listTitles.append(snap.value as! String)
                         }
                     }
                     destination.tableView.reloadData()

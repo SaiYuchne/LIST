@@ -73,7 +73,6 @@ class SingleListViewController: UIViewController, UITableViewDelegate, UITableVi
         super.viewDidLoad()
         tableView.delegate = self
         tableView.dataSource = self
-        configureListNameLabel(listNameLabel)
         
         // get the tableViewData from the database if the list is not newly created
 //        if !isNew! {
@@ -105,7 +104,12 @@ class SingleListViewController: UIViewController, UITableViewDelegate, UITableVi
             }
             print("numOfCompletedItems = \(self.numOfCompletedItems)")
         }
+        ref.child("List").child(listID!).child("listTitle").observeSingleEvent(of: .value) { (snapshot) in
+            self.listName = snapshot.value as! String
+            self.configureListNameLabel(self.listNameLabel)
+        }
     }
+    
     func configureListNameLabel(_ label: UILabel){
         if let name = listName {
             listNameLabel.attributedText = centeredAttributedString(name, fontSize: listNameLabel.bounds.size.height * 0.7)
@@ -327,7 +331,6 @@ class SingleListViewController: UIViewController, UITableViewDelegate, UITableVi
                 if let destination = segue.destination as? ListSettingsTableViewController {
                     destination.listID = listID
                     ref.child("List").child(listID!).observeSingleEvent(of: .value, with: { (snapshot) in
-                        // MARK: to do: tags and collaborators retrieval
                         if let listSettings = snapshot.value as? [String: Any] {
                             destination.settings = ["List name": listSettings["listTitle"] as! String, "Creation date": listSettings["creationDate"] as! String, "Deadline": listSettings["deadline"] as! String, "Priority level": listSettings["priority"] as! String, "Who can view this list": listSettings["privacy"] as! String, "Tags": "Tap to see", "Collaborators": "Tap to see", "The most important list": "Click to set", "The most urgent list": "Click to set", "Delete this list": nil]
                             destination.tableView.reloadData()

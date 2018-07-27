@@ -103,19 +103,25 @@ class TagCollectionTableViewController: UITableViewController, UISearchResultsUp
         }
         
         // update Inspiration pool if necessary
-        ref.child("ListItem").child(listID!).observeSingleEvent(of: .value) { (snapshot) in
-            if let snapshots = snapshot.children.allObjects as? [DataSnapshot] {
-                for snap in snapshots {
-                    let itemID = snap.key
-                    self.ref.child("InspirationPool").child(itemID).observeSingleEvent(of: .value, with: { (snapshot) in
-                        if !snapshot.exists() {
-                            let itemInfo = snap.value as! [String: Any]
-                            let addInfo = ["content": itemInfo["content"] as! String, "listID": self.listID!]
-                            self.ref.child("InspirationPool").child(itemID).setValue(addInfo)
+        // executed only when the privacy level meets the requirement
+        ref.child("List").child(listID!).child("privacy").observeSingleEvent(of: .value) { (snapshot) in
+            let privacy = snapshot.value as! String
+            if privacy != "friends" && privacy != "only me" {
+                self.ref.child("ListItem").child(self.listID!).observeSingleEvent(of: .value) { (snapshot) in
+                    if let snapshots = snapshot.children.allObjects as? [DataSnapshot] {
+                        for snap in snapshots {
+                            let itemID = snap.key
+                            self.ref.child("InspirationPool").child(itemID).observeSingleEvent(of: .value, with: { (snapshot) in
+                                if !snapshot.exists() {
+                                    let itemInfo = snap.value as! [String: Any]
+                                    let addInfo = ["content": itemInfo["content"] as! String, "listID": self.listID!]
+                                    self.ref.child("InspirationPool").child(itemID).setValue(addInfo)
+                                }
+                            })
                         }
-                    })
+                    }
                 }
-            }
+            } // the privacy level meets the requirement
         }
     }
     

@@ -26,6 +26,7 @@
 		406DD2EE210982C800B38BB7 /* SubgoalOverviewTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 406DD2ED210982C800B38BB7 /* SubgoalOverviewTableViewCell.swift */; };
 		406DD2F02109958500B38BB7 /* ProgressOverviewViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 406DD2EF2109958500B38BB7 /* ProgressOverviewViewController.swift */; };
 		406DD2F22109A74E00B38BB7 /* WorldButtonView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 406DD2F12109A74E00B38BB7 /* WorldButtonView.swift */; };
+		406DD2F4210B494D00B38BB7 /* FriendListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 406DD2F3210B494D00B38BB7 /* FriendListViewController.swift */; };
 		4098461A20F6FEA300DCAF22 /* SystemTagCollectionTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4098461920F6FEA300DCAF22 /* SystemTagCollectionTableViewController.swift */; };
 		4098461C20F7088E00DCAF22 /* MotivationQuoteViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4098461B20F7088E00DCAF22 /* MotivationQuoteViewController.swift */; };
 		4098461E20F709C200DCAF22 /* MotivationQuoteView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4098461D20F709C200DCAF22 /* MotivationQuoteView.swift */; };
@@ -119,6 +120,7 @@
 		406DD2ED210982C800B38BB7 /* SubgoalOverviewTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubgoalOverviewTableViewCell.swift; sourceTree = "<group>"; };
 		406DD2EF2109958500B38BB7 /* ProgressOverviewViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProgressOverviewViewController.swift; sourceTree = "<group>"; };
 		406DD2F12109A74E00B38BB7 /* WorldButtonView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorldButtonView.swift; sourceTree = "<group>"; };
+		406DD2F3210B494D00B38BB7 /* FriendListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FriendListViewController.swift; sourceTree = "<group>"; };
 		4098461920F6FEA300DCAF22 /* SystemTagCollectionTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SystemTagCollectionTableViewController.swift; sourceTree = "<group>"; };
 		4098461B20F7088E00DCAF22 /* MotivationQuoteViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MotivationQuoteViewController.swift; sourceTree = "<group>"; };
 		4098461D20F709C200DCAF22 /* MotivationQuoteView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MotivationQuoteView.swift; sourceTree = "<group>"; };
@@ -405,6 +407,7 @@
 			children = (
 				40DC375820D89B6400EADAD1 /* FriendsTableViewController.swift */,
 				40DC375E20D8AE1200EADAD1 /* FriendRequestTableViewController.swift */,
+				406DD2F3210B494D00B38BB7 /* FriendListViewController.swift */,
 			);
 			path = Friends;
 			sourceTree = "<group>";
@@ -747,6 +750,7 @@
 				40DC375620D3938000EADAD1 /* SubgoalTableViewCell.swift in Sources */,
 				40E919D220F30BA40022D0E6 /* ViewFavouriteListViewController.swift in Sources */,
 				406DD2EC21097CD500B38BB7 /* GoalOverviewTableViewCell.swift in Sources */,
+				406DD2F4210B494D00B38BB7 /* FriendListViewController.swift in Sources */,
 				40DC375B20D8A18400EADAD1 /* FriendTableViewCell.swift in Sources */,
 				401470C820D0C50B008B5846 /* ISPoint.swift in Sources */,
 				40E919C320F060FD0022D0E6 /* WorldPageViewController.swift in Sources */,

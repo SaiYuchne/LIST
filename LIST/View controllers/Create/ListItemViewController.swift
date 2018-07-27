@@ -160,6 +160,7 @@ class ListItemViewController: UIViewController {
                     point.touchUpInside =
                         { (point:ISPoint) in
                             self.addNode = false
+                            print("touched: addNode = \(self.addNode)")
                             self.selectedNodeID = point.nodeID
                             self.performSegue(withIdentifier: "goToNodeSetting", sender: self)
                     }

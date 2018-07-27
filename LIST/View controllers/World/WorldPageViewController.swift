@@ -12,16 +12,12 @@ import FirebaseDatabase
 class WorldPageViewController: UIViewController {
 
     let ref = Database.database().reference()
-    private lazy var user = LISTUser()
+    private var user = LISTUser()
     
-    @IBOutlet weak var inspirationPoolExtractView: InspirationPoolExtractView! {
-        didSet{
-            let tap = UITapGestureRecognizer(target: self, action: #selector(inspirationPoolExtractTapped(_: )))
-            inspirationPoolExtractView.addGestureRecognizer(tap)
-        }
-    }
+    @IBOutlet weak var inspirationPoolExtractView: InspirationPoolExtractView!
     
     var trendingTags = [String]()
+    var bigWishPool = [InspirationPoolViewController.cellData]()
     
     @IBOutlet weak var firstTagLabel: UILabel!
     @IBOutlet weak var secondTagLabel: UILabel!
@@ -33,17 +29,6 @@ class WorldPageViewController: UIViewController {
         super.viewDidLoad()
 
         getDataFromDatabase()
-        configureLabels()
-    }
-    
-    @objc private func inspirationPoolExtractTapped(_ recognizer: UITapGestureRecognizer) {
-        switch recognizer.state {
-        case .ended:
-            performSegue(withIdentifier: "goToInspirationPool", sender: self)
-            break
-        default:
-            break
-        }
     }
     
     @IBOutlet weak var searchTagView: RoundRecView!{
@@ -53,10 +38,40 @@ class WorldPageViewController: UIViewController {
         }
     }
     
+    @IBAction func inspirationPoolTapped(_ sender: UIButton) {
+        ref.child("InspirationPool").observeSingleEvent(of: .value, with: { (snapshot) in
+            print("mark 1")
+            if let snapshots = snapshot.children.allObjects as? [DataSnapshot] {
+                print("mark 2")
+                self.bigWishPool.removeAll()
+                for snap in snapshots {
+                    print("mark 3")
+                    let itemInfo = snap.value as! [String: String]
+                    let listID = itemInfo["listID"] as! String
+                    let content = itemInfo["content"] as! String
+                    var newCell = InspirationPoolViewController.cellData(itemID: snap.key, content: content, listID: listID, tags: [String]())
+                    print("new cell instantialized")
+                    self.bigWishPool.append(newCell)
+//                    self.ref.child("List").child(listID).child("tag").observeSingleEvent(of: .value, with: { (snapshot) in
+//                        if let snapshots = snapshot.children.allObjects as? [DataSnapshot] {
+//                            print("mark 4")
+//                            for snap in snapshots {
+//                                newCell.tags.append(snap.key)
+//                                print("tag = \(snap.key)")
+//                            }
+//                            self.bigWishPool.append(newCell)
+//                        }
+//                    })
+                }
+                self.performSegue(withIdentifier: "goToInspirationPool", sender: self)
+            }
+        })
+    }
+    
     @objc func searchTagViewTapped(_ recognizer: UITapGestureRecognizer) {
         switch recognizer.state {
         case .ended:
-            performSegue(withIdentifier: "goToSystemTags", sender: self)
+//            performSegue(withIdentifier: "goToSystemTags", sender: self)
             break
         default:
             break
@@ -73,7 +88,7 @@ class WorldPageViewController: UIViewController {
     @objc func motivateViewTapped(_ recognizer: UITapGestureRecognizer) {
         switch recognizer.state {
         case .ended:
-            // perform segue
+            performSegue(withIdentifier: "goToMotivationQuote", sender: self)
             break
         default:
             break
@@ -87,37 +102,81 @@ class WorldPageViewController: UIViewController {
         fourthTagLabel.text = "4️⃣ "+trendingTags[3]
         fifthTagLabel.text = "5️⃣ "+trendingTags[4]
         
-        firstTagLabel.font = UIFont.preferredFont(forTextStyle: .body).withSize(firstTagLabel.bounds.height * 0.9)
-        secondTagLabel.font = UIFont.preferredFont(forTextStyle: .body).withSize(secondTagLabel.bounds.height * 0.9)
-        thirdTagLabel.font = UIFont.preferredFont(forTextStyle: .body).withSize(thirdTagLabel.bounds.height * 0.9)
-        fourthTagLabel.font = UIFont.preferredFont(forTextStyle: .body).withSize(fourthTagLabel.bounds.height * 0.9)
-        fifthTagLabel.font = UIFont.preferredFont(forTextStyle: .body).withSize(fifthTagLabel.bounds.height * 0.9)
+        firstTagLabel.font = UIFont.preferredFont(forTextStyle: .body).withSize(firstTagLabel.bounds.height * 0.5)
+        secondTagLabel.font = UIFont.preferredFont(forTextStyle: .body).withSize(secondTagLabel.bounds.height * 0.5)
+        thirdTagLabel.font = UIFont.preferredFont(forTextStyle: .body).withSize(thirdTagLabel.bounds.height * 0.5)
+        fourthTagLabel.font = UIFont.preferredFont(forTextStyle: .body).withSize(fourthTagLabel.bounds.height * 0.5)
+        fifthTagLabel.font = UIFont.preferredFont(forTextStyle: .body).withSize(fifthTagLabel.bounds.height * 0.5)
+    }
+    
+    override func performSegue(withIdentifier identifier: String, sender: Any?) {
+        if (self.shouldPerformSegue(withIdentifier: identifier, sender: sender)) {
+            super.performSegue(withIdentifier: identifier, sender: sender)
+        }
+    }
+    
+    override func shouldPerformSegue(withIdentifier identifier: String, sender: Any?) -> Bool {
+        print("shouldPerformSegue")
+        if identifier == "goToInspirationPool", sender is WorldPageViewController {
+            print("shouldPerformSegue: goToInspirationPool")
+            print("bigWishPool.count = \(bigWishPool.count)")
+            if bigWishPool.count == 0 {
+                return false
+            } else {
+                return true
+            }
+        } else {
+            return true
+        }
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "goToInspirationPool" {
             if let destination = segue.destination as? InspirationPoolViewController {
+                print("preparing for segues: goToInspirationPool")
                 destination.isTagSpecific = false
+                destination.bigWishPool.removeAll()
+                for index in self.bigWishPool.indices {
+                    ref.child("List").child(bigWishPool[index].listID).child("tag").observeSingleEvent(of: .value, with: { (snapshot) in
+                        if let snapshots = snapshot.children.allObjects as? [DataSnapshot] {
+                            print("mark 4")
+                            for snap in snapshots {
+                                self.bigWishPool[index].tags.append(snap.key)
+                                print("tag = \(snap.key)")
+                            }
+                            destination.bigWishPool.append(self.bigWishPool[index])
+                        }
+                    })
+                    
+                }
             }
         }
     }
     
+    private func createAttributedString(_ string: String, fontSize: CGFloat, isCentered: Bool) -> NSAttributedString {
+        var font = UIFont.preferredFont(forTextStyle: .body).withSize(fontSize)
+        font = UIFontMetrics(forTextStyle: .body).scaledFont(for: font)
+        let paragraphStyle = NSMutableParagraphStyle()
+        if isCentered {
+            paragraphStyle.alignment = .center
+        } else {
+            paragraphStyle.alignment = .left
+        }
+        return NSAttributedString(string: string, attributes: [.paragraphStyle:paragraphStyle,.font:font])
+    }
+    
     // MARK: database operations
-    private func getDataFromDatabase() {
-        let trendingTagsRef = ref.child("Tag").child("tags").queryOrdered(byChild: "listCount")
-        
-        trendingTagsRef.observeSingleEvent(of: .value, with: { (snapshot) in
+    func getDataFromDatabase() {
+        ref.child("Tag").child("tags").queryOrdered(byChild: "listCount").observe(.value, with: { (snapshot) in
             if let snapshots = snapshot.children.allObjects as? [DataSnapshot]{
-                var tagCount = 0
+                var reversedTrendingTags = [String]()
                 for snap in snapshots{
                     let tagName = snap.key
-                    self.trendingTags.append(tagName)
-                    tagCount += 1
-                    if tagCount >= 5 {
-                        break
-                    }
+                    reversedTrendingTags.append(tagName)
                 }
+                self.trendingTags = reversedTrendingTags.reversed()
             }
+            self.configureLabels()
         })
     }
 }

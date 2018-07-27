@@ -97,6 +97,58 @@ class ArchiveListViewController: UIViewController {
                     }
                 })
             }
+        } else if segue.identifier == "goToSeeArchiveListTag" {
+            if let destination = segue.destination as? SimpleListTagTableViewController {
+                listRef.child(listID!).child("tag").observe(.value, with: { (snapshot) in
+                    if let snapshots = snapshot.children.allObjects as? [DataSnapshot] {
+                        destination.cellTitle.removeAll()
+                        for snap in snapshots {
+                            destination.cellTitle.append(snap.key)
+                        }
+                    }
+                    destination.tableView.reloadData()
+                })
+            }
+        } else if segue.identifier == "goToSeeListOverview" {
+            if let destination = segue.destination as? ListOverviewViewController {
+                destination.listName = listTitleLabel.text!
+                destination.listID = listID!
+                    let ref = Database.database().reference()
+                ref.child("ListItem").child(listID!).queryOrdered(byChild: "creationDays").observe(.value, with: { (snapshot) in
+                    destination.goalData.removeAll()
+                    if let snapshots = snapshot.children.allObjects as? [DataSnapshot] {
+                        for snap in snapshots {
+                            if let itemInfo = snap.value as? [String: Any] {
+                                let itemID = snap.key
+                                destination.goalData.append(ListOverviewViewController.listCellData(opened: false, itemID: itemID, title: itemInfo["content"] as! String, subgoalID: [String](), sectionData: [String]()))
+                                
+                                // retrive subgoal info
+                                ref.child("Subgoal").child(itemID).queryOrdered(byChild: "creationDays").observe(.value, with: { (snapshot) in
+                                    print("retriving subgoal info in database...")
+                                    if destination.goalData.count > 0 {
+                                        destination.goalData[destination.goalData.count - 1].subgoalID.removeAll()
+                                        destination.goalData[destination.goalData.count - 1].sectionData.removeAll()
+                                    }
+                                    
+                                    if let subsnapshots = snapshot.children.allObjects as? [DataSnapshot] {
+                                        for subsnap in subsnapshots {
+                                            if let subItemInfo = subsnap.value as?[String: Any] {
+                                                destination.goalData[destination.goalData.count - 1].subgoalID.append(subsnap.key)
+                                                
+                                                destination.goalData[destination.goalData.count - 1].sectionData.append(subItemInfo["content"] as! String)
+                                                print("has found subgoal: \(subItemInfo["content"] as! String)")
+                                            }
+                                        }
+                                    } // end subgoal info retrival
+                                    
+                                })
+                            } // if itemInfo as [String: Any]
+                        } // end list item info retrival
+                    }
+                    
+                    destination.tableView.reloadData()
+                })
+            }
         }
     }
 }

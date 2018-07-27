@@ -23,8 +23,12 @@ class ArchiveHomePageViewController: UIViewController {
         ref.child("Profile").child(user.userID).child("creationDate").observeSingleEvent(of: .value) { (snapshot) in
                 self.archiveHomePageView.creationDate = snapshot.value as! String
             self.ref.child("Archive").child("count").child(self.user.userID).observeSingleEvent(of: .value) { (snapshot) in
-                self.archiveHomePageView.count = snapshot.value as! Int
-                print("count = \(snapshot.value as! Int)")
+                if !snapshot.exists() {
+                    self.archiveHomePageView.count = 0
+                } else {
+                    self.archiveHomePageView.count = snapshot.value as! Int
+                    print("count = \(snapshot.value as! Int)")
+                }
                 self.archiveHomePageView.layoutSubviews()
             }
         }

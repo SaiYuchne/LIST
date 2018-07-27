@@ -17,13 +17,15 @@ class MotivationQuoteViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        motivationQuoteView.translatesAutoresizingMaskIntoConstraints = false
 
-        sendQuote()
     }
     
-    private func sendQuote() {
-        ref.child("MotivationQuote").observeSingleEvent(of: .value) { (snapshot) in
-            self.motivationQuoteView.quote = snapshot.value as? String
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        motivationQuoteView.translatesAutoresizingMaskIntoConstraints = false
+        ref.child("MotivationQuote").observe(.value) { (snapshot) in
+            self.motivationQuoteView.quote = snapshot.value as! String
         }
     }
 }

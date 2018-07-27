@@ -13,7 +13,6 @@ class SingleListViewController: UIViewController, UITableViewDelegate, UITableVi
     
     let ref = Database.database().reference()
     private lazy var user = LISTUser()
-    // MARK: to do: should be decided by segue preparation
     var isEditable: Bool?
     
     var isNew: Bool?
@@ -222,11 +221,10 @@ class SingleListViewController: UIViewController, UITableViewDelegate, UITableVi
             self.present(alert, animated: true, completion: nil)
         }))
         alert.addAction(UIAlertAction(title: "document progress", style: .default, handler: { (action) in
-            let goal: String
                 if let superView = sender.superview?.superview as? ListItemTableViewCell {
-                    goal = superView.goalLabel.text!
+                    let goalID = superView.itemID!
                     for index in self.goalData.indices {
-                        if self.goalData[index].title == goal {
+                        if self.goalData[index].itemID == goalID {
                             self.selectedWishIndex = index
                         }
                     }
@@ -335,7 +333,7 @@ class SingleListViewController: UIViewController, UITableViewDelegate, UITableVi
                     ref.child("List").child(listID!).observeSingleEvent(of: .value, with: { (snapshot) in
                         // MARK: to do: tags and collaborators retrieval
                         if let listSettings = snapshot.value as? [String: Any] {
-                            destination.settings = ["List name": listSettings["listTitle"] as! String, "Creation date": listSettings["creationDate"] as! String, "Deadline": listSettings["deadline"] as! String, "Priority level": listSettings["priority"] as! String, "Who can view this list": listSettings["privacy"] as! String, "Tags": nil, "Collaborators": nil, "Delete this list": nil]
+                            destination.settings = ["List name": listSettings["listTitle"] as! String, "Creation date": listSettings["creationDate"] as! String, "Deadline": listSettings["deadline"] as! String, "Priority level": listSettings["priority"] as! String, "Who can view this list": listSettings["privacy"] as! String, "Tags": "Tap to see", "Collaborators": "Tap to see", "The most important list": "Click to set", "The most urgent list": "Click to set", "Delete this list": nil]
                             destination.tableView.reloadData()
                         }
                     })
@@ -530,12 +528,15 @@ class SingleListViewController: UIViewController, UITableViewDelegate, UITableVi
                     // update archive
                     let archiveRef = self.ref.child("Archive")
                     for person in participants {
-                        archiveRef.child(person).child(self.listID!).setValue(self.listID!)
-                        
+                        archiveRef.child(person).child(self.listID!).child(self.listID!).setValue(self.listID!)
+                        self.ref.child("Archive").child(person).child(self.listID!).child("completionDays").setValue(Date().timeIntervalSinceReferenceDate)
                         archiveRef.child("count").child(person).observeSingleEvent(of: .value) { (snapshot) in
+                            print("retrieving count..")
                             if !snapshot.exists() {
+                                print("count does not exist")
                                 self.ref.child("Archive").child("count").child(person).setValue(1)
                             } else {
+                                print("update value")
                                 self.ref.child("Archive").child("count").child(person).setValue((snapshot.value as! Int) + 1)
                             }
                         }

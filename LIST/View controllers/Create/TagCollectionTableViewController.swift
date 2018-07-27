@@ -101,6 +101,22 @@ class TagCollectionTableViewController: UITableViewController, UISearchResultsUp
                 self.ref.child("TagList").child(self.user.userID).child(self.filteredTags[row]).child(self.listID!).setValue(listTitle)
             }
         }
+        
+        // update Inspiration pool if necessary
+        ref.child("ListItem").child(listID!).observeSingleEvent(of: .value) { (snapshot) in
+            if let snapshots = snapshot.children.allObjects as? [DataSnapshot] {
+                for snap in snapshots {
+                    let itemID = snap.key
+                    self.ref.child("InspirationPool").child(itemID).observeSingleEvent(of: .value, with: { (snapshot) in
+                        if !snapshot.exists() {
+                            let itemInfo = snap.value as! [String: Any]
+                            let addInfo = ["content": itemInfo["content"] as! String, "listID": self.listID!]
+                            self.ref.child("InspirationPool").child(itemID).setValue(addInfo)
+                        }
+                    })
+                }
+            }
+        }
     }
     
     private func deleteTagInDatabase (tagToBeDeleted: String) {
@@ -115,5 +131,17 @@ class TagCollectionTableViewController: UITableViewController, UISearchResultsUp
         ref.child("Tag").child("tags").child(tagToBeDeleted).child("listIDs").child(listID!).removeValue()
         // update the user's tagList
         ref.child("TagList").child(user.userID).child(tagToBeDeleted).child(listID!).removeValue()
+        
+        // update Inspiration Pool if necessary
+        if listTags.count == 0 {
+            ref.child("ListItem").child(self.listID!).observeSingleEvent(of: .value) { (snapshot) in
+                if let snapshots = snapshot.children.allObjects as? [DataSnapshot] {
+                    for snap in snapshots {
+                        let itemID = snap.key
+                        self.ref.child("InspirationPool").child(itemID).removeValue()
+                    }
+                }
+            }
+        }
     }
 }

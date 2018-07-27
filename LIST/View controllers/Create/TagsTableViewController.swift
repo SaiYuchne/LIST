@@ -116,5 +116,22 @@ class TagsTableViewController: UITableViewController {
         ref.child("Tag").child("tags").child(tag).child("listIDs").child(listID!).removeValue()
         // update the user's tagList
         ref.child("TagList").child(user.userID).child(tag).child(listID!).removeValue()
+        
+        // update Inspiration Pool if necessary
+        ref.child("List").child(listID!).child("tag").observeSingleEvent(of: .value) { (snapshot) in
+            if !snapshot.exists() {
+                print("the list has no tags")
+                self.ref.child("ListItem").child(self.listID!).observeSingleEvent(of: .value) { (snapshot) in
+                    if let snapshots = snapshot.children.allObjects as? [DataSnapshot] {
+                        for snap in snapshots {
+                            let itemID = snap.key
+                            self.ref.child("InspirationPool").child(itemID).removeValue()
+                        }
+                    }
+                }
+            } else {
+                print("the list still has tags")
+            }
+        }
     }
 }

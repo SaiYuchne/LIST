@@ -115,6 +115,33 @@ class ViewListMenuViewController: UIViewController {
         } else {
             if let destination = segue.destination as? ViewListViewController {
                 destination.byTag = true
+                destination.byPriority = false
+                destination.byDeadline = false
+                // pass data
+                let TagListRef = ref.child("TagList").child(user.userID)
+                for index in destination.tagListsData.indices {
+                    let tag = destination.tagListsData[index].title
+                    TagListRef.child(tag).observe(.value, with: { (snapshot) in
+                        if(!snapshot.exists()) {
+                            
+                            // should have no lists under that tag
+                            destination.tagListsData[index].sectionData = [String]()
+                            destination.tableView.reloadData()
+                        } else {
+                            destination.tagListsData[index].listID = [String]()
+                            destination.tagListsData[index].sectionData = [String]()
+                            if let listTitles = snapshot.children.allObjects as? [DataSnapshot] {
+                                for listTitle in listTitles {
+                                    destination.tagListsData[index].listID.append(listTitle.key)
+                                    destination.tagListsData[index].sectionData.append(listTitle.value as! String)
+                                    
+                                }
+                            } // end else
+                        }
+                        destination.tableViewData = destination.tagListsData
+                        destination.tableView.reloadData()
+                    }) // end observing
+                } // end observing
             }
         }
     }

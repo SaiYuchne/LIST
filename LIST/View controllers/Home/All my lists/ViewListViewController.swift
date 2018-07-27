@@ -15,6 +15,12 @@ class ViewListViewController: UIViewController, UITableViewDelegate, UITableView
     let ref = Database.database().reference()
     @IBOutlet weak var tableView: UITableView!
     
+    struct cellData{
+        var opened = Bool()
+        var title = String()
+        var sectionData = [String]()
+        var listID = [String]()
+    }
     var tableViewData = [cellData]()
     var priorityListsData = [
         cellData(opened: false, title: "⭐️⭐️⭐️⭐️⭐️", sectionData: [String](), listID: [String]()),
@@ -25,7 +31,23 @@ class ViewListViewController: UIViewController, UITableViewDelegate, UITableView
     private let priorityLevel = ["1": "⭐️", "2": "⭐️⭐️", "3": "⭐️⭐️⭐️", "4": "⭐️⭐️⭐️⭐️", "5": "⭐️⭐️⭐️⭐️⭐️"]
     
     var deadlineListsData = [cellData]()
-    var tagListsData = [cellData]()
+    var tagListsData = [
+        cellData(opened: false, title: "Animal", sectionData: [String](), listID: [String]()),
+        cellData(opened: false, title: "Arts", sectionData: [String](), listID: [String]()),
+        cellData(opened: false, title: "Diet", sectionData: [String](), listID: [String]()),
+        cellData(opened: false, title: "Family", sectionData: [String](), listID: [String]()),
+        cellData(opened: false, title: "Food", sectionData: [String](), listID: [String]()),
+        cellData(opened: false, title: "Hobby", sectionData: [String](), listID: [String]()),
+        cellData(opened: false, title: "Life", sectionData: [String](), listID: [String]()),
+        cellData(opened: false, title: "Mood", sectionData: [String](), listID: [String]()),
+        cellData(opened: false, title: "Romance", sectionData: [String](), listID: [String]()),
+        cellData(opened: false, title: "Skill", sectionData: [String](), listID: [String]()),
+        cellData(opened: false, title: "Sports", sectionData: [String](), listID: [String]()),
+        cellData(opened: false, title: "Study", sectionData: [String](), listID: [String]()),
+        cellData(opened: false, title: "Travel", sectionData: [String](), listID: [String]()),
+        cellData(opened: false, title: "Work", sectionData: [String](), listID: [String]()),
+        cellData(opened: false, title: "YOLO", sectionData: [String](), listID: [String]())]
+    
     
     var byPriority = false
     var byDeadline = false
@@ -43,7 +65,6 @@ class ViewListViewController: UIViewController, UITableViewDelegate, UITableView
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-
         tableView.reloadData()
     }
     
@@ -56,6 +77,10 @@ class ViewListViewController: UIViewController, UITableViewDelegate, UITableView
             tableViewData[section].sectionData = [String]()
             tableViewData[section].sectionData = priorityListsData[section].sectionData
             tableViewData[section].listID = priorityListsData[section].listID
+        } else if(byTag) {
+            tableViewData[section].sectionData = [String]()
+            tableViewData[section].sectionData = tagListsData[section].sectionData
+            tableViewData[section].listID = tagListsData[section].listID
         }
         if tableViewData[section].opened {
             return tableViewData[section].sectionData.count + 1
@@ -239,9 +264,4 @@ class ViewListViewController: UIViewController, UITableViewDelegate, UITableView
     }
 }
 
-struct cellData{
-    var opened = Bool()
-    var title = String()
-    var sectionData = [String]()
-    var listID = [String]()
-}
+

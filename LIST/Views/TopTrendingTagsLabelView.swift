@@ -20,14 +20,14 @@ class TopTrendingTagsLabelView: UIView {
     }
     
     private func configureLabel(_ label: UILabel) {
-        label.attributedText = centeredAttributedString("🔝Top Trending Tags", fontSize: labelFontSize)
-        label.frame = self.frame
+        label.attributedText = centeredAttributedString("👇🏼🔝Top Trending Tags👇🏼", fontSize: labelFontSize)
+        label.frame = self.bounds
     }
     
     override func draw(_ rect: CGRect) {
         let roundedRect = UIBezierPath(roundedRect: bounds, cornerRadius: cornerRadius)
         roundedRect.addClip()
-        UIColor.init(red: 31/255, green: 54/255, blue: 130/255, alpha: 1).setFill()
+        UIColor.init(red: 239/255, green: 62/255, blue: 91/255, alpha: 1).setFill()
         roundedRect.fill()
     }
     
@@ -52,9 +52,9 @@ class TopTrendingTagsLabelView: UIView {
 
 extension TopTrendingTagsLabelView {
     struct SizeRatio {
-        static let fontSizeToBoundsHeight: CGFloat = 0.7
+        static let fontSizeToBoundsHeight: CGFloat = 0.4
         static let cornerOffsetToCornerRadius:CGFloat = 0.33
-        static let cornerRadiusToBoundsHeight: CGFloat = 0.06
+        static let cornerRadiusToBoundsHeight: CGFloat = 0.1
     }
     var cornerRadius: CGFloat {
         return bounds.size.height * SizeRatio.cornerRadiusToBoundsHeight

@@ -21,13 +21,13 @@ class InspirationPoolExtractView: UIView {
 
     private func configureLabel(_ label: UILabel) {
         label.attributedText = centeredAttributedString("Get a dive!💦", fontSize: labelFontSize)
-        label.frame = self.frame
+        label.frame = self.bounds
     }
     
     override func draw(_ rect: CGRect) {
         let roundedRect = UIBezierPath(roundedRect: bounds, cornerRadius: cornerRadius)
         roundedRect.addClip()
-        UIColor.init(red: 31/255, green: 54/255, blue: 130/255, alpha: 1).setFill()
+        UIColor.init(red: 160/255, green: 158/255, blue: 214/255, alpha: 1).setFill()
         roundedRect.fill()
     }
 
@@ -51,9 +51,9 @@ class InspirationPoolExtractView: UIView {
 }
 extension InspirationPoolExtractView {
     struct SizeRatio {
-        static let fontSizeToBoundsHeight: CGFloat = 0.8
+        static let fontSizeToBoundsHeight: CGFloat = 0.4
         static let cornerOffsetToCornerRadius:CGFloat = 0.33
-        static let cornerRadiusToBoundsHeight: CGFloat = 0.06
+        static let cornerRadiusToBoundsHeight: CGFloat = 0.1
     }
     var cornerRadius: CGFloat {
         return bounds.size.height * SizeRatio.cornerRadiusToBoundsHeight

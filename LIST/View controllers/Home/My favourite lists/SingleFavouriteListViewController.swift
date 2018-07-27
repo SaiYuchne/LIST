@@ -55,11 +55,11 @@ class SingleFavouriteListViewController: UIViewController, UITableViewDelegate, 
     }
     
     func numberOfSections(in tableView: UITableView) -> Int {
-        return goalData.count
+        return goalData.count + 1
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        if goalData[section].opened{
+        if section < goalData.count, goalData[section].opened{
             return goalData[section].sectionData.count + 1
         } else {
             return 1
@@ -67,18 +67,20 @@ class SingleFavouriteListViewController: UIViewController, UITableViewDelegate, 
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        print("tableView.numberOfSections = \(tableView.numberOfSections)")
-        if indexPath.row == 0 {
-            guard let cell = tableView.dequeueReusableCell(withIdentifier: "favListGoalCell") as? FavListGoalTableViewCell else {return UITableViewCell()}
-            print("indexPath.section is \(indexPath.section) \n indexPath.row is \(indexPath.row)")
-            cell.goalLabel.text = goalData[indexPath.section].title
-            return cell
-        } else {
-            let indexData = indexPath.row - 1
-            guard let cell = tableView.dequeueReusableCell(withIdentifier: "subgoalCell") as? FavListSubgoalTableViewCell else {return UITableViewCell()}
-            cell.subgoalLabel.text = goalData[indexPath.section].sectionData[indexData]
-            return cell
+        if indexPath.section+1 != tableView.numberOfSections{
+            if indexPath.row == 0 {
+                guard let cell = tableView.dequeueReusableCell(withIdentifier: "favListGoalCell") as? FavListGoalTableViewCell else {return UITableViewCell()}
+                cell.goalLabel.text = goalData[indexPath.section].title
+                return cell
+            } else {
+                let indexData = indexPath.row - 1
+                guard let cell = tableView.dequeueReusableCell(withIdentifier: "subgoalCell") as? FavListSubgoalTableViewCell else {return UITableViewCell()}
+                cell.subgoalLabel.text = goalData[indexPath.section].sectionData[indexData]
+                return cell
+            }
         }
+        let cell = tableView.dequeueReusableCell(withIdentifier: "seeTagCell", for: indexPath)
+        return cell
     }
     
     // MARK: expand to show subgoals
@@ -93,36 +95,24 @@ class SingleFavouriteListViewController: UIViewController, UITableViewDelegate, 
                 let sections = IndexSet.init(integer: indexPath.section)
                 tableView.reloadSections(sections, with: .none)
             }
+        } else if indexPath.section == tableView.numberOfSections - 1 {
+            performSegue(withIdentifier: "seeFavListTags", sender: self)
         }
     }
     
-    // MARK: database operations
-    func getTableViewDataFromDatabase(){
-        let listItemRef = ref.child("ListItem").child(listID!)
-        
-        listItemRef.observeSingleEvent(of: .value, with: { (snapshot) in
-            if let snapshots = snapshot.children.allObjects as? [DataSnapshot]{
-                for snap in snapshots{
-                    var tempData = snap.value as! Dictionary<String, Any>
-                    let key = snap.key
-                    
-                    self.goalData.append(cellData(opened: false, itemID: key, title: tempData["content"] as! String, subgoalID: [],  sectionData: []))
-                    self.ref.child("Subgoal").child(key).observeSingleEvent(of: .value, with: { (snapshot) in
-                        if let snapshots = snapshot.children.allObjects as? [DataSnapshot]{
-                            for snap in snapshots{
-                                var tempData = snap.value as! Dictionary<String, Any>
-                                self.goalData[self.goalData.count-1].subgoalID.append(snap.key)
-                                self.goalData[self.goalData.count-1].sectionData.append(tempData["content"] as! String)
-                            }
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if segue.identifier == "seeFavListTags" {
+            if let destination = segue.destination as? SimpleListTagTableViewController {
+                ref.child("List").child(listID!).child("tag").observe(.value, with: { (snapshot) in
+                    if let snapshots = snapshot.children.allObjects as? [DataSnapshot] {
+                        destination.cellTitle.removeAll()
+                        for snap in snapshots {
+                            destination.cellTitle.append(snap.key)
                         }
-                    }) { (error) in
-                        print(error.localizedDescription)
                     }
-                }
+                    destination.tableView.reloadData()
+                })
             }
-        }) { (error) in
-            print(error.localizedDescription)
         }
-        
     }
 }

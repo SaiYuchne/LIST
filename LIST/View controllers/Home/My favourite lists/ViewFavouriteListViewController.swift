@@ -24,8 +24,6 @@ class ViewFavouriteListViewController: UIViewController, UITableViewDelegate, UI
 
         tableView.delegate = self
         tableView.dataSource = self
-        
-        getTableViewDataFromDatabase()
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -43,17 +41,9 @@ class ViewFavouriteListViewController: UIViewController, UITableViewDelegate, UI
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-            chosenRow = indexPath.row - 1
-            performSegue(withIdentifier: "goToOrginalList", sender: self)
-    }
-    
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        if segue.identifier == "goToOriginalList" {
-            if let destination = segue.destination as? SingleFavouriteListViewController {
-                destination.listName = listNames[chosenRow!]
-                destination.listID = listIDs[chosenRow!]
-            }
-        }
+        chosenRow = indexPath.row
+        print("chosenRow: \(chosenRow!)")
+        performSegue(withIdentifier: "goToOrginalFavList", sender: self)
     }
     
     // MARK: delete list items
@@ -70,6 +60,7 @@ class ViewFavouriteListViewController: UIViewController, UITableViewDelegate, UI
                 self.deleteFavListFromDatabase(itemID: self.listIDs[indexPath.row])
                 self.listIDs.remove(at: indexPath.row)
                 self.listNames.remove(at: indexPath.row)
+                tableView.deleteRows(at: [indexPath], with: .fade)
                 tableView.reloadData()
             }
             alert.addAction(no)
@@ -78,19 +69,51 @@ class ViewFavouriteListViewController: UIViewController, UITableViewDelegate, UI
         }
     }
     
-    // MARK: database operations
-    private func getTableViewDataFromDatabase() {
-        ref.child("FavouriteList").child(user.userID).observeSingleEvent(of: .value) { (snapshot) in
-            if let snapshots = snapshot.children.allObjects as? [DataSnapshot] {
-                for snap in snapshots {
-                    self.listIDs.append(snap.value as! String)
-                    self.listNames.append(snap.key)
-                }
-            }
-        }
-    }
-    
     private func deleteFavListFromDatabase(itemID: String) {
         ref.child("FavouriteList").child(user.userID).child(itemID).removeValue()
+    }
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if segue.identifier == "goToOrginalFavList" {
+            if let destination = segue.destination as? SingleFavouriteListViewController {
+                print("prepare for segue: goToOrginalFavList")
+                destination.listName = listNames[chosenRow!]
+                print("listName: \(listNames[chosenRow!])")
+                destination.listID = listIDs[chosenRow!]
+                print("listID: \(listIDs[chosenRow!])")
+                ref.child("ListItem").child(listIDs[chosenRow!]).queryOrdered(byChild: "creationDays").observeSingleEvent(of: .value, with: { (snapshot) in
+                    destination.goalData.removeAll()
+                    if let snapshots = snapshot.children.allObjects as? [DataSnapshot] {
+                        for snap in snapshots {
+                            if let itemInfo = snap.value as? [String: Any] {
+                                let itemID = snap.key
+                                destination.goalData.append(SingleFavouriteListViewController.cellData(opened: false, itemID: itemID, title: itemInfo["content"] as! String, subgoalID: [String](), sectionData: [String]()))
+                                
+                                // retrive subgoal info
+                                self.ref.child("Subgoal").child(itemID).queryOrdered(byChild: "creationDays").observeSingleEvent(of: .value, with: { (snapshot) in
+                                    if destination.goalData.count > 0 {
+                                        destination.goalData[destination.goalData.count - 1].subgoalID.removeAll()
+                                        destination.goalData[destination.goalData.count - 1].sectionData.removeAll()
+                                    }
+                                    
+                                    if let subsnapshots = snapshot.children.allObjects as? [DataSnapshot] {
+                                        for subsnap in subsnapshots {
+                                            if let subItemInfo = subsnap.value as?[String: Any] {
+                                                destination.goalData[destination.goalData.count - 1].subgoalID.append(subsnap.key)
+                                                
+                                                destination.goalData[destination.goalData.count - 1].sectionData.append(subItemInfo["content"] as! String)
+                                            }
+                                        }
+                                    } // end subgoal info retrival
+                                    
+                                })
+                            } // if itemInfo as [String: Any]
+                        } // end list item info retrival
+                    }
+                    
+                    destination.tableView.reloadData()
+                })
+            }
+        }
     }
 }

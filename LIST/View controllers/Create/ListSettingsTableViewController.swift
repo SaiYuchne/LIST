@@ -20,7 +20,7 @@ class ListSettingsTableViewController: UITableViewController,  UITextFieldDelega
     var newDdl: String?
     var dateStringForDatabase: String?
     
-    var settings = ["List name": "list name", "Creation date": "2018-07-01", "Deadline": "2018-12-31", "Priority level": "⭐️⭐️⭐️⭐️", "Who can view this list": "personal", "Tags": nil, "Collaborators": nil, "Delete this list": nil]
+    var settings = ["List name": "list name", "Creation date": "2018-07-01", "Deadline": "2018-12-31", "Priority level": "⭐️⭐️⭐️⭐️", "Who can view this list": "personal", "Tags": "Tap to see", "Collaborators": "Tap to see", "The most important list": "Click to set", "The most urgent list": "Click to set", "Delete this list": nil]
     private let priorityLevel = ["⭐️": 1, "⭐️⭐️": 2, "⭐️⭐️⭐️": 3, "⭐️⭐️⭐️⭐️": 4, "⭐️⭐️⭐️⭐️⭐️": 5]
     
     override func viewDidLoad() {
@@ -68,9 +68,17 @@ class ListSettingsTableViewController: UITableViewController,  UITextFieldDelega
             case 5:
                 cell.accessoryType = .disclosureIndicator
                 cell.textLabel?.text = "Tags"
-            default:
+            case 6:
                 cell.accessoryType = .disclosureIndicator
                 cell.textLabel?.text = "Collaborators"
+            case 7:
+                cell.accessoryType = .disclosureIndicator
+                cell.textLabel?.text = "The most important list"
+                cell.detailTextLabel?.text = settings["The most important list"]!
+            default:
+                cell.accessoryType = .disclosureIndicator
+                cell.textLabel?.text = "The most urgent list"
+                cell.detailTextLabel?.text = settings["The most urgent list"]!
             }
             return cell
         }else {
@@ -229,6 +237,54 @@ class ListSettingsTableViewController: UITableViewController,  UITextFieldDelega
             // perform segue
             self.performSegue(withIdentifier: "goToCollaborators", sender: self)
         case 7:
+            // set to be the most important list
+            let alert = UIAlertController(title: "The most important list", message: "Are you sure to set this list as the most important list?", preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: "No", style: .cancel, handler: nil))
+            alert.addAction(UIAlertAction(title: "Yes", style: .default, handler: { (action) in
+                // set
+                self.ref.child("MostImportantList").child(self.user.userID).child("listID").observeSingleEvent(of: .value, with: { (snapshot) in
+                    if snapshot.exists() {
+                        let importantListID = snapshot.value as! String
+                        if importantListID == self.listID! {
+                            self.presentAlreadyListAlert(value: 0)
+                        } else {
+                            let listInfo = ["listID": self.listID!, "listTitle": self.settings["List name"]]
+                            self.ref.child("MostImportantList").child(self.user.userID).setValue(listInfo)
+                            self.presentSetMostImportantListAlert()
+                        }
+                    } else {
+                        let listInfo = ["listID": self.listID!, "listTitle": self.settings["List name"]]
+                        self.ref.child("MostImportantList").child(self.user.userID).setValue(listInfo)
+                        self.presentSetMostUrgentListAlert()
+                    }
+                })
+            }))
+            present(alert, animated: true, completion: nil)
+        case 8:
+            // set to be the most urgent list
+            let alert = UIAlertController(title: "The most urgent list", message: "Are you sure to set this list as the most urgent list?", preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: "No", style: .cancel, handler: nil))
+            alert.addAction(UIAlertAction(title: "Yes", style: .default, handler: { (action) in
+                // set
+                self.ref.child("MostUrgentList").child(self.user.userID).child("listID").observeSingleEvent(of: .value, with: { (snapshot) in
+                    if snapshot.exists() {
+                        let urgentListID = snapshot.value as! String
+                        if urgentListID == self.listID! {
+                            self.presentAlreadyListAlert(value: 1)
+                        } else {
+                            let listInfo = ["listID": self.listID!, "listTitle": self.settings["List name"]]
+                            self.ref.child("MostUrgentList").child(self.user.userID).setValue(listInfo)
+                            self.presentSetMostUrgentListAlert()
+                        }
+                    } else {
+                        let listInfo = ["listID": self.listID!, "listTitle": self.settings["List name"]]
+                        self.ref.child("MostUrgentList").child(self.user.userID).setValue(listInfo)
+                        self.presentSetMostUrgentListAlert()
+                    }
+                })
+            }))
+            present(alert, animated: true, completion: nil)
+        case 9:
             let alert = UIAlertController(title: "Delete the list", message: "Are you sure to delete this list?", preferredStyle: .alert)
             let no = UIAlertAction(title: "Don't delete", style: .cancel, handler: nil)
             let yes = UIAlertAction(title: "Delete", style: .default) { (_) in
@@ -244,12 +300,31 @@ class ListSettingsTableViewController: UITableViewController,  UITextFieldDelega
                 // delete all the items belonging to the list
                 self.ref.child("ListItem").child(self.listID!).removeValue()
                 
+                // retrieve tags first, then delete from TagList
+                self.ref.child("List").child(self.listID!).child("tag").queryOrdered(byChild: "tagName").observeSingleEvent(of: .value, with: { (snapshot) in
+                    if snapshot.exists() {
+                        if let snapshots = snapshot.children.allObjects as? [DataSnapshot] {
+                            for snap in snapshots {
+                                self.ref.child("Tag").child(self.user.userID).child(snap.key).child(self.listID!).removeValue()
+                                
+                                self.ref.child("Tag").child(snap.key).child("listCount").observeSingleEvent(of: .value, with: { (snapshot) in
+                                    let count = snapshot.value as! Int
+                                    self.ref.child("Tag").child(snap.key).child("listCount").setValue(count - 1)
+                                })
+                                self.ref.child("Tag").child(snap.key).child("listIDs").child(self.listID!).removeValue()
+                            }
+                        }
+                    }
+                })
+                
                 // delete the list in database
                 self.ref.child("List").child(self.listID!).removeValue()
                 // including deadlineList, priorityList and tagList
                 self.ref.child("PriorityList").child(self.user.userID).child(self.settings["Priority level"] as! String).child(self.listID!).removeValue()
                 self.ref.child("DeadlineList").child(self.user.userID).child(self.listID!).removeValue()
                 // MARK: todo: delete from tagList and collaborators' access
+                
+                
                 self.performSegue(withIdentifier: "afterDeleteList", sender: self)
             }
             alert.addAction(no)
@@ -259,6 +334,30 @@ class ListSettingsTableViewController: UITableViewController,  UITextFieldDelega
         default:
             break
         }
+    }
+    
+    func presentSetMostImportantListAlert() {
+        let alert = UIAlertController(title: "Successful", message: "Set the most important list successfully", preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "Ok", style: .default, handler: nil))
+        present(alert, animated: true, completion: nil)
+    }
+    
+    func presentSetMostUrgentListAlert() {
+        let alert = UIAlertController(title: "Successful", message: "Set the most urgent list successfully", preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "Ok", style: .default, handler: nil))
+        present(alert, animated: true, completion: nil)
+    }
+    
+    func presentAlreadyListAlert(value: Int) {
+        var listType = String()
+        if value == 0 {
+            listType = "important"
+        } else {
+            listType = "urgent"
+        }
+        let alert = UIAlertController(title: "Note", message: "This list has already been set as the most \(listType) list.", preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "Ok", style: .default, handler: nil))
+        present(alert, animated: true, completion: nil)
     }
     
     // MARK: Set the date picker with a tool bar

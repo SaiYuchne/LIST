@@ -20,6 +20,11 @@ class HomePageViewController: UIViewController {
         var tags = [String]()
     }
     
+    var mostImportantListID: String?
+    var mostImportantListTitle: String?
+    var mostUrgentListID: String?
+    var mostUrgentListTitle: String?
+    
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
@@ -49,7 +54,7 @@ class HomePageViewController: UIViewController {
         })
         
         // initialize the tag systems of the app
-        initializeTagSystem()
+//        initializeTagSystem()
     }
     
     override func viewDidLoad() {
@@ -86,6 +91,44 @@ class HomePageViewController: UIViewController {
             break
         }
     }
+    
+    @IBAction func mostImportantListTapped(_ sender: UIButton) {
+        ref.child("MostImportantList").child(user.userID).observeSingleEvent(of: .value) { (snapshot) in
+            if snapshot.exists() {
+                let listInfo = snapshot.value as! [String: String]
+                self.mostImportantListID = listInfo["listID"] as! String
+                self.mostImportantListTitle = listInfo["listTitle"] as! String
+                self.performSegue(withIdentifier: "goToMostImportantList", sender: self)
+            } else {
+                self.presentNoMostImportantListAlert()
+            }
+        }
+    }
+    
+    func presentNoMostImportantListAlert() {
+        let alert = UIAlertController(title: "Sorry", message: "You didn't set a most important list. You can set it in a list's list settings.", preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "Ok", style: .default, handler: nil))
+        present(alert, animated: true, completion: nil)
+    }
+    
+    @IBAction func mostUrgentListTapped(_ sender: UIButton) {
+        ref.child("MostUrgentList").child(user.userID).observeSingleEvent(of: .value) { (snapshot) in
+            if snapshot.exists() {
+                let listInfo = snapshot.value as! [String: String]
+                self.mostUrgentListID = listInfo["listID"] as! String
+                self.mostUrgentListTitle = listInfo["listTitle"] as! String
+                self.performSegue(withIdentifier: "goToMostUrgentList", sender: self)
+            } else {
+                self.presentNoMostUrgentListAlert()
+            }
+        }
+    }
+    
+    func presentNoMostUrgentListAlert() {
+        let alert = UIAlertController(title: "Sorry", message: "You didn't set a most urgent list. You can set it in a list's list settings.", preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "Ok", style: .default, handler: nil))
+        present(alert, animated: true, completion: nil)
+    }
   
     @IBAction func myArchiveTapped(_ sender: UIButton) {
         performSegue(withIdentifier: "goToArchive", sender: self)
@@ -118,7 +161,7 @@ class HomePageViewController: UIViewController {
         if segue.identifier == "goToArchive" {
             if let destination = segue.destination as? PageViewController {
                 print("prepare segue: goToArchive")
-                ref.child("Archive").child(user.userID).observeSingleEvent(of: .value) { (snapshot) in
+                ref.child("Archive").child(user.userID).queryOrdered(byChild: "completionDays").observeSingleEvent(of: .value) { (snapshot) in
                     if let snapshots = snapshot.children.allObjects as? [DataSnapshot] {
                         destination.listIDs.removeAll()
                         for snap in snapshots {
@@ -130,6 +173,84 @@ class HomePageViewController: UIViewController {
                         
                     }
                 }
+            }
+        } else if segue.identifier == "goToViewFavLists" {
+            if let destination = segue.destination as? ViewFavouriteListViewController {
+                ref.child("FavouriteList").child(user.userID).observeSingleEvent(of: .value, with: { (snapshot) in
+                    if let snapshots = snapshot.children.allObjects as? [DataSnapshot] {
+                        destination.listIDs.removeAll()
+                        destination.listNames.removeAll()
+                        for snap in snapshots {
+                            destination.listIDs.append(snap.key)
+                            destination.listNames.append(snap.value as! String)
+                        }
+                        destination.tableView.reloadData()
+                    }
+                })
+            }
+        } else if segue.identifier == "goToMostImportantList" || segue.identifier == "goToMostUrgentList" {
+            var targetListID = String()
+            var targetListTitle = String()
+            switch (segue.identifier!) {
+            case "goToMostImportantList":
+                targetListID = mostImportantListID!
+                targetListTitle = mostImportantListTitle!
+            case "goToMostUrgentList":
+                targetListID = mostUrgentListID!
+                targetListTitle = mostUrgentListTitle!
+            default:
+                break
+            }
+            if let destination = segue.destination as? SingleListViewController {
+                destination.listName = targetListTitle
+                destination.listID = targetListID
+                destination.isNew = false
+                ref.child("ListItem").child(targetListID).queryOrdered(byChild: "creationDays").observe(.value, with: { (snapshot) in
+                    destination.goalData.removeAll()
+                    if let snapshots = snapshot.children.allObjects as? [DataSnapshot] {
+                        for snap in snapshots {
+                            if let itemInfo = snap.value as? [String: Any] {
+                                let itemID = snap.key
+                                destination.goalData.append(SingleListViewController.listCellData(opened: false, itemID: itemID, title: itemInfo["content"] as! String, isGoalFinished: itemInfo["isFinished"] as! Bool, subgoalID: [String](), sectionData: [String](), isSubgoalFinished: [Bool]()))
+                                
+                                // retrive subgoal info
+                                self.ref.child("Subgoal").child(itemID).queryOrdered(byChild: "creationDays").observe(.value, with: { (snapshot) in
+                                    print("retriving subgoal info in database...")
+                                    if destination.goalData.count > 0 {
+                                        destination.goalData[destination.goalData.count - 1].subgoalID.removeAll()
+                                        destination.goalData[destination.goalData.count - 1].isSubgoalFinished.removeAll()
+                                        destination.goalData[destination.goalData.count - 1].sectionData.removeAll()
+                                    }
+                                    
+                                    if let subsnapshots = snapshot.children.allObjects as? [DataSnapshot] {
+                                        for subsnap in subsnapshots {
+                                            if let subItemInfo = subsnap.value as?[String: Any] {
+                                                destination.goalData[destination.goalData.count - 1].subgoalID.append(subsnap.key)
+                                                
+                                                destination.goalData[destination.goalData.count - 1].sectionData.append(subItemInfo["content"] as! String)
+                                                print("has found subgoal: \(subItemInfo["content"] as! String)")
+                                                destination.goalData[destination.goalData.count - 1].isSubgoalFinished.append(subItemInfo["isFinished"] as! Bool)
+                                                
+                                            }
+                                        }
+                                    } // end subgoal info retrival
+                                    
+                                })
+                            } // if itemInfo as [String: Any]
+                        } // end list item info retrival
+                    }
+                    
+                    destination.tableView.reloadData()
+                    self.ref.child("List").child(targetListID).child("userID").observeSingleEvent(of: .value, with: { (snapshot) in
+                        if let creatorID = snapshot.value as? String {
+                            if creatorID == self.user.userID {
+                                destination.isEditable = true
+                            } else {
+                                destination.isEditable = false
+                            }
+                        }
+                    })
+                })
             }
         }
     }

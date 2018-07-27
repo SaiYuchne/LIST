@@ -10,13 +10,23 @@ import UIKit
 
 class MotivationQuoteView: RoundRecView {
 
-    var quote: String?
+    var quote = String() {
+        didSet {
+            layoutSubviews()
+        }
+    }
     
     // MARK: motivationLabel
     private lazy var motivationLabel = createTagLabel()
     
     private var tagString: NSAttributedString {
-        return centeredAttributedString("\"\(quote!)\"", fontSize: cornerFontSize)
+        return centeredAttributedString("\"\(quote)\"", fontSize: cornerFontSize)
+    }
+    
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        
+        configureTagLabel(motivationLabel)
     }
     
     private func createTagLabel() -> UILabel {
@@ -27,8 +37,8 @@ class MotivationQuoteView: RoundRecView {
     }
     
     private func configureTagLabel(_ label: UILabel) {
-        label.attributedText = centeredAttributedString(quote!, fontSize: labelFontSize)
-        label.frame = self.frame
+        label.attributedText = centeredAttributedString(quote, fontSize: labelFontSize)
+        label.frame = CGRect(x: textXPosition, y: textYPosition, width: self.frame.size.width * 0.7, height: self.frame.size.height * 0.7)
     }
 
     private func centeredAttributedString(_ string: String, fontSize: CGFloat) -> NSAttributedString {
@@ -42,11 +52,17 @@ class MotivationQuoteView: RoundRecView {
 }
 extension MotivationQuoteView {
     struct SizeRatio {
-        static let fontSizeToBoundsHeight: CGFloat = 0.8
+        static let fontSizeToBoundsHeight: CGFloat = 0.1
         static let cornerOffsetToCornerRadius:CGFloat = 0.33
         static let cornerRadiusToBoundsHeight: CGFloat = 0.06
     }
     var labelFontSize: CGFloat {
         return bounds.size.height * SizeRatio.fontSizeToBoundsHeight
+    }
+    private var textXPosition: CGFloat {
+        return self.bounds.origin.x+self.frame.size.height * 0.1
+    }
+    private var textYPosition: CGFloat {
+        return self.bounds.origin.y+self.frame.size.height * 0.1
     }
 }

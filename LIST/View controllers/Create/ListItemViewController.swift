@@ -31,10 +31,6 @@ class ListItemViewController: UIViewController {
         timeLineView.addSubview(timeline)
         initializeTimeline()
     }
-
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-    }
     
     func configureItemNameLabel(_ label: UILabel){
         if let name = itemName {

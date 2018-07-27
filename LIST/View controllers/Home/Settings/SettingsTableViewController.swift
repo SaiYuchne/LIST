@@ -13,11 +13,6 @@ class SettingsTableViewController: UITableViewController {
 
     private var infoTitle = ["Personal profile", "System settings"]
     let userID = LISTUser().userID
-    
-    override func viewDidLoad() {
-        super.viewDidLoad()
-    }
-
 
     // MARK: - Table view data source
 
@@ -53,7 +48,7 @@ class SettingsTableViewController: UITableViewController {
             if let destination = segue.destination as? ProfileTableViewController {
                 print("second layer")
                 let userRef = Database.database().reference().child("Profile").child(userID)
-                userRef.observeSingleEvent(of: .value, with: { (snapshot) in
+                userRef.observe(.value, with: { (snapshot) in
                     if let userInfo = snapshot.value as? [String: AnyObject] {
                         destination.userName = userInfo["userName"] as! String
                         print(userInfo["userName"] as! String)
@@ -65,10 +60,9 @@ class SettingsTableViewController: UITableViewController {
                         print(userInfo["motto"] as! String)
                         destination.email = userInfo["email"] as! String
                         print(userInfo["email"] as! String)
+                        destination.tableView.reloadData()
                     }
-                })
-                
-                destination.tableView.reloadData()
+                })   
             }
         }
     }

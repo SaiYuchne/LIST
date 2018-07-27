@@ -69,7 +69,7 @@ class SystemTagCollectionTableViewController: UITableViewController, UISearchRes
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "goToInspirationPoolWithTag" {
             if let destination = segue.destination as? InspirationPoolViewController {
-                destination.tag = selectedTag
+                destination.tag = selectedTag!
                 destination.isTagSpecific = true
             }
         }

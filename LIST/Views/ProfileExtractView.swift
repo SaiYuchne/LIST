@@ -49,7 +49,6 @@ class ProfileExtractView: UIView {
     private lazy var usernameLabel = createMottoLabel()
     
     private var usernameString: NSAttributedString {
-//        return createAttributedString("Testname", fontSize: cornerFontSize*0.8, isParagraphStyleNatural:true)
         return createAttributedString("\(userName)", fontSize: cornerFontSize*0.8, isParagraphStyleNatural:true)
     }
     
@@ -89,8 +88,6 @@ class ProfileExtractView: UIView {
     private lazy var dayLabel = createDayLabel()
     
     private var dayString: NSAttributedString {
-        
-//        return createAttributedString("LIST has been there with you for\n 40 days!", fontSize: cornerFontSize*0.8, isParagraphStyleNatural:false)
         return createAttributedString("LIST has been there with you for\n \(calculateDateDifference(from: creationDays)) days!", fontSize: cornerFontSize*0.8, isParagraphStyleNatural:false)
     }
     

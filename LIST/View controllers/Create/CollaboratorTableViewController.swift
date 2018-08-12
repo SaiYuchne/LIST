@@ -160,14 +160,15 @@ class CollaboratorTableViewController: UITableViewController {
             
             // delete the collaborator's access to this list
             
-            ref.child("List").child(listID!).child("priority").observeSingleEvent(of: .value) { (snapshot) in
-                let priorityLevel = snapshot.value as! String
-                var tags = [String]()
+            ref.child("List").child(listID!).observeSingleEvent(of: .value) { (snapshot) in
+                let listInfo = snapshot.value as! [String: Any]
+                let priorityLevel = listInfo["priority"] as! String
+                let remainingDays = listInfo["remainingDays"] as! Int
+                // TagList
                 self.ref.child("List").child(self.listID!).child("tag").observeSingleEvent(of: .value) { (snapshot) in
-                    tags.removeAll()
                     if let snapshots = snapshot.children.allObjects as? [DataSnapshot] {
                         for snap in snapshots {
-                            tags.append(snap.value as! String)
+                            self.ref.child("TagList").child(collaboratorID).child(snap.key).child(self.listID!).removeValue()
                         }
                     }
                 }
@@ -175,11 +176,7 @@ class CollaboratorTableViewController: UITableViewController {
                 // PriorityList
                 self.ref.child("PriorityList").child(collaboratorID).child(priorityLevel).child(self.listID!).removeValue()
                 // DeadlineList
-                self.ref.child("DeadlineList").child(collaboratorID).child(self.listID!).removeValue()
-                //TagList
-                for tag in tags {
-                    self.ref.child("TagList").child(collaboratorID).child(tag).child(self.listID!).removeValue()
-                }
+                self.ref.child("DeadlineList").child(collaboratorID).child("\(remainingDays)").child(self.listID!).removeValue()
             }
             
         
@@ -188,20 +185,16 @@ class CollaboratorTableViewController: UITableViewController {
     func updateAccessInDatabase(receiverID: String) {
         
         ref.child("List").child(listID!).observeSingleEvent(of: .value) { (snapshot) in
-            var tags = [String]()
                 if let listInfo = snapshot.value as? [String: Any] {
                 let priorityLevel = listInfo["priority"] as! String
                 let deadline = listInfo["deadline"] as! String
+                let remainingDays = listInfo["remainingDays"] as! Int
                 let listTitle = listInfo["listTitle"] as! String
-                print("priorityLevel = \(priorityLevel)")
-                    print("deadline = \(deadline)")
-                    print("listTitle = \(listTitle)")
-                    
+                // TagList
                     self.ref.child("List").child(self.listID!).child("tag").observeSingleEvent(of: .value) { (snapshot) in
-                        tags.removeAll()
                         if let snapshots = snapshot.children.allObjects as? [DataSnapshot] {
                             for snap in snapshots {
-                                tags.append(snap.value as! String)
+                                self.ref.child("TagList").child(receiverID).child(snap.key).child(self.listID!).setValue(listTitle)
                             }
                         }
                     }
@@ -210,11 +203,7 @@ class CollaboratorTableViewController: UITableViewController {
                     self.ref.child("PriorityList").child(receiverID).child(priorityLevel).child(self.listID!).setValue(self.listID!)
                     // DeadlineList
                     let deadlineListInfo = ["listTitle": listTitle, "deadline": deadline]
-                    self.ref.child("DeadlineList").child(receiverID).child(self.listID!).setValue(deadlineListInfo)
-                    //TagList
-                    for tag in tags {
-                        self.ref.child("TagList").child(receiverID).child(tag).child(self.listID!).setValue(listTitle)
-                    }
+                    self.ref.child("DeadlineList").child(receiverID).child("\(remainingDays)").child(self.listID!).setValue(deadlineListInfo)
             }
         }
         

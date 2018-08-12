@@ -111,6 +111,30 @@ class ViewListMenuViewController: UIViewController {
         } else if segue.identifier == "viewByDeadline" {
             if let destination = segue.destination as? ViewListViewController {
                 destination.byDeadline = true
+                destination.byPriority = false
+                destination.byTag = false
+                // pass data
+                // It is assumed that the remaining days will be in increasing order
+                let DeadlineListRef = ref.child("DeadlineList").child(user.userID)
+                DeadlineListRef.observe(.value, with: {(snapshot) in
+                    destination.tableViewData.removeAll()
+                    if let snapshots = snapshot.children.allObjects as? [DataSnapshot] {
+                        for snap in snapshots {
+                            let remainingDays = snap.key
+                            var newCell = ViewListViewController.cellData(opened: false, title: remainingDays, sectionData: [String](), listID: [String]())
+                            if let subSnapshots = snap.children.allObjects as? [DataSnapshot] {
+                                for subSnap in subSnapshots {
+                                    newCell.listID.append(subSnap.key)
+                                    let listInfo = subSnap.value as! [String: String]
+                                    newCell.sectionData.append(listInfo["listTitle"]!)
+                                    newCell.title = listInfo["deadline"]!
+                                }
+                                destination.tableViewData.append(newCell)
+                            }
+                        }
+                    }
+                    destination.tableView.reloadData()
+                })
             }
         } else {
             if let destination = segue.destination as? ViewListViewController {

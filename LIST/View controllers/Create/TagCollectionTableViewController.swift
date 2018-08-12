@@ -15,6 +15,7 @@ class TagCollectionTableViewController: UITableViewController, UISearchResultsUp
     var listID: String?
     var listTags = [String]()
     let user = LISTUser()
+    var participantID = [String]()
     
     var tags = [String]()
     private var filteredTags = [String]()
@@ -95,10 +96,12 @@ class TagCollectionTableViewController: UITableViewController, UISearchResultsUp
             self.ref.child("Tag").child("tags").child(self.filteredTags[row]).child("listCount").setValue(listCount + 1)
         }
         ref.child("Tag").child("tags").child(filteredTags[row]).child("listIDs").child(listID!).setValue(listID!)
-        // update the user's tagList
+        // update the participants' TagList
         ref.child("List").child(listID!).child("listTitle").observeSingleEvent(of: .value) { (snapshot) in
             if let listTitle = snapshot.value as? String {
-                self.ref.child("TagList").child(self.user.userID).child(self.filteredTags[row]).child(self.listID!).setValue(listTitle)
+                for person in self.participantID {
+                    self.ref.child("TagList").child(person).child(self.filteredTags[row]).child(self.listID!).setValue(listTitle)
+                }
             }
         }
         
@@ -135,8 +138,10 @@ class TagCollectionTableViewController: UITableViewController, UISearchResultsUp
             self.ref.child("Tag").child("tags").child(tagToBeDeleted).child("listCount").setValue(listCount - 1)
         }
         ref.child("Tag").child("tags").child(tagToBeDeleted).child("listIDs").child(listID!).removeValue()
-        // update the user's tagList
-        ref.child("TagList").child(user.userID).child(tagToBeDeleted).child(listID!).removeValue()
+        // update the participants' TagList
+        for person in participantID {
+           ref.child("TagList").child(person).child(tagToBeDeleted).child(listID!).removeValue()
+        }
         
         // update Inspiration Pool if necessary
         if listTags.count == 0 {

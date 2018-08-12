@@ -14,6 +14,7 @@ class TagsTableViewController: UITableViewController {
     let ref = Database.database().reference()
     var listID: String?
     let user = LISTUser()
+    var participantID = [String]()
     
     var cellTitle = ["Add more tags"]
     
@@ -79,6 +80,7 @@ class TagsTableViewController: UITableViewController {
         if segue.identifier == "goToTagCollection"{
             if let destination = segue.destination as? TagCollectionTableViewController{
                 destination.listID = listID
+                destination.participantID = participantID
                 ref.child("Tag").child("tags").observe(.value, with: { (snapshot) in
                     destination.tags.removeAll()
                     if let snapshots = snapshot.children.allObjects as? [DataSnapshot] {
@@ -114,8 +116,10 @@ class TagsTableViewController: UITableViewController {
             self.ref.child("Tag").child("tags").child(tag).child("listCount").setValue(listCount - 1)
         }
         ref.child("Tag").child("tags").child(tag).child("listIDs").child(listID!).removeValue()
-        // update the user's tagList
-        ref.child("TagList").child(user.userID).child(tag).child(listID!).removeValue()
+        // update the participants' tagList
+        for person in participantID {
+            ref.child("TagList").child(person).child(tag).child(listID!).removeValue()
+        }
         
         // update Inspiration Pool if necessary
         ref.child("List").child(listID!).child("tag").observeSingleEvent(of: .value) { (snapshot) in

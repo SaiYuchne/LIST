@@ -19,13 +19,27 @@ class ListSettingsTableViewController: UITableViewController,  UITextFieldDelega
     private var alert = UIAlertController(title: "Edit", message: "Edit the deadline:", preferredStyle: .alert)
     var newDdl: String?
     var dateStringForDatabase: String?
+    var newRemainingDays: Int?
+    var tags = [String]()
+    var participantID = [String]()
     
     var settings = ["List name": "list name", "Creation date": "2018-07-01", "Deadline": "2018-12-31", "Priority level": "⭐️⭐️⭐️⭐️", "Who can view this list": "personal", "Tags": "Tap to see", "Collaborators": "Tap to see", "The most important list": "Click to set", "The most urgent list": "Click to set", "Delete this list": nil]
     private let priorityLevel = ["⭐️": 1, "⭐️⭐️": 2, "⭐️⭐️⭐️": 3, "⭐️⭐️⭐️⭐️": 4, "⭐️⭐️⭐️⭐️⭐️": 5]
     
-    override func viewDidLoad() {
-        super.viewDidLoad()
-
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        // get all the participants
+        ref.child("List").child(listID!).child("collaborator").observe(.value) { (snapshot) in
+            self.participantID = [self.user.userID]
+            if snapshot.exists() {
+                if let snapshots = snapshot.children.allObjects as? [DataSnapshot] {
+                    for snap in snapshots {
+                        self.participantID.append(snap.key)
+                    }
+                }
+            }
+        }
     }
     
     // MARK: - Table view data source
@@ -124,11 +138,9 @@ class ListSettingsTableViewController: UITableViewController,  UITextFieldDelega
                 })
                 let cancel = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
                 let edit = UIAlertAction(title: "OK", style: .default) { (_) in
-                    self.alert.textFields?[0].text = self.newDdl
-                    if let newDate = self.alert.textFields?[0].text {
+                    if let newDate = self.alert.textFields?[0].text, !newDate.isEmpty {
                         // change the deadline in database
-                        self.ref.child("List").child(self.listID!).child("deadline").setValue(newDate)
-                        print("the new date is \(newDate)")
+                        self.updateDeadlineInDatabase(newDate: newDate)
                         if let cell = tableView.cellForRow(at: indexPath) {
                             cell.detailTextLabel?.text = newDate
                         }
@@ -147,8 +159,10 @@ class ListSettingsTableViewController: UITableViewController,  UITextFieldDelega
                 self.settings["Priority level"] = "⭐️"
                 //update the priority level in the database
                 self.ref.child("List").child(self.listID!).child("priority").setValue("⭐️")
-                self.ref.child("PriorityList").child(self.user.userID).child(previousLevel).child(self.listID!).removeValue()
-                self.ref.child("PriorityList").child(self.user.userID).child("⭐️").child(self.listID!).setValue(self.listID!)
+                for person in self.participantID {
+                    self.ref.child("PriorityList").child(person).child(previousLevel).child(self.listID!).removeValue()
+                    self.ref.child("PriorityList").child(person).child("⭐️").child(self.listID!).setValue(self.listID!)
+                }
                 if let cell = tableView.cellForRow(at: indexPath) {
                     cell.detailTextLabel?.text = "⭐️"
                 }
@@ -157,8 +171,10 @@ class ListSettingsTableViewController: UITableViewController,  UITextFieldDelega
                 self.settings["Priority level"] = "⭐️⭐️"
                 //update the priority level in the database
                 self.ref.child("List").child(self.listID!).child("priority").setValue("⭐️⭐️")
-                self.ref.child("PriorityList").child(self.user.userID).child(previousLevel).child(self.listID!).removeValue()
-                self.ref.child("PriorityList").child(self.user.userID).child("⭐️⭐️").child(self.listID!).setValue(self.listID!)
+                for person in self.participantID {
+                    self.ref.child("PriorityList").child(person).child(previousLevel).child(self.listID!).removeValue()
+                    self.ref.child("PriorityList").child(person).child("⭐️⭐️").child(self.listID!).setValue(self.listID!)
+                }
                 if let cell = tableView.cellForRow(at: indexPath) {
                     cell.detailTextLabel?.text = "⭐️⭐️"
                 }
@@ -167,8 +183,10 @@ class ListSettingsTableViewController: UITableViewController,  UITextFieldDelega
                 self.settings["Priority level"] = "⭐️⭐️⭐️"
                 //update the priority level in the database
                 self.ref.child("List").child(self.listID!).child("priority").setValue("⭐️⭐️⭐️")
-                self.ref.child("PriorityList").child(self.user.userID).child(previousLevel).child(self.listID!).removeValue()
-                self.ref.child("PriorityList").child(self.user.userID).child("⭐️⭐️⭐️").child(self.listID!).setValue(self.listID!)
+                for person in self.participantID {
+                    self.ref.child("PriorityList").child(person).child(previousLevel).child(self.listID!).removeValue()
+                    self.ref.child("PriorityList").child(person).child("⭐️⭐️⭐️").child(self.listID!).setValue(self.listID!)
+                }
                 if let cell = tableView.cellForRow(at: indexPath) {
                     cell.detailTextLabel?.text = "⭐️⭐️⭐️"
                 }
@@ -177,8 +195,10 @@ class ListSettingsTableViewController: UITableViewController,  UITextFieldDelega
                 self.settings["Priority level"] = "⭐️⭐️⭐️⭐️"
                 //update the priority level in the database
                 self.ref.child("List").child(self.listID!).child("priority").setValue("⭐️⭐️⭐️⭐️")
-                self.ref.child("PriorityList").child(self.user.userID).child(previousLevel).child(self.listID!).removeValue()
-                self.ref.child("PriorityList").child(self.user.userID).child("⭐️⭐️⭐️⭐️").child(self.listID!).setValue(self.listID!)
+                for person in self.participantID {
+                    self.ref.child("PriorityList").child(person).child(previousLevel).child(self.listID!).removeValue()
+                    self.ref.child("PriorityList").child(person).child("⭐️⭐️⭐️⭐️").child(self.listID!).setValue(self.listID!)
+                }
                 if let cell = tableView.cellForRow(at: indexPath) {
                     cell.detailTextLabel?.text = "⭐️⭐️⭐️⭐️"
                 }
@@ -187,8 +207,10 @@ class ListSettingsTableViewController: UITableViewController,  UITextFieldDelega
                 self.settings["Priority level"] = "⭐️⭐️⭐️⭐️⭐️"
                 //update the priority level in the database
                 self.ref.child("List").child(self.listID!).child("priority").setValue("⭐️⭐️⭐️⭐️⭐️")
-                self.ref.child("PriorityList").child(self.user.userID).child(previousLevel).child(self.listID!).removeValue()
-                self.ref.child("PriorityList").child(self.user.userID).child("⭐️⭐️⭐️⭐️⭐️").child(self.listID!).setValue(self.listID!)
+                for person in self.participantID {
+                    self.ref.child("PriorityList").child(person).child(previousLevel).child(self.listID!).removeValue()
+                    self.ref.child("PriorityList").child(person).child("⭐️⭐️⭐️⭐️⭐️").child(self.listID!).setValue(self.listID!)
+                }
                 if let cell = tableView.cellForRow(at: indexPath) {
                     cell.detailTextLabel?.text = "⭐️⭐️⭐️⭐️⭐️"
                 }
@@ -200,7 +222,7 @@ class ListSettingsTableViewController: UITableViewController,  UITextFieldDelega
         case 4:
             let alert = UIAlertController(title: "Privacy level", message: "Who can view this list?", preferredStyle: .actionSheet)
             alert.addAction(UIAlertAction(title: "only me", style: .default, handler: { (action) in
-                //update the priority level in the database
+                //update the privacy level in the database
                 self.ref.child("List").child(self.listID!).child("privacy").setValue("only me")
                 if let cell = tableView.cellForRow(at: indexPath) {
                     cell.detailTextLabel?.text = "only me"
@@ -210,7 +232,7 @@ class ListSettingsTableViewController: UITableViewController,  UITextFieldDelega
                 self.updateInspirationPool()
             }))
             alert.addAction(UIAlertAction(title: "friends", style: .default, handler: { (action) in
-                //update the priority level in the database
+                //update the privacy level in the database
                 self.ref.child("List").child(self.listID!).child("privacy").setValue("friends")
                 if let cell = tableView.cellForRow(at: indexPath) {
                     cell.detailTextLabel?.text = "friends"
@@ -221,7 +243,7 @@ class ListSettingsTableViewController: UITableViewController,  UITextFieldDelega
                 self.updateInspirationPool()
             }))
             alert.addAction(UIAlertAction(title: "the public but I want to be anonymous", style: .default, handler: { (action) in
-                //update the priority level in the database
+                //update the privacy level in the database
                 self.ref.child("List").child(self.listID!).child("privacy").setValue("the public but I want to be anonomous")
                 if let cell = tableView.cellForRow(at: indexPath) {
                     cell.detailTextLabel?.text = "the public but I want to be anonomous"
@@ -229,7 +251,7 @@ class ListSettingsTableViewController: UITableViewController,  UITextFieldDelega
                 self.inputInspirationPool()
             }))
             alert.addAction(UIAlertAction(title: "the public", style: .default, handler: { (action) in
-                //update the priority level in the database
+                //update the privacy level in the database
                 self.ref.child("List").child(self.listID!).child("privacy").setValue("the public")
                 if let cell = tableView.cellForRow(at: indexPath) {
                     cell.detailTextLabel?.text = "the public"
@@ -257,7 +279,7 @@ class ListSettingsTableViewController: UITableViewController,  UITextFieldDelega
                         if importantListID == self.listID! {
                             self.presentAlreadyListAlert(value: 0)
                         } else {
-                            let listInfo = ["listID": self.listID!, "listTitle": self.settings["List name"]]
+                            let listInfo = ["listID": self.listID!, "listTitle": self.settings["List name"] as! String]
                             self.ref.child("MostImportantList").child(self.user.userID).setValue(listInfo)
                             self.presentSetMostImportantListAlert()
                         }
@@ -314,8 +336,9 @@ class ListSettingsTableViewController: UITableViewController,  UITextFieldDelega
                     if snapshot.exists() {
                         if let snapshots = snapshot.children.allObjects as? [DataSnapshot] {
                             for snap in snapshots {
-                                self.ref.child("Tag").child(self.user.userID).child(snap.key).child(self.listID!).removeValue()
-                                
+                                for person in self.participantID {
+                                    self.ref.child("TagList").child(person).child(snap.key).child(self.listID!).removeValue()
+                                }
                                 self.ref.child("Tag").child(snap.key).child("listCount").observeSingleEvent(of: .value, with: { (snapshot) in
                                     let count = snapshot.value as! Int
                                     self.ref.child("Tag").child(snap.key).child("listCount").setValue(count - 1)
@@ -328,11 +351,14 @@ class ListSettingsTableViewController: UITableViewController,  UITextFieldDelega
                 
                 // delete the list in database
                 self.ref.child("List").child(self.listID!).removeValue()
-                // including deadlineList, priorityList and tagList
-                self.ref.child("PriorityList").child(self.user.userID).child(self.settings["Priority level"] as! String).child(self.listID!).removeValue()
-                self.ref.child("DeadlineList").child(self.user.userID).child(self.listID!).removeValue()
-                // MARK: todo: delete from tagList and collaborators' access
-                
+                // including deadlineList and priorityList of all participants
+                self.ref.child("List").child(self.listID!).child("remainingDays").observeSingleEvent(of: .value, with: { (snapshot) in
+                    let remainingDays = snapshot.value as! Int
+                    for person in self.participantID {
+                        self.ref.child("DeadlineList").child(person).child("\(remainingDays)").child(self.listID!).removeValue()
+                        self.ref.child("PriorityList").child(person).child(self.settings["Priority level"] as! String).child(self.listID!).removeValue()
+                    }
+                })
                 
                 self.performSegue(withIdentifier: "afterDeleteList", sender: self)
             }
@@ -399,8 +425,9 @@ class ListSettingsTableViewController: UITableViewController,  UITextFieldDelega
         formatterForDatabase.dateFormat = "dd-MM-yyyy"
         dateStringForDatabase = formatterForDatabase.string(from: picker.date)
         let dateString = formatter.string(from: picker.date)
-        
+        print("newDdl = \(dateString)")
         newDdl = "\(dateString)"
+        newRemainingDays = calculateDaysLeft(deadlineDate: picker.date)
         print(newDdl!)
         alert.textFields?[0].text = newDdl
         self.view.endEditing(true)
@@ -410,6 +437,7 @@ class ListSettingsTableViewController: UITableViewController,  UITextFieldDelega
         if segue.identifier == "goToTagSettings"{
             if let destination = segue.destination as? TagsTableViewController {
                 destination.listID = listID
+                destination.participantID = participantID
                 // retrieve tags of the list in database
                 ref.child("List").child(listID!).child("tag").queryOrdered(byChild: "tagName").observe(.value, with: { (snapshot) in
                     destination.cellTitle.removeAll()
@@ -440,6 +468,33 @@ class ListSettingsTableViewController: UITableViewController,  UITextFieldDelega
                 })
             }
         }
+    }
+    
+    func calculateDaysLeft(deadlineDate: Date) -> Int {
+        print("calculating days left...")
+        var daysLeft = 0
+        let todayInterval = Int(Date().timeIntervalSinceReferenceDate/(3600 * 24))
+        let deadlineInterval = Int(deadlineDate.timeIntervalSinceReferenceDate/(3600 * 24))
+        
+        daysLeft = deadlineInterval - todayInterval
+        
+        return daysLeft < 0 ? 0 : daysLeft
+    }
+    
+    func updateDeadlineInDatabase(newDate: String) {
+       // update DdlList first
+        var oldRemainingDays = 0
+        let deadlineUpdate = ["listTitle": settings["List name"], "deadline": newDdl!]
+        self.ref.child("List").child(self.listID!).child("remainingDays").observeSingleEvent(of: .value, with: {(snapshot) in
+            oldRemainingDays = snapshot.value as! Int
+            print("oldRemaingDays is = \(oldRemainingDays)")
+            for person in self.participantID {
+                self.ref.child("DeadlineList").child(person).child("\(oldRemainingDays)").child(self.listID!).removeValue()
+                self.ref.child("DeadlineList").child(person).child("\(self.newRemainingDays!)").child(self.listID!).setValue(deadlineUpdate)
+            }
+            self.ref.child("List").child(self.listID!).child("remainingDays").setValue(self.newRemainingDays!)
+            self.ref.child("List").child(self.listID!).child("deadline").setValue(newDate)
+        })
     }
     
     func updateInspirationPool() {

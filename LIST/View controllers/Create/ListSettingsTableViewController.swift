@@ -349,8 +349,6 @@ class ListSettingsTableViewController: UITableViewController,  UITextFieldDelega
                     }
                 })
                 
-                // delete the list in database
-                self.ref.child("List").child(self.listID!).removeValue()
                 // including deadlineList and priorityList of all participants
                 self.ref.child("List").child(self.listID!).child("remainingDays").observeSingleEvent(of: .value, with: { (snapshot) in
                     let remainingDays = snapshot.value as! Int
@@ -358,8 +356,10 @@ class ListSettingsTableViewController: UITableViewController,  UITextFieldDelega
                         self.ref.child("DeadlineList").child(person).child("\(remainingDays)").child(self.listID!).removeValue()
                         self.ref.child("PriorityList").child(person).child(self.settings["Priority level"] as! String).child(self.listID!).removeValue()
                     }
+                    // delete the list in database
+                    self.ref.child("List").child(self.listID!).removeValue()
                 })
-                
+
                 self.performSegue(withIdentifier: "afterDeleteList", sender: self)
             }
             alert.addAction(no)

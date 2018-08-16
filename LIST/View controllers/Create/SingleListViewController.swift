@@ -42,6 +42,7 @@ class SingleListViewController: UIViewController, UITableViewDelegate, UITableVi
     }
     
     var goalData = [listCellData]()
+    var tags = [String]()
     
     @IBOutlet weak var tableView: UITableView!
     
@@ -108,6 +109,16 @@ class SingleListViewController: UIViewController, UITableViewDelegate, UITableVi
             self.listName = snapshot.value as! String
             self.configureListNameLabel(self.listNameLabel)
         }
+        
+        // retrieve tags
+        ref.child("List").child(listID!).child("tag").observeSingleEvent(of: .value) { (snapshot) in
+            if let snapshots = snapshot.children.allObjects as? [DataSnapshot] {
+                self.tags.removeAll()
+                for snap in snapshots {
+                    self.tags.append(snap.key)
+                }
+            }
+        }
     }
     
     func configureListNameLabel(_ label: UILabel){
@@ -173,11 +184,10 @@ class SingleListViewController: UIViewController, UITableViewDelegate, UITableVi
         let add = UIAlertAction(title: "Add", style: .default) { (_) in
             if let wish = alert.textFields?[0].text{
                 let key = self.ref.child("ListItem").child(self.listID!).child("items").childByAutoId().key
-                self.goalData.append(listCellData(opened: false, itemID: key,  title: wish, isGoalFinished: false, subgoalID: [], sectionData: [], isSubgoalFinished: []))
+                self.goalData.append(listCellData(opened: false, itemID: key, title: wish, isGoalFinished: false, subgoalID: [], sectionData: [], isSubgoalFinished: []))
                 // add the wish in the database
                 self.addWishInDatabase(key: key, wish: wish)
                 print("totalNumOfItems will be added 1")
-                
                 self.tableView.reloadData()
             }
         }
@@ -333,10 +343,17 @@ class SingleListViewController: UIViewController, UITableViewDelegate, UITableVi
                     ref.child("List").child(listID!).observeSingleEvent(of: .value, with: { (snapshot) in
                         if let listSettings = snapshot.value as? [String: Any] {
                             destination.settings = ["List name": listSettings["listTitle"] as! String, "Creation date": listSettings["creationDate"] as! String, "Deadline": listSettings["deadline"] as! String, "Priority level": listSettings["priority"] as! String, "Who can view this list": listSettings["privacy"] as! String, "Tags": "Tap to see", "Collaborators": "Tap to see", "The most important list": "Click to set", "The most urgent list": "Click to set", "Delete this list": nil]
-                            destination.tableView.reloadData()
+                            self.ref.child("List").child(self.listID!).child("tag").observe(.value, with: { (snapshot) in
+                                if let snapshots = snapshot.children.allObjects as? [DataSnapshot] {
+                                    destination.tags.removeAll()
+                                    for snap in snapshots {
+                                        destination.tags.append(snap.key)
+                                    }
+                                }
+                                destination.tableView.reloadData()
+                            })
                         }
                     })
-                    
                 }
             } else {
                 print("isEditable is false")
@@ -465,6 +482,20 @@ class SingleListViewController: UIViewController, UITableViewDelegate, UITableVi
         listItemRef.child(key).setValue(defaultListItemInfo)
         // update Subgoal
         ref.child("Subgoal").child(key)
+        // update Inspiration Pool if eligible
+        ref.child("List").child(listID!).child("privacy").observeSingleEvent(of: .value) { (snapshot) in
+            let privacyLevel = snapshot.value as! String
+            if privacyLevel != "only me" && privacyLevel != "friends" {
+                let itemInfo = ["content": wish, "listID": self.listID!]
+                // update BigInspirationPool
+                self.ref.child("InspirationPool").child(key).setValue(itemInfo)
+                // update SmallInspirationPool
+                for tag in self.tags {
+                    self.ref.child("SmallInspirationPool").child(tag).child(key).setValue(itemInfo)
+                }
+            }
+        }
+        
     }
     
     func addSubgoalInDatabase(wishIndex: Array<Any>.Index, subgoal: String){
@@ -485,6 +516,19 @@ class SingleListViewController: UIViewController, UITableViewDelegate, UITableVi
         
         let subgoalRef = ref.child("Subgoal").child(itemID)
         subgoalRef.removeValue()
+        
+        // update Inspiration Pool if eligible
+        ref.child("List").child(listID!).child("privacy").observeSingleEvent(of: .value) { (snapshot) in
+            let privacyLevel = snapshot.value as! String
+            if privacyLevel != "only me" && privacyLevel != "friends" {
+                // update BigInspirationPool
+                self.ref.child("InspirationPool").child(itemID).removeValue()
+                // update SmallInspirationPool
+                for tag in self.tags {
+                    self.ref.child("SmallInspirationPool").child(tag).child(itemID).removeValue()
+                }
+            }
+        }
     }
     
     func deleteSubgoalFromDatabase(itemID: String, subgoalID: String){

@@ -20,8 +20,8 @@ class ListSettingsTableViewController: UITableViewController,  UITextFieldDelega
     var newDdl: String?
     var dateStringForDatabase: String?
     var newRemainingDays: Int?
-    var tags = [String]()
     var participantID = [String]()
+    var tags = [String]()
     
     var settings = ["List name": "list name", "Creation date": "2018-07-01", "Deadline": "2018-12-31", "Priority level": "⭐️⭐️⭐️⭐️", "Who can view this list": "personal", "Tags": "Tap to see", "Collaborators": "Tap to see", "The most important list": "Click to set", "The most urgent list": "Click to set", "Delete this list": nil]
     private let priorityLevel = ["⭐️": 1, "⭐️⭐️": 2, "⭐️⭐️⭐️": 3, "⭐️⭐️⭐️⭐️": 4, "⭐️⭐️⭐️⭐️⭐️": 5]
@@ -82,9 +82,11 @@ class ListSettingsTableViewController: UITableViewController,  UITextFieldDelega
             case 5:
                 cell.accessoryType = .disclosureIndicator
                 cell.textLabel?.text = "Tags"
+                cell.detailTextLabel?.text = settings["Tags"]!
             case 6:
                 cell.accessoryType = .disclosureIndicator
                 cell.textLabel?.text = "Collaborators"
+                cell.detailTextLabel?.text = settings["Collaborators"]!
             case 7:
                 cell.accessoryType = .disclosureIndicator
                 cell.textLabel?.text = "The most important list"
@@ -243,20 +245,22 @@ class ListSettingsTableViewController: UITableViewController,  UITextFieldDelega
                 self.updateInspirationPool()
             }))
             alert.addAction(UIAlertAction(title: "the public but I want to be anonymous", style: .default, handler: { (action) in
+                let oldPrivacyLevel = self.settings["Who can view this list"] as! String
                 //update the privacy level in the database
                 self.ref.child("List").child(self.listID!).child("privacy").setValue("the public but I want to be anonomous")
                 if let cell = tableView.cellForRow(at: indexPath) {
                     cell.detailTextLabel?.text = "the public but I want to be anonomous"
                 }
-                self.inputInspirationPool()
+                self.inputInspirationPool(oldPrivacyLevel: oldPrivacyLevel, newPrivacyLevel: "the public but I want to be anonymous")
             }))
             alert.addAction(UIAlertAction(title: "the public", style: .default, handler: { (action) in
+                let oldPrivacyLevel = self.settings["Who can view this list"] as! String
                 //update the privacy level in the database
                 self.ref.child("List").child(self.listID!).child("privacy").setValue("the public")
                 if let cell = tableView.cellForRow(at: indexPath) {
                     cell.detailTextLabel?.text = "the public"
                 }
-                self.inputInspirationPool()
+                self.inputInspirationPool(oldPrivacyLevel: oldPrivacyLevel, newPrivacyLevel: "the public but I want to be anonymous")
             }))
             alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
             self.present(alert, animated: true, completion: nil)
@@ -328,27 +332,24 @@ class ListSettingsTableViewController: UITableViewController,  UITextFieldDelega
                         }
                     }
                 })
+                // remove all random wishes from the Inspiration Pools
+                let privacyLevel = self.settings["Who can view this list"] as! String
+                if privacyLevel != "only me" && privacyLevel != "friends" {
+                    self.updateInspirationPool()
+                }
                 // delete all the items belonging to the list
                 self.ref.child("ListItem").child(self.listID!).removeValue()
-                
-                // retrieve tags first, then delete from TagList
-                self.ref.child("List").child(self.listID!).child("tag").queryOrdered(byChild: "tagName").observeSingleEvent(of: .value, with: { (snapshot) in
-                    if snapshot.exists() {
-                        if let snapshots = snapshot.children.allObjects as? [DataSnapshot] {
-                            for snap in snapshots {
-                                for person in self.participantID {
-                                    self.ref.child("TagList").child(person).child(snap.key).child(self.listID!).removeValue()
-                                }
-                                self.ref.child("Tag").child(snap.key).child("listCount").observeSingleEvent(of: .value, with: { (snapshot) in
-                                    let count = snapshot.value as! Int
-                                    self.ref.child("Tag").child(snap.key).child("listCount").setValue(count - 1)
-                                })
-                                self.ref.child("Tag").child(snap.key).child("listIDs").child(self.listID!).removeValue()
-                            }
-                        }
+                // delete from TagList
+                for tag in self.tags {
+                    for person in self.participantID {
+                        self.ref.child("TagList").child(person).child(tag).child(self.listID!).removeValue()
                     }
-                })
-                
+                    self.ref.child("Tag").child(tag).child("listCount").observeSingleEvent(of: .value, with: { (snapshot) in
+                        let count = snapshot.value as! Int
+                        self.ref.child("Tag").child(tag).child("listCount").setValue(count - 1)
+                    })
+                    self.ref.child("Tag").child(tag).child("listIDs").child(self.listID!).removeValue()
+                }
                 // including deadlineList and priorityList of all participants
                 self.ref.child("List").child(self.listID!).child("remainingDays").observeSingleEvent(of: .value, with: { (snapshot) in
                     let remainingDays = snapshot.value as! Int
@@ -438,15 +439,19 @@ class ListSettingsTableViewController: UITableViewController,  UITextFieldDelega
             if let destination = segue.destination as? TagsTableViewController {
                 destination.listID = listID
                 destination.participantID = participantID
+                let privacy = settings["Who can view this list"] as! String
+                if privacy != "only me" && privacy != "friends" {
+                    destination.isPrivate = false
+                } else {
+                    destination.isPrivate = true
+                }
                 // retrieve tags of the list in database
-                ref.child("List").child(listID!).child("tag").queryOrdered(byChild: "tagName").observe(.value, with: { (snapshot) in
-                    destination.cellTitle.removeAll()
-                    destination.cellTitle.append("Add more tags")
-                    if snapshot.exists() {
-                        if let snapshots = snapshot.children.allObjects as? [DataSnapshot] {
-                            for snap in snapshots {
-                                destination.cellTitle.insert(snap.value as! String, at: 0)
-                            }
+                ref.child("List").child(listID!).child("tag").observe(.value, with: { (snapshot) in
+                    if let snapshots = snapshot.children.allObjects as? [DataSnapshot] {
+                        destination.cellTitle.removeAll()
+                        destination.cellTitle.append("Add more tags")
+                        for snap in snapshots {
+                            destination.cellTitle.insert(snap.key, at: destination.cellTitle.count - 1)
                         }
                     }
                     destination.tableView.reloadData()
@@ -502,27 +507,41 @@ class ListSettingsTableViewController: UITableViewController,  UITextFieldDelega
             if let snapshots = snapshot.children.allObjects as? [DataSnapshot] {
                 for snap in snapshots {
                     let itemID = snap.key
+                    // update BigInspirationPool
                     self.ref.child("InspirationPool").child(itemID).removeValue()
+                    // update SmallInspirationPool
+                    for tag in self.tags {
+                        self.ref.child("SmallInspirationPool").child(tag).child(itemID).removeValue()
+                    }
                 }
             }
         }
     }
     
-    func inputInspirationPool() {
-        ref.child("List").child(listID!).child("tag").observeSingleEvent(of: .value) { (snapshot) in
-            if snapshot.exists() {
-                self.ref.child("ListItem").child(self.listID!).observeSingleEvent(of: .value) { (snapshot) in
-                    if let snapshots = snapshot.children.allObjects as? [DataSnapshot] {
-                        for snap in snapshots {
-                            let itemID = snap.key
-                            self.ref.child("InspirationPool").child(itemID).observeSingleEvent(of: .value, with: { (snapshot) in
+    func inputInspirationPool(oldPrivacyLevel: String, newPrivacyLevel: String) {
+        if oldPrivacyLevel != newPrivacyLevel {
+            self.ref.child("ListItem").child(self.listID!).observeSingleEvent(of: .value) { (snapshot) in
+                if let snapshots = snapshot.children.allObjects as? [DataSnapshot] {
+                    for snap in snapshots {
+                        let itemID = snap.key
+                        // update BigInspirationPool
+                        self.ref.child("InspirationPool").child(itemID).observeSingleEvent(of: .value, with: { (snapshot) in
+                            if !snapshot.exists() {
+                                let itemInfo = snap.value as! [String: Any]
+                                let addInfo = ["content": itemInfo["content"] as! String, "listID": self.listID!]
+                                self.ref.child("InspirationPool").child(itemID).setValue(addInfo)
+                            }
+                        })
+                        // update SmallInspirationPool
+                        for tag in self.tags {
+                            self.ref.child("SmallInspirationPool").child(tag).child(itemID).observeSingleEvent(of: .value, with: { (snapshot) in
                                 if !snapshot.exists() {
                                     let itemInfo = snap.value as! [String: Any]
                                     let addInfo = ["content": itemInfo["content"] as! String, "listID": self.listID!]
-                                    self.ref.child("InspirationPool").child(itemID).setValue(addInfo)
+                                    self.ref.child("SmallInspirationPool").child(tag).child(itemID).setValue(addInfo)
                                 }
                             })
-                        }
+                        } // end updating Inspiration Pools
                     }
                 }
             }

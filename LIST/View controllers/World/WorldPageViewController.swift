@@ -52,16 +52,6 @@ class WorldPageViewController: UIViewController {
                     var newCell = InspirationPoolViewController.cellData(itemID: snap.key, content: content, listID: listID, tags: [String]())
                     print("new cell instantialized")
                     self.bigWishPool.append(newCell)
-//                    self.ref.child("List").child(listID).child("tag").observeSingleEvent(of: .value, with: { (snapshot) in
-//                        if let snapshots = snapshot.children.allObjects as? [DataSnapshot] {
-//                            print("mark 4")
-//                            for snap in snapshots {
-//                                newCell.tags.append(snap.key)
-//                                print("tag = \(snap.key)")
-//                            }
-//                            self.bigWishPool.append(newCell)
-//                        }
-//                    })
                 }
                 self.performSegue(withIdentifier: "goToInspirationPool", sender: self)
             }
@@ -71,8 +61,7 @@ class WorldPageViewController: UIViewController {
     @objc func searchTagViewTapped(_ recognizer: UITapGestureRecognizer) {
         switch recognizer.state {
         case .ended:
-//            performSegue(withIdentifier: "goToSystemTags", sender: self)
-            break
+            performSegue(withIdentifier: "goToSystemTags", sender: self)
         default:
             break
         }
@@ -147,7 +136,6 @@ class WorldPageViewController: UIViewController {
                             destination.bigWishPool.append(self.bigWishPool[index])
                         }
                     })
-                    
                 }
             }
         }

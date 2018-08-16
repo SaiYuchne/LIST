@@ -65,7 +65,6 @@ class FriendListViewController: UIViewController, UITableViewDelegate, UITableVi
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "goToAFriendList" {
             if let destination = segue.destination as? SingleFavouriteListViewController {
-                destination.listName = listTitles[chosenRow!]
                 destination.listID = listIDs[chosenRow!]
                 ref.child("ListItem").child(listIDs[chosenRow!]).queryOrdered(byChild: "creationDays").observeSingleEvent(of: .value, with: { (snapshot) in
                     destination.goalData.removeAll()

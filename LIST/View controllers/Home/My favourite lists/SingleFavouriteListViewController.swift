@@ -29,7 +29,6 @@ class SingleFavouriteListViewController: UIViewController, UITableViewDelegate, 
     @IBOutlet weak var tableView: UITableView!
     
     @IBOutlet weak var listNameLabel: UILabel!
-    var listName: String?
     var listID: String?
     
     override func viewDidLoad() {
@@ -41,8 +40,9 @@ class SingleFavouriteListViewController: UIViewController, UITableViewDelegate, 
     }
 
     func configureListNameLabel(_ label: UILabel){
-        if let name = listName {
-            listNameLabel.attributedText = centeredAttributedString(name, fontSize: listNameLabel.bounds.size.height * 0.7)
+        ref.child("List").child(listID!).child("listTitle").observeSingleEvent(of: .value) { (snapshot) in
+            let listName = snapshot.value as! String
+            self.listNameLabel.attributedText = self.centeredAttributedString(listName, fontSize: self.listNameLabel.bounds.size.height * 0.7)
         }
     }
     

@@ -77,7 +77,6 @@ class ViewFavouriteListViewController: UIViewController, UITableViewDelegate, UI
         if segue.identifier == "goToOrginalFavList" {
             if let destination = segue.destination as? SingleFavouriteListViewController {
                 print("prepare for segue: goToOrginalFavList")
-                destination.listName = listNames[chosenRow!]
                 print("listName: \(listNames[chosenRow!])")
                 destination.listID = listIDs[chosenRow!]
                 print("listID: \(listIDs[chosenRow!])")

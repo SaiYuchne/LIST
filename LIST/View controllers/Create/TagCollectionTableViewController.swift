@@ -16,6 +16,7 @@ class TagCollectionTableViewController: UITableViewController, UISearchResultsUp
     var listTags = [String]()
     let user = LISTUser()
     var participantID = [String]()
+    var isPrivate = false
     
     var tags = [String]()
     private var filteredTags = [String]()
@@ -86,21 +87,22 @@ class TagCollectionTableViewController: UITableViewController, UISearchResultsUp
     // MARK: database operations
     
     private func addTagInDatabase(row: Int) {
+        let selectedTag = filteredTags[row]
         // change the list settings
         print("add tag in list setting")
-        ref.child("List").child(listID!).child("tag").child(filteredTags[row]).setValue(filteredTags[row])
+        ref.child("List").child(listID!).child("tag").child(selectedTag).setValue(selectedTag)
         
         // update the app's tag system
-        ref.child("Tag").child("tags").child(filteredTags[row]).child("listCount").observeSingleEvent(of: .value) { (snapshot) in
+        ref.child("Tag").child("tags").child(selectedTag).child("listCount").observeSingleEvent(of: .value) { (snapshot) in
             let listCount = snapshot.value as! Int
-            self.ref.child("Tag").child("tags").child(self.filteredTags[row]).child("listCount").setValue(listCount + 1)
+            self.ref.child("Tag").child("tags").child(selectedTag).child("listCount").setValue(listCount + 1)
         }
-        ref.child("Tag").child("tags").child(filteredTags[row]).child("listIDs").child(listID!).setValue(listID!)
+        ref.child("Tag").child("tags").child(selectedTag).child("listIDs").child(listID!).setValue(listID!)
         // update the participants' TagList
         ref.child("List").child(listID!).child("listTitle").observeSingleEvent(of: .value) { (snapshot) in
             if let listTitle = snapshot.value as? String {
                 for person in self.participantID {
-                    self.ref.child("TagList").child(person).child(self.filteredTags[row]).child(self.listID!).setValue(listTitle)
+                    self.ref.child("TagList").child(person).child(selectedTag).child(self.listID!).setValue(listTitle)
                 }
             }
         }
@@ -119,6 +121,8 @@ class TagCollectionTableViewController: UITableViewController, UISearchResultsUp
                                     let itemInfo = snap.value as! [String: Any]
                                     let addInfo = ["content": itemInfo["content"] as! String, "listID": self.listID!]
                                     self.ref.child("InspirationPool").child(itemID).setValue(addInfo)
+                                    // update SmallInspirationPool
+                                    self.ref.child("SmallInspirationPool").child(selectedTag).child(itemID).setValue(addInfo)
                                 }
                             })
                         }
@@ -150,6 +154,8 @@ class TagCollectionTableViewController: UITableViewController, UISearchResultsUp
                     for snap in snapshots {
                         let itemID = snap.key
                         self.ref.child("InspirationPool").child(itemID).removeValue()
+                        // update SmallInspirationPool
+                        self.ref.child("SmallInspirationPool").child(tagToBeDeleted).child(itemID).removeValue()
                     }
                 }
             }

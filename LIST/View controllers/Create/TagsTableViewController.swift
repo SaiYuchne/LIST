@@ -15,6 +15,7 @@ class TagsTableViewController: UITableViewController {
     var listID: String?
     let user = LISTUser()
     var participantID = [String]()
+    var isPrivate = false
     
     var cellTitle = ["Add more tags"]
     
@@ -81,6 +82,11 @@ class TagsTableViewController: UITableViewController {
             if let destination = segue.destination as? TagCollectionTableViewController{
                 destination.listID = listID
                 destination.participantID = participantID
+                if isPrivate {
+                    destination.isPrivate = true
+                } else {
+                    destination.isPrivate = false
+                }
                 ref.child("Tag").child("tags").observe(.value, with: { (snapshot) in
                     destination.tags.removeAll()
                     if let snapshots = snapshot.children.allObjects as? [DataSnapshot] {
@@ -130,6 +136,8 @@ class TagsTableViewController: UITableViewController {
                         for snap in snapshots {
                             let itemID = snap.key
                             self.ref.child("InspirationPool").child(itemID).removeValue()
+                            self.ref.child("SmallInspirationPool").child(tag).child(itemID).removeValue()
+                            
                         }
                     }
                 }

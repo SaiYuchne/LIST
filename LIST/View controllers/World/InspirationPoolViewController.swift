@@ -22,6 +22,7 @@ class InspirationPoolViewController: UIViewController {
     }
     
     var bigWishPool = [cellData]()
+    var smallWishPool = [cellData]()
     
     var listID: String? {
         didSet {
@@ -43,6 +44,7 @@ class InspirationPoolViewController: UIViewController {
         }
     }
     var isTagSpecific = false
+    var selectedTag = String()
     
     @IBOutlet weak var background: RoundRecView!{
         didSet {
@@ -104,13 +106,19 @@ class InspirationPoolViewController: UIViewController {
                 if creatorID == self.user.userID {
                     self.presentIsSelfAlert()
                 } else {
-                    if(!self.alreadyFaved(listID: self.listID!)) {
-                        let listName = listInfo["listTitle"] as! String
-                        self.ref.child("FavouriteList").child(self.user.userID).child(self.listID!).setValue(listName)
-                        self.presentAddFavListSuccess()
-                    } else {
-                        self.presentAlreadyFavedAlert()
-                    }
+                    self.ref.child("List").child(self.listID!).child("collaborator").child(self.user.userID).observeSingleEvent(of: .value, with: { (snapshot) in
+                        if snapshot.exists() {
+                            self.presentIsCollaboratorAlert()
+                        } else {
+                            if(!self.alreadyFaved(listID: self.listID!)) {
+                                let listName = listInfo["listTitle"] as! String
+                                self.ref.child("FavouriteList").child(self.user.userID).child(self.listID!).setValue(listName)
+                                self.presentAddFavListSuccess()
+                            } else {
+                                self.presentAlreadyFavedAlert()
+                            }
+                        }
+                    })
                 }
             })
         }
@@ -138,6 +146,12 @@ class InspirationPoolViewController: UIViewController {
         self.present(alert, animated: true, completion: nil)
     }
     
+    func presentIsCollaboratorAlert() {
+        let alert = UIAlertController(title: "Sorry", message: "You are already a collabortor of this list.", preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "Ok", style: .default, handler: nil))
+        self.present(alert, animated: true, completion: nil)
+    }
+    
     func presentAlreadyFavedAlert() {
         let alert = UIAlertController(title: "Sorry", message: "You have already faved this list.", preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "Ok", style: .default, handler: nil))
@@ -153,34 +167,10 @@ class InspirationPoolViewController: UIViewController {
     // MARK: the randomization of choosing random wishes: produce as needed
     func pickARandomWish() {
         if(isTagSpecific){
-            var listCount = 0
-            ref.child("Tag").child("tags").child(tag).observeSingleEvent(of: .value) { (snapshot) in
-                listCount = snapshot.value as! Int
-            }
-            
-            let randomIndex = Int(arc4random_uniform(UInt32(listCount))) + 1
-            ref.child("Tag").child("tags").child(tag).child("listIDs").observeSingleEvent(of: .value) { (snapshot) in
-                if let listIDs = snapshot.children.allObjects as? [String] {
-                    var count = 0
-                    for listID in listIDs {
-                        if count == randomIndex {
-                            self.listID = listID
-                            // randomly pick a wish
-                            self.ref.child("ListItem").child(listID).observeSingleEvent(of: .value, with: { (snapshot) in
-                                let wishCount = snapshot.childrenCount
-                                let randomWishIndex = Int(arc4random_uniform(UInt32(wishCount))) + 1
-                                if let snapshots = snapshot.children.allObjects as? [DataSnapshot] {
-                                    let wishID = snapshots[randomWishIndex].key
-                                    self.ref.child("ListItem").child(self.listID!).child(wishID).child("content").observeSingleEvent(of: .value, with: { (snapshot) in
-                                        self.wish = snapshot.value as! String
-                                    })
-                                }
-                            })
-                        }
-                    }
-                    count = count + 1
-                }
-            }
+            let randomWishIndex = Int(arc4random_uniform(UInt32(smallWishPool.count)))
+            self.tag = "#\(smallWishPool[randomWishIndex].tags[0])"
+            self.listID = smallWishPool[randomWishIndex].listID
+            self.wish = smallWishPool[randomWishIndex].content
         } else { // non tag specific
             let randomWishIndex = Int(arc4random_uniform(UInt32(bigWishPool.count)))
             let randomTagIndex = Int(arc4random_uniform(UInt32(bigWishPool[randomWishIndex].tags.count)))
@@ -206,8 +196,7 @@ class InspirationPoolViewController: UIViewController {
         if segue.identifier == "goToOriginalList" {
             if let destination = segue.destination as? SingleFavouriteListViewController {
                 destination.listID = listID!
-                ref.child("List").child(listID!).child("listTitle").observeSingleEvent(of: .value, with: { (snapshot) in
-                    destination.listName = snapshot.value as! String
+                ref.child("List").child(listID!).child("listTitle").observe(.value, with: { (snapshot) in
                 })
                 ref.child("ListItem").child(listID!).queryOrdered(byChild: "creationDays").observe(.value, with: { (snapshot) in
                     destination.goalData.removeAll()

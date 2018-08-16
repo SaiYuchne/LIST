@@ -15,14 +15,13 @@ class SystemTagCollectionTableViewController: UITableViewController, UISearchRes
     var listID: String?
     var selectedTag: String?
     
-    private var tags = ["Animal", "Cat", "Clothes", "Diet", "Family", "Fashion", "Food", "Love", "Romance", "Sports", "Study", "Travel", "YOLO"]
+    private var tags = ["Animal", "Arts", "Diet", "Family", "Food", "Hobby", "Life", "Mood", "Romance", "Skill", "Sports", "Study", "Travel", "Work", "YOLO"]
     private var filteredTags = [String]()
     
     let searchController = UISearchController(searchResultsController: nil)
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        getTableViewDataFromDatabase()
         
         filteredTags = tags
         searchController.searchResultsUpdater = self
@@ -53,7 +52,9 @@ class SystemTagCollectionTableViewController: UITableViewController, UISearchRes
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         if let cell = tableView.cellForRow(at: indexPath) {
             selectedTag = cell.textLabel!.text!
-            performSegue(withIdentifier: "goToInspirationPoolWithTag", sender: self)
+            if shouldPerformSegue(withIdentifier: "goToInspirationPoolWithTag") {
+                print("performing segue..")
+            }
         }
     }
     
@@ -66,24 +67,45 @@ class SystemTagCollectionTableViewController: UITableViewController, UISearchRes
         self.tableView.reloadData()
     }
     
+    func shouldPerformSegue(withIdentifier identifier: String) -> Bool {
+        var shouldPerform = true
+        if identifier == "goToInspirationPoolWithTag" {
+            ref.child("SmallInspirationPool").child(selectedTag!).observeSingleEvent(of: .value, with: { (snapshot) in
+                if !snapshot.exists() {
+                    shouldPerform = false
+                    self.presentInvalidTagAlert()
+                } else {
+                    self.performSegue(withIdentifier: "goToInspirationPoolWithTag", sender: self)
+                }
+            })
+        }
+        
+        print("shoudPerform = \(shouldPerform)")
+        return shouldPerform
+    }
+    
+    func presentInvalidTagAlert() {
+        let alert = UIAlertController(title: "Sorry", message: "There is no random wish under this tag.", preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "Ok", style: .default, handler: nil))
+        present(alert, animated: true, completion: nil)
+    }
+    
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "goToInspirationPoolWithTag" {
             if let destination = segue.destination as? InspirationPoolViewController {
-                destination.tag = selectedTag!
+                destination.selectedTag = selectedTag!
                 destination.isTagSpecific = true
-            }
-        }
-    }
-    
-    // MARK: database operations
-    func getTableViewDataFromDatabase() {
-        let systemTagRef = ref.child("Tag").queryOrdered(byChild: "tagName")
-        systemTagRef.observeSingleEvent(of: .value) { (snapshot) in
-            if let snapshots = snapshot.children.allObjects as? [DataSnapshot]{
-                for snap in snapshots{
-                    let tempData = snap.value as? Dictionary<String, Any>
-                    self.tags.append(tempData!["tagName"] as! String)
-                }
+                ref.child("SmallInspirationPool").child(selectedTag!).observeSingleEvent(of: .value, with: { (snapshot) in
+                    destination.smallWishPool.removeAll()
+                    if let snapshots = snapshot.children.allObjects as? [DataSnapshot] {
+                        for snap in snapshots {
+                            print("newCell initialized")
+                            let itemInfo = snap.value as! [String: String]
+                            let newCell = InspirationPoolViewController.cellData(itemID: snap.key, content: itemInfo["content"]!, listID: itemInfo["listID"]!, tags: [self.selectedTag!])
+                            destination.smallWishPool.append(newCell)
+                        }
+                    }
+                })
             }
         }
     }
